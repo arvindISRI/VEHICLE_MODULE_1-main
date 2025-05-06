@@ -1,0 +1,11 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "isCreatingSolution": true,
+    "environment": "onprem19",
+    "version": "1.10.0",
+    "libraryName": "vehicle-module",
+    "libraryId": "a26943c7-af96-4674-ac06-ac71ce90c238",
+    "packageManager": "npm",
+    "componentType": "webpart"
+  }
+}

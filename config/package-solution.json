@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "vehicle-module-client-side-solution",
+    "id": "a26943c7-af96-4674-ac06-ac71ce90c238",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/vehicle-module.sppkg"
+  }
+}
