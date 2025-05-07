@@ -12,12 +12,9 @@ import { BaseButton, Button, Checkbox, FontWeights, IconButton, IPersonaProps } 
 import { Link, useHistory } from 'react-router-dom';
 import useSPCRUD, { ISPCRUD } from '../../../services/bal/spcrud';
 import SPCRUD from '../../../services/bal/spcrud';
-import EmployeeOps from '../../../services/bal/EmployeeMaster';
 import { IEmployeeMaster } from '../../../services/interface/IEmployeeMaster';
-import { ICHSRequest } from '../../../services/interface/ICHSRequest';
+
 import { keys } from '@microsoft/sp-lodash-subset';
-import { IEmployeeCHSLimitMaster } from '../../../services/interface/IEmployeeCHSLimitMaster';
-import EmployeeCHSLimitMasterOps from '../../../services/bal/EmployeeCHSLimitMaster';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
 import { Label } from 'office-ui-fabric-react/lib/Label';
@@ -32,6 +29,7 @@ import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { ENV_CONFIG } from '../../../../Enviroment/envConfig';
 import { IVehicleModuleProps } from '../IVehicleModuleProps';
+import EmployeeOps from '../../../services/bal/PersonalAdvanceVehicleMaster';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 const initialValues = {
@@ -106,7 +104,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       reqID: '',
       isClearable: true,
       isSearchable: true,
-      CHSApproverView: [],
+     
 
       filteredOptions: [],
 
@@ -173,7 +171,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         EmployeeName: employeeData.EmployeeName,
         DateOfJoining: employeeData.DateOfJoining ? new Date(employeeData.DateOfJoining) : null,
         CurrentOfficeLocation: employeeData.CurrentOfficeLocation,
-
+        DateOfConfirmation: employeeData.DateOfConfirmation
+        ? `${new Date(employeeData.DateOfConfirmation).getDate()}-${new Date(employeeData.DateOfConfirmation).getMonth() + 1}-${new Date(employeeData.DateOfConfirmation).getFullYear()}`
+        : null,
         EmployeeIDId: employeeData.Id,
         DependentType: "",
         ActualClaimAmountLable: "",
@@ -367,6 +367,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         VehicleType: this.state.typeOfVehicle,
         HR1Response:'Pending with HR1',
         HR2Response:'Pending with HR2',
+
+        DateOfConfirmation: this.state.DateOfConfirmation
+        ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
+        : null,
         GHResponse:'Pending with Group Head',
         ManufactureYear: this.state.yearOfManufacture1 || "",
         VehicleCondition: this.state.ConditionOfVehicle,
@@ -429,7 +433,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
         CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
         VehicleType: this.state.typeOfVehicle,
-
+        DateOfConfirmation: this.state.DateOfConfirmation
+        ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
+        : null,
         ManufactureYear: this.state.yearOfManufacture1 || "",
         VehicleCondition: this.state.ConditionOfVehicle,
         MakeModel: this.state.ExpenseDetails.MakeModel || "",
@@ -659,7 +665,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               <Label className="control-Label font-weight-bold">Date of joining</Label>
             </div>
             <div className="col-sm-2">
-              {moment(this.state.CHSApproverView.DateOfJoining).format("DD/MM/YYYY")} </div>
+              {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Residence Address  </Label>
             </div>

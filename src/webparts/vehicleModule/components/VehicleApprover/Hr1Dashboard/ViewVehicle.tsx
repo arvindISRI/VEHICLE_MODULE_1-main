@@ -14,10 +14,8 @@ import useSPCRUD, { ISPCRUD } from '../../../../services/bal/spcrud';
 import SPCRUD from '../../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../../services/bal/PersonalAdvanceVehicleMaster';
 import { IEmployeeMaster } from '../../../../services/interface/IEmployeeMaster';
-import { ICHSRequest } from '../../../../services/interface/ICHSRequest';
+
 import { keys } from '@microsoft/sp-lodash-subset';
-// import { IEmployeeCHSLimitMaster } from '../../../../services/interface/IEmployeeCHSLimitMaster';
-// import EmployeeCHSLimitMasterOps from '../../../../services/bal/EmployeeCHSLimitMaster';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
 import { Label } from 'office-ui-fabric-react/lib/Label';
@@ -67,6 +65,12 @@ const ConditionofvehicleOptions: IDropdownOption[] = [
   { key: 'New', text: 'New' },
   { key: 'Second Hand', text: 'Second Hand' }
 ];
+const cellStyle = {
+  border: '1px solid black',
+  padding: '8px',
+  textAlign: 'left',
+};
+
 
 const onbehalfoption: IDropdownOption[] = [
   { key: 'Yes', text: 'Yes' },
@@ -101,12 +105,14 @@ export default class HR1ViewVehicle extends React.Component<IVehicleModuleProps,
       EmployeeIDId: '',
       DesignationId: '',
       CompanyEmail: '',
+      DateOfConfirmation: null,
 
       file: null,
       reqID: '',
+      Status: '',
       isClearable: true,
       isSearchable: true,
-      CHSApproverView: [],
+     
 
       filteredOptions: [],
 
@@ -121,8 +127,8 @@ export default class HR1ViewVehicle extends React.Component<IVehicleModuleProps,
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
-          expectedLife:0,
-          DatePurposeofWithdrawal:''
+          expectedLife: 0,
+          DatePurposeofWithdrawal: ''
 
 
 
@@ -143,29 +149,162 @@ export default class HR1ViewVehicle extends React.Component<IVehicleModuleProps,
       typeOfVehicle1: '',
       typeOfVehicle: '',
 
+
+      isConfirmed: '', // assume this is auto-populated
+      applicationCorrect: '',
+      // costOfVehicle: 750000, // example auto-populated value
+      eligibleLoanAmount: '',
+      disciplinaryPending: '',
+      netMonthlySalary: '', // example auto-populated value
+      FityofNetemoluments: '',
+      emiTenure: '',
+      vehicleLoanCost: '',
+      isEMILessThan50Percent: '',
+      marks: 0,
+      totalMarks: 0,
+      recommendedSanctionAmount: 0,
+      VehicleLoanEMI: 0,
+
+
+      HR1Response	:''	,
+HR1Remark		:''	,
+HR2Response		:''	,
+HR2Remark		:''	,
+GHResponse		:''	,
+GHRemark:''	,
+
     };
 
   }
   async componentDidMount() {
 
-   // document.getElementById('divLoading').style.display = 'block';
+    // document.getElementById('divLoading').style.display = 'block';
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
 
     this.setState({ VMId: VMId });
+    this.calculateEMICheck();
+    this.calculateTotalMarks();
     await this.getAllPersonalAdvanceVehicle();
-await this.getAllPrevPersonalAdvanceHistory();
+    await this.getAllPrevPersonalAdvanceHistory();
 
     await this.getCurrentUser();
     // await this.getEmployee();
   }
 
+
+
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
-      this.setState({ selectedOption: null });
+    if (
+      prevState.VehicleLoanEMI !== this.state.VehicleLoanEMI ||
+      prevState.ExpenseDetails.FityofNetemoluments !== this.state.ExpenseDetails.FityofNetemoluments
+    ) {
+      this.calculateEMICheck();
+    }
+
+    if (
+      prevState.isConfirmed !== this.state.isConfirmed ||
+      prevState.applicationCorrect !== this.state.applicationCorrect ||
+      prevState.disciplinaryPending !== this.state.disciplinaryPending ||
+      prevState.isEMILessThan50Percent !== this.state.isEMILessThan50Percent
+    ) {
+      this.calculateTotalMarks();
     }
   }
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name.startsWith('ExpenseDetails.')) {
+      const key = name.split('.')[1];
+      this.setState((prevState) => ({
+        ExpenseDetails: {
+          ...prevState.ExpenseDetails,
+          [key]: value,
+        },
+      }));
+    } else {
+      this.setState({ [name]: value });
+    }
+  };
+
+  calculateEMICheck = () => {
+    const emi = parseFloat(this.state.VehicleLoanEMI || 0);
+    const fiftyPercentSalary = parseFloat(this.state.ExpenseDetails.FityofNetemoluments || 0);
+
+    const isEMILess = emi < fiftyPercentSalary;
+    this.setState({ isEMILessThan50Percent: isEMILess ? 'Yes' : 'No' });
+  };
+
+  calculateTotalMarks = () => {
+    const { isConfirmed, applicationCorrect, disciplinaryPending, isEMILessThan50Percent } = this.state;
+
+    const total =
+      (isConfirmed === 'Yes' ? 1 : 0) +
+      (applicationCorrect === 'Yes' ? 1 : 0) +
+      (disciplinaryPending === 'No' ? 1 : 0) +
+      (isEMILessThan50Percent === 'Yes' ? 1 : 0);
+
+    this.setState({ totalMarks: total });
+  };
+
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (
+  //     prevState.netMonthlySalary !== this.state.netMonthlySalary ||
+  //     prevState.vehicleLoanCost !== this.state.vehicleLoanCost
+  //   ) {
+  //     this.calculateHalfNetSalary();
+  //     this.evaluateEMIEligibility();
+  //   }
+
+  //   if (
+  //     prevState.marks !== this.state.marks
+  //   ) {
+  //     this.calculateTotalMarks();
+  //   }
+  // }
+
+  // calculateHalfNetSalary = () => {
+  //   const halfSalary = this.state.netMonthlySalary * 0.5;
+  //   this.setState({ FityofNetemoluments: halfSalary });
+  // };
+
+  // evaluateEMIEligibility = () => {
+  //   const { vehicleLoanCost, FityofNetemoluments } = this.state;
+  //   const isEligible = parseFloat(vehicleLoanCost || 0) < FityofNetemoluments;
+  //   this.setState({
+  //     isEMILessThan50Percent: isEligible ? 'Yes' : 'No'
+  //   });
+  // };
+
+  // calculateTotalMarks = () => {
+  //   const { marks } = this.state;
+  //   this.setState({ totalMarks: marks }); // add other marks logic if needed
+  // };
+
+  // calculateTotalMarks = () => {
+  //   const {
+  //     isConfirmed,
+  //     disciplinaryProceedings,
+  //     netMonthlySalary,
+  //     vehicleLoanEMI,
+  //     applicationCorrect
+  //   } = this.state;
+
+  //   let total = 0;
+
+  //   if (isConfirmed === 'Yes') total += 1;
+  //   if (disciplinaryProceedings === 'No') total += 1;
+  //   if (applicationCorrect === 'Yes') total += 1;
+
+  //   const fiftyPercentOfSalary = parseFloat(netMonthlySalary) * 0.5;
+  //   if (parseFloat(vehicleLoanEMI) < fiftyPercentOfSalary) total += 1;
+
+  //   this.setState({ totalMarks: total });
+  // };
+
 
   public getCurrentUser = async () => {
     const spCrudObj = await useSPCRUD();
@@ -175,63 +314,92 @@ await this.getAllPrevPersonalAdvanceHistory();
     });
   }
 
-  
 
-  public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest |any> => {
+
+  public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       let employeeData = results;
 
       var currentEmpResult = employeeData.filter((item) => {
         return item.ID == +this.state.VMId;
-    })
+      })
 
-    if(currentEmpResult && currentEmpResult.length>0){
+      if (currentEmpResult && currentEmpResult.length > 0) {
+
+
+
+
+        this.setState({
+          EmployeeInfodb: currentEmpResult,
+          AllEmployeeCollObj: [],
+          EmployeeName: currentEmpResult[0].EmployeeName,
+          Created: currentEmpResult[0].Created,
+          DateOfConfirmation: currentEmpResult[0].DateOfConfirmation,
+          // Created
+          // DateOfConfirmation
+          isConfirmed: currentEmpResult[0].Created > currentEmpResult[0].DateOfConfirmation ? 'Yes' : 'No',
+
+          DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
+          CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
+          EmployeeCode: '' + currentEmpResult[0].EmployeeCode,
+          DesignationTitle: currentEmpResult[0].Designation,
+          Age: (currentEmpResult[0].Age),
+          Status: currentEmpResult[0].Status,
+
+
+
+          totalMarks:  currentEmpResult[0].TotalMarks,
+          isEMILessThan50Percent:  currentEmpResult[0].IsEmiLessThan50,
+          VehicleLoanEMI:  currentEmpResult[0].VehicleLoanEMI || 0,
+          eligibleLoanAmount:  currentEmpResult[0].EligibleLoanAmount,
+          applicationCorrect:  currentEmpResult[0].ApplicationCorrect,
+          disciplinaryPending:  currentEmpResult[0].DisciplinaryProceedings,
+          recommendedSanctionAmount: currentEmpResult[0].SanctionAmount,
 
       
-   
-
-      this.setState({
-        EmployeeInfodb: currentEmpResult,
-        AllEmployeeCollObj: [],
-        EmployeeName: currentEmpResult[0].EmployeeName,
-        DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
-        CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
-        EmployeeCode: ''+currentEmpResult[0].EmployeeCode,
-        DesignationTitle: currentEmpResult[0].Designation,
-        Age: (currentEmpResult[0].Age),
-        ExpenseDetails: {
-          TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
-          TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
-          Totaldeductions: +currentEmpResult[0].TotalDeductions,
-          FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
-          RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
-          MakeModel:currentEmpResult[0].MakeModel,
-          CostofVehicle:currentEmpResult[0].CostOfVehicle,
-          NameandAddressoftheSeller:currentEmpResult[0].SellerDetails,
 
 
-          AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount?+currentEmpResult[0].PrevLoanAmount:0 ,
-          // Dateoffinalrepaymentofloan:currentEmpResult[0].PrevLoanDate?new Date(currentEmpResult[0].PrevLoanDate):null ,
-          // DateofAvailmentofLoan:currentEmpResult[0].PrevLoanRepaymentDate?new Date(currentEmpResult[0].PrevLoanRepaymentDate):null,
+          HR1Response	:currentEmpResult[0].HR1Response,	
+          HR1Remark		:currentEmpResult[0].HR1Remark	,
+          HR2Response		:currentEmpResult[0].HR2Response	,
+          HR2Remark		:currentEmpResult[0].HR2Remark	,
+          GHResponse		:currentEmpResult[0].GHResponse	,
+          GHRemark:currentEmpResult[0].GHRemark,	
 
-          DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
-          ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
-          : '',
-        Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
-          ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
-          : '',
-      
+          ExpenseDetails: {
+            TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+            TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
+            Totaldeductions: +currentEmpResult[0].TotalDeductions,
+            FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
+            netMonthlySalary: +(currentEmpResult[0].NetEmoluments50) * 2,
+            RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
+            MakeModel: currentEmpResult[0].MakeModel,
+            CostofVehicle: currentEmpResult[0].CostOfVehicle,
+            NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
 
-        }          ,
-        typeOfVehicle:currentEmpResult[0].VehicleType,
-        typeOfVehicle1:currentEmpResult[0].PrevVehicleLoanType,
 
-        ConditionOfVehicle:currentEmpResult[0].VehicleCondition,
-        yearOfManufacture1:currentEmpResult[0].ManufactureYear,
-        ExpectedlifeofVehicle:currentEmpResult[0].ExpectedLife,
+            AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
+            // Dateoffinalrepaymentofloan:currentEmpResult[0].PrevLoanDate?new Date(currentEmpResult[0].PrevLoanDate):null ,
+            // DateofAvailmentofLoan:currentEmpResult[0].PrevLoanRepaymentDate?new Date(currentEmpResult[0].PrevLoanRepaymentDate):null,
+
+            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
+              ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
+              : '',
+            Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
+              ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
+              : '',
+            ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
+
+
+          },
+          typeOfVehicle: currentEmpResult[0].VehicleType,
+          typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
+
+          ConditionOfVehicle: currentEmpResult[0].VehicleCondition,
+          yearOfManufacture1: currentEmpResult[0].ManufactureYear,
         });
-    }
-     return currentEmpResult;
+      }
+      return currentEmpResult;
     });
   };
 
@@ -245,21 +413,21 @@ await this.getAllPrevPersonalAdvanceHistory();
 
   //   if(currentEmpResultHistory && currentEmpResultHistory.length>0){
 
-      
-   
+
+
 
   //     this.setState({
   //       EmployeeInfodb: currentEmpResultHistory,
   //       AllEmployeeCollObj: [],
-       
-        
+
+
   //     });
   //   }
   //    return currentEmpResultHistory;
   //   });
   // };
 
-  
+
 
   // public getEmployee = async (): Promise<IEmployeeMaster> => {
   //   return await PersonalAdvanceVehicleMasterOps().getEmployeeMaster(this.props).then(async (results) => {
@@ -294,36 +462,36 @@ await this.getAllPrevPersonalAdvanceHistory();
   public getAllPrevPersonalAdvanceHistory = async (): Promise<any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
       let employeeDataHisty = results;
-  
+
       var currentEmpResultHistory = employeeDataHisty.filter((item) => {
         return item.PersonalAdvanceVehicleId.Id == +this.state.VMId;
       });
-  
+
       if (currentEmpResultHistory && currentEmpResultHistory.length > 0) {
-  
+
         const vehicleRowsFromDB = currentEmpResultHistory.map((item) => ({
           DatePurposeofWithdrawal: item.WithdrawalDetails || '',
           PAmount: item.WithdrawalAmount || 0,
           POutstandingLoanasOnDate: item.OutstandingLoan || 0,
-          PDatePurposeofWithdrawal:item.FinalRepaymentDate? new Date(item.FinalRepaymentDate).toISOString().split('T')[0]: '',// item.FinalRepaymentDate || '',
+          PDatePurposeofWithdrawal: item.FinalRepaymentDate ? new Date(item.FinalRepaymentDate).toISOString().split('T')[0] : '',// item.FinalRepaymentDate || '',
           expectedLife: item.ExpectedLife || 0,
           Id: item.ID || 0,
           PersonalAdvanceVehicleId: item.PersonalAdvanceVehicleId || 0
 
         }));
-  
+
         this.setState({
           EmployeeInfodb: currentEmpResultHistory,
-          vehicleRows: vehicleRowsFromDB, 
+          vehicleRows: vehicleRowsFromDB,
           AllEmployeeCollObj: [],
         });
       }
-  
+
       return currentEmpResultHistory;
     });
   };
 
-  
+
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
@@ -360,73 +528,33 @@ await this.getAllPrevPersonalAdvanceHistory();
   };
 
 
-  public BtnSubmitRequest = async (SubmittionType) => {
+
+  public BtnRejectRequest = async () => {
     var VehicleRequestItem
-    if (SubmittionType == 'Draft') {
-      VehicleRequestItem = {
-        EmployeeCode: this.state.EmployeeID,
-        EmployeeName: this.state.EmployeeName,
-        Age: '' + this.state.Age,
-        Status: "Draft",
-        DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-        ResidenceAddress: this.state.CurrentOfficeLocation,
-        Designation: this.state.DesignationTitle,
-        TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-        Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-        TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-        NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-        EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-        CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-        VehicleType: this.state.typeOfVehicle,
+    VehicleRequestItem = {
 
-        ManufactureYear: this.state.yearOfManufacture1 || "",
-        VehicleCondition: this.state.ConditionOfVehicle,
-        MakeModel: this.state.ExpenseDetails.MakeModel || "",
-        SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-        ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
+      GHResponse: 'Rejected by GroupHead',
+      // GroupHeadResponse:'Pending with GroupHead',
+      // GHResponse:'Pending with Group Head',
+      Status: 'Rejected',
 
-        PrevVehicleLoanType:this.state.typeOfVehicle1,
-        PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-        PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-        PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-      };
-    }
+      GHApproverNameId: this.state.Currentuser.Id,
+      GHResponseDate: new Date(),
+      GHRemark: this.state.ExpenseDetails.GroupHeadRemarks,
 
-//     PrevVehicleLoanType	Choice	
-// PrevLoanAmount	Number	
-// PrevLoanDate	Date and Time	
-// PrevLoanRepaymentDate
+      IsConfirm: this.state.isConfirmed,
+      TotalMarks: this.state.totalMarks,
+      IsEmiLessThan50: this.state.isEMILessThan50Percent,
+      VehicleLoanEMI: this.state.VehicleLoanEMI || 0,
+      EligibleLoanAmount: this.state.eligibleLoanAmount,
+      ApplicationCorrect: this.state.applicationCorrect,
+      DisciplinaryProceedings: this.state.disciplinaryPending,
+      SanctionAmount: this.state.recommendedSanctionAmount,
+      SanctionAmountDate: new Date()
 
-    if (SubmittionType == 'Submitted') {
-      VehicleRequestItem = {
-        EmployeeCode: this.state.EmployeeID,
-        EmployeeName: this.state.EmployeeName,
-        Age: '' + this.state.Age,
-        Status: "Pending",
-        DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-        ResidenceAddress: this.state.CurrentOfficeLocation,
-        Designation: this.state.DesignationTitle,
-        TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-        Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-        TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-        NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-        EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-        CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-        VehicleType: this.state.typeOfVehicle,
-        ManufactureYear: this.state.yearOfManufacture1 || "",
-        VehicleCondition: this.state.ConditionOfVehicle,
-        MakeModel: this.state.ExpenseDetails.MakeModel || "",
-        SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-        ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
+    };
 
-        PrevVehicleLoanType:this.state.typeOfVehicle1,
 
-        PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-        PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-        PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-    
-      };
-    }
     this.setState({ isSubmitting: true });
 
     const spCrudObj = await useSPCRUD();
@@ -434,21 +562,89 @@ await this.getAllPrevPersonalAdvanceHistory();
 
 
     try {
-      const req = await spCrudObj.insertData("PersonalAdvanceVehicle", VehicleRequestItem, this.props);
-      this.setState({ reqID: req.data.ID });
+      await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
+      // this.setState({ reqID: req.data.ID });
+      alert('Vehicle Request Rejected Successfully!');
+      window.location.href = '#/GroupHeadDashboard'
+      // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
+      // alert('Vehicle Request Submitted Successfully!');
+      // const RequestNoGenerate = {
+      //   Title: 'VM000' + req.data.ID
+      // };
 
-      const RequestNoGenerate = {
-        Title: 'VM000' + req.data.ID
-      };
+      //  await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
 
-      await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
+      // if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
+      //   await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
+      //   alert('Vehicle Request Submitted Successfully!');
+      // } else {
+      //   alert('Vehicle Request Submitted without attachments.');
+      // }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Error submitting the vehicle request.");
+    } finally {
+      this.setState({ isSubmitting: false });
+    }
+  };
 
-      if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
-        await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-        alert('Vehicle Request Submitted Successfully!');
-      } else {
-        alert('Vehicle Request Submitted without attachments.');
-      }
+  public BtnApproveGroupHeadRequest = async () => {
+    var VehicleRequestItem
+    VehicleRequestItem = {
+
+      GHResponse: 'Approved by GroupHead',
+      // GroupHeadResponse:'Pending with GroupHead',
+      // GHResponse:'Pending with Group Head',
+      Status: 'Approved',
+
+      GHApproverNameId: this.state.Currentuser.Id,
+      GHResponseDate: new Date(),
+      GHRemark: this.state.ExpenseDetails.GroupHeadRemarks,
+
+      // this.state.isEMILessThan50Percent
+      // this.state.VehicleLoanEMI
+      // this.state.disciplinaryPending
+      // this.state.eligibleLoanAmount
+      // this.state.applicationCorrect
+      // this.state.isConfirmed
+      IsConfirm: this.state.isConfirmed,
+      TotalMarks: this.state.totalMarks,
+      IsEmiLessThan50: this.state.isEMILessThan50Percent,
+      VehicleLoanEMI: this.state.VehicleLoanEMI || 0,
+      EligibleLoanAmount: this.state.eligibleLoanAmount,
+      ApplicationCorrect: this.state.applicationCorrect,
+      DisciplinaryProceedings: this.state.disciplinaryPending,
+      SanctionAmount: this.state.recommendedSanctionAmount,
+      SanctionAmountDate: new Date(),
+
+    };
+
+
+    this.setState({ isSubmitting: true });
+
+    const spCrudObj = await useSPCRUD();
+
+
+
+    try {
+      await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
+      // this.setState({ reqID: req.data.ID });
+      // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
+      alert('Vehicle Request Submitted Successfully!');
+      window.location.href = '#/GroupHeadDashboard'
+
+      // const RequestNoGenerate = {
+      //   Title: 'VM000' + req.data.ID
+      // };
+
+      //  await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
+
+      // if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
+      //   await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
+      //   alert('Vehicle Request Submitted Successfully!');
+      // } else {
+      //   alert('Vehicle Request Submitted without attachments.');
+      // }
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -521,7 +717,7 @@ await this.getAllPrevPersonalAdvanceHistory();
         ...prevState.ExpenseDetails,
         CostofVehicle: isSecondHand ? prevState.ExpenseDetails.CostofVehicle || '' : '',
 
-        ExpectedlifeofVehicle: isSecondHand ? prevState.ExpenseDetails.ExpectedlifeofVehicle || 0 : 0
+        ExpectedlifeofVehicle: isSecondHand ? prevState.ExpenseDetails.ExpectedlifeofVehicle || '' : ''
       }
     }));
   };
@@ -536,6 +732,7 @@ await this.getAllPrevPersonalAdvanceHistory();
 
     }));
   };
+
 
   private handleTypeOfVehicleChange1 = (
     option: IDropdownOption,
@@ -567,6 +764,20 @@ await this.getAllPrevPersonalAdvanceHistory();
     updatedRows[index][field] = value;
     this.setState({ vehicleRows: updatedRows });
   };
+
+  // handleChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   if (name === 'disciplinaryPending') {
+  //     const marks = value === 'No' ? 1 : 0;
+  //     this.setState({ [name]: value, marks });
+  //   } else if (name === 'eligibleLoanAmount') {
+  //     const cappedValue = Math.min(parseFloat(value || 0), 1000000);
+  //     this.setState({ [name]: cappedValue });
+  //   } else {
+  //     this.setState({ [name]: value });
+  //   }
+  // };
 
   private removeRow = (index: number) => {
     this.setState(prevState => ({
@@ -609,7 +820,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Date of joining</Label>
             </div>
             <div className="col-sm-2">
-              {moment(this.state.CHSApproverView.DateOfJoining).format("DD/MM/YYYY")} </div>
+              {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Residence Address  </Label>
             </div>
@@ -634,8 +845,8 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance) </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
-              value={this.state.ExpenseDetails.TotalEmolumentspm}
+              <TextField type='number' disabled
+                value={this.state.ExpenseDetails.TotalEmolumentspm}
                 name="ExpenseDetails.TotalEmolumentspm"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -652,8 +863,8 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
-               value={this.state.ExpenseDetails.Totaldeductions}
+              <TextField type='number' disabled
+                value={this.state.ExpenseDetails.Totaldeductions}
 
                 name="ExpenseDetails.Totaldeductions"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
@@ -673,7 +884,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 20)  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
+              <TextField type='number' disabled
                 value={this.state.ExpenseDetails.RepaymenttenureinEMI}
 
                 name="ExpenseDetails.RepaymenttenureinEMI"
@@ -716,7 +927,7 @@ await this.getAllPrevPersonalAdvanceHistory();
             </div>
             <div className="col-sm-2">
               <TextField disabled
-              value={this.state.ExpenseDetails.MakeModel}
+                value={this.state.ExpenseDetails.MakeModel}
 
                 name="ExpenseDetails.MakeModel"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
@@ -743,7 +954,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               { }
 
               <TextField
-                 type="number"  disabled
+                type="number" disabled
                 name="ExpenseDetails.CostofVehicle"
                 value={this.state.ExpenseDetails.CostofVehicle || ''}
                 onChanged={(value: string) => {
@@ -766,7 +977,7 @@ await this.getAllPrevPersonalAdvanceHistory();
             <div className="col-sm-2">
               <TextField
                 multiline
-                name="ExpenseDetails.NameandAddressoftheSeller" disabled 
+                name="ExpenseDetails.NameandAddressoftheSeller" disabled
                 value={this.state.ExpenseDetails.NameandAddressoftheSeller || ''}
                 onChanged={(value: string) => {
                   this.setState(prevState => ({
@@ -780,14 +991,14 @@ await this.getAllPrevPersonalAdvanceHistory();
 
             </div>
 
-            <div className="col-sm-2" hidden={!this.state.ExpectlifeShow && !this.state.ExpectedlifeofVehicle}>
+            <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)  </Label>
             </div>
-            <div className="col-sm-2" hidden={!this.state.ExpectlifeShow && !this.state.ExpectedlifeofVehicle}>
+            <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
 
               <TextField
 
-                 type='number'  disabled
+                type='text' disabled
                 name="ExpenseDetails.ExpectedlifeofVehicle"
                 value={this.state.ExpenseDetails.ExpectedlifeofVehicle}
                 onChanged={(value: string) => {
@@ -826,7 +1037,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Amount of Loan availed  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
+              <TextField type='number' disabled
                 value={this.state.ExpenseDetails.AmountofLoanavailed}
 
                 name="ExpenseDetails.AmountofLoanavailed"
@@ -835,24 +1046,24 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Date of Availment of Loan   </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='date'  disabled
-              value={this.state.ExpenseDetails.DateofAvailmentofLoan}
+              <TextField type='date' disabled
+                value={this.state.ExpenseDetails.DateofAvailmentofLoan}
 
                 name="ExpenseDetails.DateofAvailmentofLoan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}/>   
-                
-                               </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)} />
+
+            </div>
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Date of final repayment of loan  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='date'  disabled
-              value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
+              <TextField type='date' disabled
+                value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
 
                 name="ExpenseDetails.Dateoffinalrepaymentofloan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}/>  </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
 
           </div>
 
@@ -880,7 +1091,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Amount</Label>
                 <TextField
-                   type="number"  disabled
+                  type="number" disabled
                   value={row.PAmount}
                   onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
                 />
@@ -904,19 +1115,19 @@ await this.getAllPrevPersonalAdvanceHistory();
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date of Final Repayment </Label>
                 <TextField
-                   type='date'  disabled  
+                  type='date' disabled
                   value={row.PDatePurposeofWithdrawal}
                   onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
                 />
               </div>
-              <div className="col-sm-3">
+              {/* <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Expected Life</Label>
                 <TextField
                   type="number" disabled
                   value={row.expectedLife}
                   onChanged={(val) => this.handleRowChange(index, 'expectedLife', val)}
                 />
-              </div>
+              </div> */}
 
               {/* <div className="col-sm-4 d-flex align-items-center mt-4">
                 <IconButton
@@ -936,17 +1147,186 @@ await this.getAllPrevPersonalAdvanceHistory();
           </div>
         ))}
 
-        <div className='text-center'>
-        
 
-         
-        <a  href={'#/HR1Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
+        <hr></hr>
 
-            
+
+
+        <div className="row form-group">
+          <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
+            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR1Remark}
+            />
+
+          </div>
+
+          <div className="col-sm-2" hidden={!(this.state.HRResponse=='Approved by HR2')}>
+            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR2Remark}
+            /> </div>
+
+<div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
+<Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
+          <TextField
+              multiline disabled
+              value={this.state.GHRemark}
+            /> </div>
 
         </div>
 
+
+
+
+        <div hidden={!(this.state.Status == 'Approved')}>
+          <h2>Recommendation by Group Head</h2>
+
+          <table
+            style={{
+              borderCollapse: 'collapse',
+              width: '100%',
+              border: '1px solid black',
+              margin: '20px 0',
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={cellStyle}>Particulars</th>
+                <th style={cellStyle}>Input</th>
+                <th style={cellStyle}>Marks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={cellStyle}>1. Whether Confirmed (Auto Populated)</td>
+                <td style={cellStyle}>
+                  <input type="text"  name="isConfirmed" value={this.state.isConfirmed} readOnly />
+                </td>
+                <td style={cellStyle}>{this.state.isConfirmed === 'Yes' ? 1 : 0}</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>2. Application Correct</td>
+                <td style={cellStyle}>
+                  <select name="applicationCorrect" disabled value={this.state.applicationCorrect} onChange={this.handleChange} required>
+                    <option value="">--Select--</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </td>
+                <td style={cellStyle}>{this.state.applicationCorrect === 'Yes' ? 1 : 0}</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>3. Cost of the Vehicle (Auto Populated)</td>
+                <td style={cellStyle}>
+                  <input type="number" disabled value={this.state.ExpenseDetails.CostofVehicle || ''}  />
+                </td>
+                <td style={cellStyle}>-</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>4. Eligible Loan Amount (upto 10 Lakh)</td>
+                <td style={cellStyle}>
+                  <input
+                    type="number" disabled
+                    name="eligibleLoanAmount"
+                    value={this.state.eligibleLoanAmount}
+                    onChange={this.handleChange}
+                  />
+                </td>
+                <td style={cellStyle}>-</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>5. Disciplinary Proceedings Pending</td>
+                <td style={cellStyle}>
+                  <select name="disciplinaryPending" disabled value={this.state.disciplinaryPending} onChange={this.handleChange}>
+                    <option value="">--Select--</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </td>
+                <td style={cellStyle}>{this.state.disciplinaryPending === 'No' ? 1 : 0}</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>6a. Net Monthly Salary (Auto Populated)</td>
+                <td style={cellStyle}>
+                  <input type="text" disabled name="netMonthlySalary" value={this.state.ExpenseDetails.netMonthlySalary} readOnly />
+                </td>
+                <td style={cellStyle}>-</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>6b. 50% of Net Salary (Calculated)</td>
+                <td style={cellStyle}>
+                  <input type="text" disabled value={this.state.ExpenseDetails.FityofNetemoluments} readOnly />
+                </td>
+                <td style={cellStyle}>-</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>6c. Vehicle Loan EMI</td>
+                <td style={cellStyle}>
+                  <input
+                    type="number" disabled
+                    name="VehicleLoanEMI"
+                    value={this.state.VehicleLoanEMI}
+                    onChange={this.handleChange}
+                  />
+                </td>
+                <td style={cellStyle}>-</td>
+              </tr>
+
+              <tr>
+                <td style={cellStyle}>6d. Is EMI &lt; 50% of Salary?</td>
+                <td style={cellStyle}>
+                  <input type="text" disabled value={this.state.isEMILessThan50Percent} readOnly />
+                </td>
+                <td style={cellStyle}>{this.state.isEMILessThan50Percent === 'Yes' ? 1 : 0}</td>
+              </tr>
+
+              <tr>
+                <td style={{ ...cellStyle, fontWeight: 'bold' }}>Total Marks</td>
+                <td style={cellStyle}></td>
+                <td style={{ ...cellStyle, fontWeight: 'bold' }}>{this.state.totalMarks}</td>
+              </tr>
+            </tbody>
+          </table>
+
+
+
+
+          <div className="row form-group" >
+            <div className="col-sm-6" hidden={!(this.state.totalMarks == 4)}>
+              <Label className="control-Label font-weight-bold">Recommended Sanction Amount	</Label>
+
+              <input
+                type="number" disabled
+                value={this.state.recommendedSanctionAmount}
+                name="recommendedSanctionAmount"
+                onChange={this.handleChange}
+              />
+            </div>
+
+          </div>
+        </div>
+        <div className='text-center'>
+          <a href={'#/HR1Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
+        </div>
       </div>
+
+
     );
   }
 }

@@ -6,6 +6,7 @@ export interface IEmployeeMaster{
     EmployeeTitle:string,
     EmployeeName?:string,
     EmployeeId?:any,
+    DateOfConfirmation:any,
     FirstName:string,
     MiddleName:string,
     LastName:string,

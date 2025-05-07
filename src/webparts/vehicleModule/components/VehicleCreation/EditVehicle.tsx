@@ -14,10 +14,8 @@ import useSPCRUD, { ISPCRUD } from '../../../services/bal/spcrud';
 import SPCRUD from '../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../services/bal/PersonalAdvanceVehicleMaster';
 import { IEmployeeMaster } from '../../../services/interface/IEmployeeMaster';
-import { ICHSRequest } from '../../../services/interface/ICHSRequest';
+
 import { keys } from '@microsoft/sp-lodash-subset';
-// import { IEmployeeCHSLimitMaster } from '../../../services/interface/IEmployeeCHSLimitMaster';
-// import EmployeeCHSLimitMasterOps from '../../../services/bal/EmployeeCHSLimitMaster';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
 import { Label } from 'office-ui-fabric-react/lib/Label';
@@ -82,7 +80,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       yearOfManufacture1: '',
 
       isSubmitting: false,
-      isSave:false,
+      isSave: false,
       selectedOption: '',
 
       filteredData: [],
@@ -107,7 +105,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       reqID: '',
       isClearable: true,
       isSearchable: true,
-      CHSApproverView: [],
+     
 
       filteredOptions: [],
 
@@ -119,9 +117,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       // vehicleRows: [],               // For displaying in UI (merged from new + existing - soft-deleted)
       newVehicleRows: [],            // New rows not saved to DB
       updatedVehicleRows: [],        // Modified existing rows
-      removedVehicleRowIds: []  ,     // IDs of rows to be deleted (only for existing)
+      removedVehicleRowIds: [],     // IDs of rows to be deleted (only for existing)
 
-      
+
 
       vehicleRows: [
         {
@@ -129,8 +127,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
-          expectedLife:0,
-          DatePurposeofWithdrawal:''
+          expectedLife: 0,
+          DatePurposeofWithdrawal: ''
 
 
 
@@ -156,14 +154,14 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
   }
   async componentDidMount() {
 
-   // document.getElementById('divLoading').style.display = 'block';
+    // document.getElementById('divLoading').style.display = 'block';
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
 
     this.setState({ VMId: VMId });
     await this.getAllPersonalAdvanceVehicle();
-await this.getAllPrevPersonalAdvanceHistory();
+    await this.getAllPrevPersonalAdvanceHistory();
 
     await this.getCurrentUser();
     // await this.getEmployee();
@@ -183,59 +181,59 @@ await this.getAllPrevPersonalAdvanceHistory();
     });
   }
 
-  
 
-  public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest |any> => {
+
+  public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       let employeeData = results;
 
       var currentEmpResult = employeeData.filter((item) => {
         return item.ID == +this.state.VMId;
-    })
+      })
 
-    if(currentEmpResult && currentEmpResult.length>0){
-
-      
-   
-
-      this.setState({
-        EmployeeInfodb: currentEmpResult,
-        AllEmployeeCollObj: [],
-        EmployeeName: currentEmpResult[0].EmployeeName,
-        DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
-        CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
-        EmployeeCode: ''+currentEmpResult[0].EmployeeCode,
-        DesignationTitle: currentEmpResult[0].Designation,
-        Age: (currentEmpResult[0].Age),
-        ExpenseDetails: {
-          TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
-          TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
-          Totaldeductions: +currentEmpResult[0].TotalDeductions,
-          FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
-          RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
-          MakeModel:currentEmpResult[0].MakeModel,
-          CostofVehicle:currentEmpResult[0].CostOfVehicle,
-          NameandAddressoftheSeller:currentEmpResult[0].SellerDetails,
+      if (currentEmpResult && currentEmpResult.length > 0) {
 
 
-          AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount?+currentEmpResult[0].PrevLoanAmount:0 ,
-          // Dateoffinalrepaymentofloan:currentEmpResult[0].PrevLoanDate?new Date(currentEmpResult[0].PrevLoanDate):null ,
-          // DateofAvailmentofLoan:currentEmpResult[0].PrevLoanRepaymentDate?new Date(currentEmpResult[0].PrevLoanRepaymentDate):null,
 
-          DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
-          Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
-      
-          ExpectedlifeofVehicle:currentEmpResult[0].ExpectedLife || '',
 
-        }          ,
-        typeOfVehicle:currentEmpResult[0].VehicleType,
-        typeOfVehicle1:currentEmpResult[0].PrevVehicleLoanType,
+        this.setState({
+          EmployeeInfodb: currentEmpResult,
+          AllEmployeeCollObj: [],
+          EmployeeName: currentEmpResult[0].EmployeeName,
+          DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
+          CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
+          EmployeeCode: '' + currentEmpResult[0].EmployeeCode,
+          DesignationTitle: currentEmpResult[0].Designation,
+          Age: (currentEmpResult[0].Age),
+          ExpenseDetails: {
+            TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+            TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
+            Totaldeductions: +currentEmpResult[0].TotalDeductions,
+            FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
+            RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
+            MakeModel: currentEmpResult[0].MakeModel,
+            CostofVehicle: currentEmpResult[0].CostOfVehicle,
+            NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
 
-        ConditionOfVehicle:currentEmpResult[0].VehicleCondition,
-        yearOfManufacture1:currentEmpResult[0].ManufactureYear,
+
+            AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
+            // Dateoffinalrepaymentofloan:currentEmpResult[0].PrevLoanDate?new Date(currentEmpResult[0].PrevLoanDate):null ,
+            // DateofAvailmentofLoan:currentEmpResult[0].PrevLoanRepaymentDate?new Date(currentEmpResult[0].PrevLoanRepaymentDate):null,
+
+            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
+            Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
+
+            ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || '',
+
+          },
+          typeOfVehicle: currentEmpResult[0].VehicleType,
+          typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
+
+          ConditionOfVehicle: currentEmpResult[0].VehicleCondition,
+          yearOfManufacture1: currentEmpResult[0].ManufactureYear,
         });
-    }
-     return currentEmpResult;
+      }
+      return currentEmpResult;
     });
   };
 
@@ -249,21 +247,21 @@ await this.getAllPrevPersonalAdvanceHistory();
 
   //   if(currentEmpResultHistory && currentEmpResultHistory.length>0){
 
-      
-   
+
+
 
   //     this.setState({
   //       EmployeeInfodb: currentEmpResultHistory,
   //       AllEmployeeCollObj: [],
-       
-        
+
+
   //     });
   //   }
   //    return currentEmpResultHistory;
   //   });
   // };
 
-  
+
 
   // public getEmployee = async (): Promise<IEmployeeMaster> => {
   //   return await PersonalAdvanceVehicleMasterOps().getEmployeeMaster(this.props).then(async (results) => {
@@ -298,18 +296,18 @@ await this.getAllPrevPersonalAdvanceHistory();
   public getAllPrevPersonalAdvanceHistory = async (): Promise<any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
       let employeeDataHisty = results;
-  
+
       var currentEmpResultHistory = employeeDataHisty.filter((item) => {
         return item.PersonalAdvanceVehicleId.Id == +this.state.VMId;
       });
-  
+
       if (currentEmpResultHistory && currentEmpResultHistory.length > 0) {
-  
+
         const vehicleRowsFromDB = currentEmpResultHistory.map((item) => ({
           DatePurposeofWithdrawal: item.WithdrawalDetails || '',
           PAmount: item.WithdrawalAmount || 0,
           POutstandingLoanasOnDate: item.OutstandingLoan || 0,
-          PDatePurposeofWithdrawal:item.FinalRepaymentDate? new Date(item.FinalRepaymentDate).toISOString().split('T')[0]: null,// item.FinalRepaymentDate || '',
+          PDatePurposeofWithdrawal: item.FinalRepaymentDate ? new Date(item.FinalRepaymentDate).toISOString().split('T')[0] : null,// item.FinalRepaymentDate || '',
           // expectedLife: item.ExpectedLife || 0,
           Id: item.ID || 0,
           isNew: false,
@@ -317,19 +315,19 @@ await this.getAllPrevPersonalAdvanceHistory();
           PersonalAdvanceVehicleId: item.PersonalAdvanceVehicleId || 0
 
         }));
-  
+
         this.setState({
           EmployeeInfodb: currentEmpResultHistory,
-          vehicleRows: vehicleRowsFromDB, 
+          vehicleRows: vehicleRowsFromDB,
           AllEmployeeCollObj: [],
         });
       }
-  
+
       return currentEmpResultHistory;
     });
   };
 
-  
+
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
@@ -364,18 +362,18 @@ await this.getAllPrevPersonalAdvanceHistory();
     this.setState({ ExpenseDetails: updatedExpenseDetails });
 
   };
-  
+
 
   public BtnSaveAsDraft = async (SubmittionType) => {
 
     const spCrudObj = await useSPCRUD();
 
-   
 
 
-    if(this.state.removedVehicleRowIds && this.state.removedVehicleRowIds.length>0){
 
-      for(var r=0;r<this.state.removedVehicleRowIds.length;r++){
+    if (this.state.removedVehicleRowIds && this.state.removedVehicleRowIds.length > 0) {
+
+      for (var r = 0; r < this.state.removedVehicleRowIds.length; r++) {
         await spCrudObj.deleteData("PrevPersonalAdvanceHistory", this.state.removedVehicleRowIds[r], this.props);
 
       }
@@ -389,7 +387,7 @@ await this.getAllPrevPersonalAdvanceHistory();
         EmployeeName: this.state.EmployeeName,
         Age: '' + this.state.Age,
         Status: "Draft",
-        Id:RequestNoGenerate,
+        Id: RequestNoGenerate,
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,
         Designation: this.state.DesignationTitle,
@@ -407,17 +405,17 @@ await this.getAllPrevPersonalAdvanceHistory();
         SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
         ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
 
-        PrevVehicleLoanType:this.state.typeOfVehicle1,
-        PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-        PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-        PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
+        PrevVehicleLoanType: this.state.typeOfVehicle1,
+        PrevLoanRepaymentDate: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
+        PrevLoanAmount: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
+        PrevLoanDate: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
       };
     }
 
-//     PrevVehicleLoanType	Choice	
-// PrevLoanAmount	Number	
-// PrevLoanDate	Date and Time	
-// PrevLoanRepaymentDate
+    //     PrevVehicleLoanType	Choice	
+    // PrevLoanAmount	Number	
+    // PrevLoanDate	Date and Time	
+    // PrevLoanRepaymentDate
 
     // if (SubmittionType == 'Submitted') {
     //   VehicleRequestItem = {
@@ -446,37 +444,37 @@ await this.getAllPrevPersonalAdvanceHistory();
     //     PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
     //     PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
     //     PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-    
+
     //   };
     // }
     this.setState({ isSave: true });
 
     try {
-       await spCrudObj.updateData("PersonalAdvanceVehicle",this.state.VMId, VehicleRequestItem, this.props);
+      await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
       //this.setState({ reqID: req.data.ID });
 
       const RequestNoGenerate = this.state.VMId;
       const newRows = this.state.vehicleRows.filter(row => row.isNew === true);
 
       const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
-      
+
       if (existingRows && existingRows.length > 0) {
         await this.UpdatePrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, existingRows);
       }
       if (newRows && newRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, newRows);
       }
-      
+
       if ((existingRows && existingRows.length > 0) || (newRows && newRows.length > 0)) {
         alert('Vehicle Request Updated Successfully!');
-        window.location.href='#/InitiatorDashboard'
+        window.location.href = '#/InitiatorDashboard'
 
       } else {
         alert('Vehicle Request Submitted without attachments.');
       }
-      
-      
-      
+
+
+
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -489,12 +487,12 @@ await this.getAllPrevPersonalAdvanceHistory();
 
     const spCrudObj = await useSPCRUD();
 
-   
 
 
-    if(this.state.removedVehicleRowIds && this.state.removedVehicleRowIds.length>0){
 
-      for(var r=0;r<this.state.removedVehicleRowIds.length;r++){
+    if (this.state.removedVehicleRowIds && this.state.removedVehicleRowIds.length > 0) {
+
+      for (var r = 0; r < this.state.removedVehicleRowIds.length; r++) {
         await spCrudObj.deleteData("PrevPersonalAdvanceHistory", this.state.removedVehicleRowIds[r], this.props);
 
       }
@@ -530,10 +528,10 @@ await this.getAllPrevPersonalAdvanceHistory();
     //   };
     // }
 
-//     PrevVehicleLoanType	Choice	
-// PrevLoanAmount	Number	
-// PrevLoanDate	Date and Time	
-// PrevLoanRepaymentDate
+    //     PrevVehicleLoanType	Choice	
+    // PrevLoanAmount	Number	
+    // PrevLoanDate	Date and Time	
+    // PrevLoanRepaymentDate
 
     if (SubmittionType == 'Submitted') {
       VehicleRequestItem = {
@@ -542,10 +540,10 @@ await this.getAllPrevPersonalAdvanceHistory();
         Age: '' + this.state.Age,
         Status: "Pending",
 
-        HR1Response:'Pending with HR1',
-        HR2Response:'Pending with HR2',
-        GHResponse:'Pending with Group Head',
-        
+        HR1Response: 'Pending with HR1',
+        HR2Response: 'Pending with HR2',
+        GHResponse: 'Pending with Group Head',
+
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,
         Designation: this.state.DesignationTitle,
@@ -562,42 +560,42 @@ await this.getAllPrevPersonalAdvanceHistory();
         SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
         ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
 
-        PrevVehicleLoanType:this.state.typeOfVehicle1,
+        PrevVehicleLoanType: this.state.typeOfVehicle1,
 
-        PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-        PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-        PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-    
+        PrevLoanRepaymentDate: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
+        PrevLoanAmount: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
+        PrevLoanDate: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
+
       };
     }
     this.setState({ isSubmitting: true });
 
     try {
-       await spCrudObj.updateData("PersonalAdvanceVehicle",+this.state.VMId, VehicleRequestItem, this.props);
+      await spCrudObj.updateData("PersonalAdvanceVehicle", +this.state.VMId, VehicleRequestItem, this.props);
       // this.setState({ reqID: req.data.ID });
 
       const RequestNoGenerate = this.state.VMId;
       const newRows = this.state.vehicleRows.filter(row => row.isNew === true);
 
       const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
-      
+
       if (existingRows && existingRows.length > 0) {
         await this.UpdatePrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, existingRows);
       }
       if (newRows && newRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, newRows);
       }
-      
+
       if ((existingRows && existingRows.length > 0) || (newRows && newRows.length > 0)) {
         alert('Vehicle Request Submitted Successfully!');
-        window.location.href='#/InitiatorDashboard'
+        window.location.href = '#/InitiatorDashboard'
 
       } else {
         alert('Vehicle Request Submitted without attachments.');
       }
-      
-      
-      
+
+
+
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -608,48 +606,48 @@ await this.getAllPrevPersonalAdvanceHistory();
 
   async InsertPrevPersonalAdvanceHistory(ListName, RequestNoGenerate, itemArray) {
     const spCrudObj = await useSPCRUD();
-    if(itemArray && itemArray.length>0 ){
+    if (itemArray && itemArray.length > 0) {
 
-    for (let i = 0; i < itemArray.length; i++) {
-      const objVehicleHistoryitems = {
-        PersonalAdvanceVehicleIdId: +RequestNoGenerate,
-        WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
-        WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
-        // ExpectedLife: itemArray[i].expectedLife ? +itemArray[i].expectedLife : 0,
-        OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
-        FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
-      };
+      for (let i = 0; i < itemArray.length; i++) {
+        const objVehicleHistoryitems = {
+          PersonalAdvanceVehicleIdId: +RequestNoGenerate,
+          WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
+          WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
+          // ExpectedLife: itemArray[i].expectedLife ? +itemArray[i].expectedLife : 0,
+          OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
+          FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
+        };
 
-      try {
-        await spCrudObj.insertData(ListName, objVehicleHistoryitems, this.props);
-      } catch (error) {
-        console.error(`Error uploading item ${i + 1}:`, error);
+        try {
+          await spCrudObj.insertData(ListName, objVehicleHistoryitems, this.props);
+        } catch (error) {
+          console.error(`Error uploading item ${i + 1}:`, error);
+        }
       }
     }
-  }
   }
 
   async UpdatePrevPersonalAdvanceHistory(ListName, RequestNoGenerate, itemArray) {
     const spCrudObj = await useSPCRUD();
-    if(itemArray && itemArray.length>0 ){
+    if (itemArray && itemArray.length > 0) {
 
-    for (let i = 0; i < itemArray.length; i++) {
-      const objVehicleHistoryitems = {
-        PersonalAdvanceVehicleIdId: +RequestNoGenerate,
-        WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
-        WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
-        // ExpectedLife: itemArray[i].expectedLife ? +itemArray[i].expectedLife : 0,
-        OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
-        FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
-      };
+      for (let i = 0; i < itemArray.length; i++) {
+        const objVehicleHistoryitems = {
+          PersonalAdvanceVehicleIdId: +RequestNoGenerate,
+          WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
+          WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
+          // ExpectedLife: itemArray[i].expectedLife ? +itemArray[i].expectedLife : 0,
+          OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
+          FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
+        };
 
-      try {
-        await spCrudObj.updateData(ListName,itemArray[i].Id, objVehicleHistoryitems, this.props);
-      } catch (error) {
-        console.error(`Error uploading item ${i + 1}:`, error);
+        try {
+          await spCrudObj.updateData(ListName, itemArray[i].Id, objVehicleHistoryitems, this.props);
+        } catch (error) {
+          console.error(`Error uploading item ${i + 1}:`, error);
+        }
       }
     }
-  }
   }
 
 
@@ -750,18 +748,18 @@ await this.getAllPrevPersonalAdvanceHistory();
       PAmount: 0,
       PDatePurposeofWithdrawal: null,
       // expectedLife:0,
-      DatePurposeofWithdrawal:'',
+      DatePurposeofWithdrawal: '',
 
       isNew: true
     };
-  
+
     this.setState(prevState => ({
       vehicleRows: [...prevState.vehicleRows, newRow],
       newVehicleRows: [...prevState.newVehicleRows, newRow]
     }));
   };
 
-  
+
   // private handleRowChange = (index: number, field: string, value: string) => {
   //   const updatedRows = [...this.state.vehicleRows];
   //   updatedRows[index][field] = value;
@@ -771,44 +769,51 @@ await this.getAllPrevPersonalAdvanceHistory();
     const updatedRows = [...this.state.vehicleRows];
     const row = { ...updatedRows[index], [field]: value };
     updatedRows[index] = row;
-  
+
     const isExisting = !row.isNew;
-  
+
     this.setState(prevState => ({
       vehicleRows: updatedRows,
       updatedVehicleRows: isExisting
         ? [
-            ...prevState.updatedVehicleRows.filter(r => r.Id !== row.Id),
-            row
-          ]
+          ...prevState.updatedVehicleRows.filter(r => r.Id !== row.Id),
+          row
+        ]
         : prevState.updatedVehicleRows
     }));
   };
 
-  
+
   // private removeRow = (index: number) => {
   //   this.setState(prevState => ({
   //     vehicleRows: prevState.vehicleRows.filter((_, i) => i !== index)
   //   }));
   // };
 
-
-  private removeRow = (index: number,object) => {
+  private removeRow = (index: number, object) => {
     const rowToRemove = this.state.vehicleRows[index];
     const updatedVehicleRows = this.state.vehicleRows.filter((_, i) => i !== index);
-  
+
     this.setState(prevState => {
       const isNew = rowToRemove.isNew;
       const newVehicleRows = isNew
         ? prevState.newVehicleRows.filter(r => r.Id !== rowToRemove.Id)
         : prevState.newVehicleRows;
-  
+
+        const newVehicleRows1 = isNew
+        ? prevState.newVehicleRows.filter(r => r.Id === rowToRemove.Id)
+        : prevState.newVehicleRows;
+        newVehicleRows1.map((item)=>{
+          item.PDatePurposeofWithdrawal=null;
+          item.PDatePurposeofWithdrawal="";
+        })
+
       const removedVehicleRowIds = isNew
         ? prevState.removedVehicleRowIds
         : [...prevState.removedVehicleRowIds, rowToRemove.Id];
-  
+
       const updatedUpdatedVehicleRows = prevState.updatedVehicleRows.filter(r => r.Id !== rowToRemove.Id);
-  
+
       return {
         vehicleRows: updatedVehicleRows,
         newVehicleRows: newVehicleRows,
@@ -819,8 +824,8 @@ await this.getAllPrevPersonalAdvanceHistory();
   };
 
 
-  
-  
+
+
   public render(): React.ReactElement<IVehicleModuleProps> {
     return (
       <div >
@@ -856,7 +861,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Date of joining</Label>
             </div>
             <div className="col-sm-2">
-              {moment(this.state.CHSApproverView.DateOfJoining).format("DD/MM/YYYY")} </div>
+              {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Residence Address  </Label>
             </div>
@@ -882,7 +887,7 @@ await this.getAllPrevPersonalAdvanceHistory();
             </div>
             <div className="col-sm-2">
               <TextField type='number'
-              value={this.state.ExpenseDetails.TotalEmolumentspm}
+                value={this.state.ExpenseDetails.TotalEmolumentspm}
                 name="ExpenseDetails.TotalEmolumentspm"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -900,7 +905,7 @@ await this.getAllPrevPersonalAdvanceHistory();
             </div>
             <div className="col-sm-2">
               <TextField type='number'
-               value={this.state.ExpenseDetails.Totaldeductions}
+                value={this.state.ExpenseDetails.Totaldeductions}
 
                 name="ExpenseDetails.Totaldeductions"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
@@ -963,7 +968,7 @@ await this.getAllPrevPersonalAdvanceHistory();
             </div>
             <div className="col-sm-2">
               <TextField
-              value={this.state.ExpenseDetails.MakeModel}
+                value={this.state.ExpenseDetails.MakeModel}
 
                 name="ExpenseDetails.MakeModel"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
@@ -1083,12 +1088,12 @@ await this.getAllPrevPersonalAdvanceHistory();
             </div>
             <div className="col-sm-2">
               <TextField type='date'
-              value={this.state.ExpenseDetails.DateofAvailmentofLoan}
+                value={this.state.ExpenseDetails.DateofAvailmentofLoan}
 
                 name="ExpenseDetails.DateofAvailmentofLoan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}/>   
-                
-                               </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)} />
+
+            </div>
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
@@ -1096,10 +1101,10 @@ await this.getAllPrevPersonalAdvanceHistory();
             </div>
             <div className="col-sm-2">
               <TextField type='date'
-              value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
+                value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
 
                 name="ExpenseDetails.Dateoffinalrepaymentofloan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}/>  </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
 
           </div>
 
@@ -1183,7 +1188,7 @@ await this.getAllPrevPersonalAdvanceHistory();
           </div>
         ))} */}
 
-{/* {this.state.vehicleRows.map((row, index) => (
+        {/* {this.state.vehicleRows.map((row, index) => (
   <div className="card p-3 mb-3" key={index}>
     <div className="row">
     <div className="col-sm-1">
@@ -1257,71 +1262,72 @@ await this.getAllPrevPersonalAdvanceHistory();
 ))} */}
 
 
-{this.state.vehicleRows.map((row, index) => (
-  <div className="card p-3 mb-3" key={index}>
-    <div className="row mb-2">
-      {/* Serial Number */}
-      <div className="col-sm-1 d-flex flex-column justify-content-center">
-        <Label className="control-label font-weight-bold">Sr No</Label>
-        <label className="control-label">{index + 1}</label>
-      </div>
+        {this.state.vehicleRows && this.state.vehicleRows.map((row, index) => (
+          <div className="card p-3 mb-3" key={index}>
+            <div className="row mb-2">
+              {/* Serial Number */}
+              <div className="col-sm-1 d-flex flex-column justify-content-center">
+                <Label className="control-label font-weight-bold">Sr No</Label>
+                <label className="control-label">{index + 1}</label>
+              </div>
 
-      {/* Date/Purpose of Withdrawal */}
-      <div className="col-sm-3">
-        <Label className="control-label font-weight-bold">Date/Purpose of Withdrawal</Label>
-        <TextField
-          multiline
-          value={row.DatePurposeofWithdrawal}
-          onChanged={(val) => this.handleRowChange(index, 'DatePurposeofWithdrawal', val)}
-        />
-      </div>
+              {/* Date/Purpose of Withdrawal */}
+              <div className="col-sm-3">
+                <Label className="control-label font-weight-bold">Date/Purpose of Withdrawal</Label>
+                <TextField
+                  multiline
+                  value={row.DatePurposeofWithdrawal}
+                  onChanged={(val) => this.handleRowChange(index, 'DatePurposeofWithdrawal', val)}
+                />
+              </div>
 
-      {/* Date of Final Repayment */}
-      <div className="col-sm-4">
-        <Label className="control-label font-weight-bold">Date of Final Repayment</Label>
-        <TextField
+              {/* Date of Final Repayment */}
+              <div className="col-sm-4">
+                <Label className="control-label font-weight-bold">Date of Final Repayment</Label>
+                <TextField
           type="date"
           value={row.PDatePurposeofWithdrawal}
           onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
         />
-      </div>
+                {/* <input type='date'  value={row.PDatePurposeofWithdrawal} onChange={(e) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', e.target.value)}></input> */}
+              </div>
 
-      <div className="col-sm-4">
-        <Label className="control-label font-weight-bold">Amount</Label>
-        <TextField
-          type="number"
-          value={row.PAmount}
-          onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
-        />
-      </div>
+              <div className="col-sm-4">
+                <Label className="control-label font-weight-bold">Amount</Label>
+                <TextField
+                  type="number"
+                  value={row.PAmount}
+                  onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
+                />
+              </div>
 
-    </div>
+            </div>
 
-    <div className="row mb-1">
-      {/* Amount */}
+            <div className="row mb-1">
+              {/* Amount */}
 
-      <div className="col-sm-1">
-        {/* <Label className="control-label font-weight-bold">Amount</Label>
+              <div className="col-sm-1">
+                {/* <Label className="control-label font-weight-bold">Amount</Label>
         <TextField
           type="number"
           value={row.PAmount}
           onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
         /> */}
-      </div>
-    
+              </div>
 
-      {/* Outstanding Loan Amount */}
-      <div className="col-sm-3">
-        <Label className="control-label font-weight-bold">Outstanding Loan Amount as on Date</Label>
-        <TextField
-          type="number"
-          value={row.POutstandingLoanasOnDate}
-          onChanged={(val) => this.handleRowChange(index, 'POutstandingLoanasOnDate', val)}
-        />
-      </div>
 
-      {/* Expected Life */}
-      {/* <div className="col-sm-4">
+              {/* Outstanding Loan Amount */}
+              <div className="col-sm-3">
+                <Label className="control-label font-weight-bold">Outstanding Loan Amount as on Date</Label>
+                <TextField
+                  type="number"
+                  value={row.POutstandingLoanasOnDate}
+                  onChanged={(val) => this.handleRowChange(index, 'POutstandingLoanasOnDate', val)}
+                />
+              </div>
+
+              {/* Expected Life */}
+              {/* <div className="col-sm-4">
         <Label className="control-label font-weight-bold">Expected Life</Label>
         <TextField
           type="number"
@@ -1330,28 +1336,28 @@ await this.getAllPrevPersonalAdvanceHistory();
         />
       </div> */}
 
-      <div className="d-flex justify-content-end">
-        <IconButton
-          iconProps={{ iconName: 'Add' }}
-          title="Add Row"
-          onClick={this.addRow}
-        />
-        {this.state.vehicleRows.length > 1 && (
-          <IconButton
-            iconProps={{ iconName: 'Delete' }}
-            title="Remove Row"
-            onClick={() => this.removeRow(index,this.state.vehicleRows)}
-          />
-        )}
-      </div>
-    </div>
+              <div className="d-flex justify-content-end">
+                <IconButton
+                  iconProps={{ iconName: 'Add' }}
+                  title="Add Row"
+                  onClick={this.addRow}
+                />
+                {this.state.vehicleRows.length > 1 && (
+                  <IconButton
+                    iconProps={{ iconName: 'Delete' }}
+                    title="Remove Row"
+                    onClick={() => this.removeRow(index, this.state.vehicleRows)}
+                  />
+                )}
+              </div>
+            </div>
 
-    <div className="row">
-      {/* Add / Remove Buttons */}
+            <div className="row">
+              {/* Add / Remove Buttons */}
 
-    </div>
-  </div>
-))}
+            </div>
+          </div>
+        ))}
 
 
 
@@ -1370,7 +1376,7 @@ await this.getAllPrevPersonalAdvanceHistory();
           >
             {this.state.isSave ? <Spinner size={SpinnerSize.small} /> : "Save As Draft"}
           </PrimaryButton>
-        <a  href={'#/InitiatorDashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
+          <a href={'#/InitiatorDashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
 
         </div>
 

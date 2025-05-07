@@ -14,10 +14,8 @@ import useSPCRUD, { ISPCRUD } from '../../../../services/bal/spcrud';
 import SPCRUD from '../../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../../services/bal/PersonalAdvanceVehicleMaster';
 import { IEmployeeMaster } from '../../../../services/interface/IEmployeeMaster';
-import { ICHSRequest } from '../../../../services/interface/ICHSRequest';
+
 import { keys } from '@microsoft/sp-lodash-subset';
-// import { IEmployeeCHSLimitMaster } from '../../../services/interface/IEmployeeCHSLimitMaster';
-// import EmployeeCHSLimitMasterOps from '../../../services/bal/EmployeeCHSLimitMaster';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
 import { Label } from 'office-ui-fabric-react/lib/Label';
@@ -106,7 +104,7 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       reqID: '',
       isClearable: true,
       isSearchable: true,
-      CHSApproverView: [],
+     
 
       filteredOptions: [],
 
@@ -142,6 +140,15 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       ExpectlifeShow: false,
       typeOfVehicle1: '',
       typeOfVehicle: '',
+
+
+      HR1Response	:''	,
+      HR1Remark		:''	,
+      HR2Response		:''	,
+      HR2Remark		:''	,
+      GHResponse		:''	,
+      GHRemark:''	,
+      
 
     };
 
@@ -229,6 +236,15 @@ await this.getAllPrevPersonalAdvanceHistory();
 
         ConditionOfVehicle:currentEmpResult[0].VehicleCondition,
         yearOfManufacture1:currentEmpResult[0].ManufactureYear,
+
+
+        HR1Response	:currentEmpResult[0].HR1Response,	
+        HR1Remark		:currentEmpResult[0].HR1Remark	,
+        HR2Response		:currentEmpResult[0].HR2Response	,
+        HR2Remark		:currentEmpResult[0].HR2Remark	,
+        GHResponse		:currentEmpResult[0].GHResponse	,
+        GHRemark:currentEmpResult[0].GHRemark,
+
         });
     }
      return currentEmpResult;
@@ -611,7 +627,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Date of joining</Label>
             </div>
             <div className="col-sm-2">
-              {moment(this.state.CHSApproverView.DateOfJoining).format("DD/MM/YYYY")} </div>
+              {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Residence Address  </Label>
             </div>
@@ -939,6 +955,44 @@ await this.getAllPrevPersonalAdvanceHistory();
         ))}
 
         
+        
+                <hr></hr>
+        
+        
+        
+                <div className="row form-group">
+                  <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
+                    <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+                  </div>
+                  <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
+                    <TextField
+                      multiline disabled
+                      value={this.state.HR1Remark}
+                    />
+        
+                  </div>
+        
+                  <div className="col-sm-2" hidden={!(this.state.HRResponse=='Approved by HR2')}>
+                    <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+                  </div>
+                  <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
+                    <TextField
+                      multiline disabled
+                      value={this.state.HR2Remark}
+                    /> </div>
+        
+        <div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
+        <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+                  </div>
+                  <div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
+                  <TextField
+                      multiline disabled
+                      value={this.state.GHRemark}
+                    /> </div>
+        
+                </div>
+        
+
 
 <div className="row form-group">
 <div className="col-sm-6">
