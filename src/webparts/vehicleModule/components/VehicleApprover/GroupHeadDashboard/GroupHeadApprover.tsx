@@ -1150,7 +1150,7 @@ await this.getAllPrevPersonalAdvanceHistory();
                 
                           </div>
                 
-                          <div className="col-sm-2" hidden={!(this.state.HRResponse=='Approved by HR2')}>
+                          <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
                             <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
                           </div>
                           <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
