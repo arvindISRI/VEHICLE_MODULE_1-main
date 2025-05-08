@@ -381,7 +381,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
     if (isEmpty(ExpenseDetails.RepaymenttenureinEMI)) return showAlert('Please Fill Repayment tenure in EMI');
-    if (ExpenseDetails.RepaymenttenureinEMI > 20) return showAlert('Repayment tenure in EMI should be less than 20');
+    if (ExpenseDetails.RepaymenttenureinEMI > 120) return showAlert('Repayment tenure in EMI should be less than 120');
     if (isEmpty(typeOfVehicle)) return showAlert('Please Select Type of Vehicle');
     if (isEmpty(ConditionOfVehicle)) return showAlert('Please Select Whether new or second hand');
     if (isEmpty(ExpenseDetails.MakeModel)) return showAlert('Please Fill Make/ Model');
@@ -741,7 +741,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
                 name="ExpenseDetails.FityofNetemoluments"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 20)  </Label>
+              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120)  </Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number'

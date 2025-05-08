@@ -682,7 +682,7 @@ export default class ViewVehicle extends React.Component<IVehicleModuleProps, an
                 name="ExpenseDetails.FityofNetemoluments"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 20)  </Label>
+              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120)  </Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number' disabled
