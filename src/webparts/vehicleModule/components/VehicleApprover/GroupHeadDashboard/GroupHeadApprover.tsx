@@ -2,6 +2,8 @@ import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import styles from '../../VehicleModule.module.scss'
 import * as moment from 'moment'
+import swal from 'sweetalert';
+
 
 import UseUtilities, { IUtilities } from '../../../../services/bal/utilities';
 import Utilities from '../../../../services/bal/utilities';
@@ -155,7 +157,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
       eligibleLoanAmount: '',
       disciplinaryPending: '',
       netMonthlySalary: '', // example auto-populated value
-      FityofNetemoluments: '',
+    //  FityofNetemoluments: '',
       emiTenure: '',
       vehicleLoanCost: '',
       isEMILessThan50Percent: '',
@@ -214,6 +216,7 @@ await this.getAllPrevPersonalAdvanceHistory();
   handleChange = (e) => {
     const { name, value } = e.target;
 
+
     if (name.startsWith('ExpenseDetails.')) {
       const key = name.split('.')[1];
       this.setState((prevState) => ({
@@ -223,6 +226,10 @@ await this.getAllPrevPersonalAdvanceHistory();
         },
       }));
     } else {
+      if(this.state.totalMarks!=4){
+        this.setState({ recommendedSanctionAmount: 0 });
+        
+      }
       this.setState({ [name]: value });
     }
   };
@@ -515,6 +522,19 @@ await this.getAllPrevPersonalAdvanceHistory();
   
 
   public BtnRejectRequest = async () => {
+
+    // if(this.state.ExpenseDetails.GroupHeadRemarks=="" || this.state.ExpenseDetails.GroupHeadRemarks==undefined){
+    //   alert('Please Fill Remarks');
+    //   return false
+
+    // }
+
+    if(this.state.ExpenseDetails.GroupHeadRemarks=="" || this.state.ExpenseDetails.GroupHeadRemarks==null || this.state.ExpenseDetails.GroupHeadRemarks==undefined){
+      swal("Notice", "Please Fill Remarks.", "info");
+        return false ;//window.location.href = '#/InitiatorDashboard';
+      
+
+    }
     var VehicleRequestItem
       VehicleRequestItem = {
 
@@ -545,12 +565,14 @@ await this.getAllPrevPersonalAdvanceHistory();
     const spCrudObj = await useSPCRUD();
 
 
-
     try {
      await spCrudObj.updateData("PersonalAdvanceVehicle",this.state.VMId, VehicleRequestItem, this.props);
       // this.setState({ reqID: req.data.ID });
-       alert('Vehicle Request Rejected Successfully!');
-      window.location.href='#/GroupHeadDashboard'
+      //  alert('Vehicle Request Rejected Successfully!');
+      // window.location.href='#/GroupHeadDashboard'
+      swal("Success", "Vehicle Request Rejected Successfully!", "success").then(() => {
+        window.location.href = '#/GroupHeadDashboard';
+      });
       // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
       // alert('Vehicle Request Submitted Successfully!');
       // const RequestNoGenerate = {
@@ -567,13 +589,93 @@ await this.getAllPrevPersonalAdvanceHistory();
       // }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("Error submitting the vehicle request.");
+      swal("Notice", "Error submitting the vehicle request.", "info");
     } finally {
       this.setState({ isSubmitting: false });
     }
   };
 
   public BtnApproveGroupHeadRequest = async () => {
+
+    // if(this.state.totalMarks==4){
+    //   if(this.state.recommendedSanctionAmount<=0){
+        
+    //     alert('Please Add Sanction Amount');
+    //     return false;
+
+    //   }
+    // }
+    // else{
+    //   this.setState({ recommendedSanctionAmount: 0 });
+    // }
+
+    //   if(this.state.applicationCorrect==''){
+    //     alert('Please Select Application Correct');
+    //     return false;
+
+    //   }
+
+      
+    //   if(this.state.eligibleLoanAmount>1000000){
+    //     alert('Please Fill Eligible Loan Amount below 1000000');
+    //     return false;
+
+    //   }
+      
+    //   if(this.state.eligibleLoanAmount=='' || this.state.eligibleLoanAmount==0){
+    //     alert('Please Fill Eligible Loan Amount');
+    //     return false;
+
+    //   }
+    //   if(this.state.disciplinaryPending==''){
+    //     alert('Please Select  Disciplinary Proceedings Pending');
+    //     return false;
+
+    //   }
+    //   if(this.state.VehicleLoanEMI=='' || this.state.VehicleLoanEMI==0 ){
+    //     alert('Please Fill Vehicle Loan EMI');
+    //     return false;
+
+    //   }
+    
+
+    const {
+      totalMarks,
+      recommendedSanctionAmount,
+      applicationCorrect,
+      eligibleLoanAmount,
+      disciplinaryPending,
+      VehicleLoanEMI
+    } = this.state;
+    
+    if (totalMarks === 4 && recommendedSanctionAmount <= 0) {
+      return swal("Warning", "Please Add Sanction Amount", "warning");
+    }
+    
+    if (totalMarks !== 4) {
+      this.setState({ recommendedSanctionAmount: 0 });
+    }
+    
+    if (!applicationCorrect) {
+      return swal("Warning", "Please Select Application Correct", "warning");
+    }
+    
+    if (!eligibleLoanAmount || eligibleLoanAmount > 1000000) {
+      return swal("Warning", "Please Fill Eligible Loan Amount (≤ 1000000)", "warning");
+    }
+    
+    if (!disciplinaryPending) {
+      return swal("Warning", "Please Select Disciplinary Proceedings Pending", "warning");
+    }
+    
+    if (!VehicleLoanEMI || VehicleLoanEMI <= 0) {
+      return swal("Warning", "Please Fill Vehicle Loan EMI", "warning");
+    }
+    
+
+
+
+
     var VehicleRequestItem
       VehicleRequestItem = {
 
@@ -605,6 +707,7 @@ await this.getAllPrevPersonalAdvanceHistory();
       };
     
 
+
     this.setState({ isSubmitting: true });
 
     const spCrudObj = await useSPCRUD();
@@ -615,9 +718,11 @@ await this.getAllPrevPersonalAdvanceHistory();
      await spCrudObj.updateData("PersonalAdvanceVehicle",this.state.VMId, VehicleRequestItem, this.props);
       // this.setState({ reqID: req.data.ID });
       // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      alert('Vehicle Request Submitted Successfully!');
-      window.location.href='#/GroupHeadDashboard'
-
+      // alert('Vehicle Request Submitted Successfully!');
+      // window.location.href='#/GroupHeadDashboard'
+      swal("Success", "Vehicle Request Approved Successfully!", "success").then(() => {
+        window.location.href = '#/GroupHeadDashboard';
+      });
       // const RequestNoGenerate = {
       //   Title: 'VM000' + req.data.ID
       // };
@@ -632,7 +737,7 @@ await this.getAllPrevPersonalAdvanceHistory();
       // }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("Error submitting the vehicle request.");
+      swal("Notice", "Error submitting the vehicle request.", "info");
     } finally {
       this.setState({ isSubmitting: false });
     }

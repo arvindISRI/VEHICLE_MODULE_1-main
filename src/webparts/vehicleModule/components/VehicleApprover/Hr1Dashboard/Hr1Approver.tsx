@@ -2,6 +2,7 @@ import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import styles from '../../VehicleModule.module.scss'
 import * as moment from 'moment'
+import swal from 'sweetalert';
 
 import UseUtilities, { IUtilities } from '../../../../services/bal/utilities';
 import Utilities from '../../../../services/bal/utilities';
@@ -378,6 +379,13 @@ await this.getAllPrevPersonalAdvanceHistory();
   
 
   public BtnRejectRequest = async () => {
+
+    if(this.state.ExpenseDetails.HR1Remarks=="" || this.state.ExpenseDetails.HR1Remarks==null || this.state.ExpenseDetails.HR1Remarks==undefined){
+      swal("Notice", "Please Fill Remarks.", "info");
+        return false ;//window.location.href = '#/InitiatorDashboard';
+      
+
+    }
     var VehicleRequestItem
       VehicleRequestItem = {
 
@@ -402,8 +410,11 @@ await this.getAllPrevPersonalAdvanceHistory();
     try {
      await spCrudObj.updateData("PersonalAdvanceVehicle",this.state.VMId, VehicleRequestItem, this.props);
       // this.setState({ reqID: req.data.ID });
-       alert('Vehicle Request Rejected Successfully!');
-      window.location.href='#/HR1Dashboard'
+      //  alert('Vehicle Request Rejected Successfully!');
+      // window.location.href='#/HR1Dashboard'
+      swal("Success", "Vehicle Request Rejected Successfully!", "success").then(() => {
+        window.location.href = '#/HR1Dashboard';
+      });
       // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
       // alert('Vehicle Request Submitted Successfully!');
       // const RequestNoGenerate = {
@@ -420,7 +431,9 @@ await this.getAllPrevPersonalAdvanceHistory();
       // }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("Error submitting the vehicle request.");
+      swal("Notice", "Error submitting the vehicle request.", "info");
+
+      // alert("Error submitting the vehicle request.");
     } finally {
       this.setState({ isSubmitting: false });
     }
@@ -452,9 +465,11 @@ await this.getAllPrevPersonalAdvanceHistory();
      await spCrudObj.updateData("PersonalAdvanceVehicle",this.state.VMId, VehicleRequestItem, this.props);
       // this.setState({ reqID: req.data.ID });
       // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      alert('Vehicle Request Submitted Successfully!');
-      window.location.href='#/HR1Dashboard'
-
+      // alert('Vehicle Request Submitted Successfully!');
+      // window.location.href='#/HR1Dashboard'
+      swal("Success", "Vehicle Request Approved Successfully!", "success").then(() => {
+        window.location.href = '#/HR1Dashboard';
+      });
       // const RequestNoGenerate = {
       //   Title: 'VM000' + req.data.ID
       // };
@@ -469,7 +484,7 @@ await this.getAllPrevPersonalAdvanceHistory();
       // }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("Error submitting the vehicle request.");
+      swal("Notice", "Error submitting the vehicle request.", "info");
     } finally {
       this.setState({ isSubmitting: false });
     }
