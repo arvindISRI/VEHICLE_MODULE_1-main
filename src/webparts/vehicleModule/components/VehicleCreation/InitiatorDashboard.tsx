@@ -74,7 +74,7 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
     });
   }
 
- 
+
   public async checkUserInGroups(groups: any) {
     try {
       const spCrudObj = await useSPCRUD();
@@ -194,144 +194,92 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
             <PivotItem linkText='User Dashboard'>
               <div className='row'>
                 <div className={styles.tabnav + " " + 'col-md-2'}>
-                <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
-                <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
-                <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
+                  <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
+                  <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
+                  <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
 
                 </div>
                 <div className='col-md-10'>
                   <div className={styles.panelbody}>
-                  {this.state.activeTab === 'Pending' && (
+                    {this.state.activeTab === 'Pending' && (
 
-                    <div id="Pending" className="tabcontent active table-responsive">
-                      <h3>Pending</h3>
-                      <table className="table ">
-                        <tr>
-                          <th>Action</th>
+                      <div id="Pending" className="tabcontent active table-responsive">
+                        <h3>Pending</h3>
+                        <table className="table ">
+                          <tr>
+                            <th>Action</th>
 
-                          <th>VM ID</th>
-                          <th>EmployeeID</th>
-                          <th>EmployeeName</th>
-                          <th>Age</th>
-                          <th>Status</th>
-                        </tr>
-                        {
-                          this.state.UserDashboard.length > 0 ? this.state.UserDashboard.map((items) => {
-                            return (
-                              <tr>
-                                <td>
-                                <a href={'#/ViewVehicle/' + items.ID}>
-                                  <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                    title='View'  />
+                            <th>VM ID</th>
+                            <th>EmployeeID</th>
+                            <th>EmployeeName</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                          </tr>
+                          {
+                            this.state.UserDashboard.length > 0 ? this.state.UserDashboard.map((items) => {
+                              return (
+                                <tr>
+                                  <td>
+                                    <a href={'#/ViewVehicle/' + items.ID}>
+                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
+                                        title='View' />
 
-                                  </a>
-
-                                  {
-                                    items.Status === "Draft" &&
-                                    // <Link to={'/EditVehicle/' + items.ID}>
-                                    //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                    // </Link>
-                                    <a href={'#/EditVehicle/' + items.ID}>
-                                      <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
 
+                                    {
+                                      items.Status === "Draft" &&
+                                      // <Link to={'/EditVehicle/' + items.ID}>
+                                      //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
+                                      // </Link>
+                                      <a href={'#/EditVehicle/' + items.ID}>
+                                        <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
+                                      </a>
 
 
-                                  }
 
-                                </td>
+                                    }
 
-                                <td>{items.Title}</td>
-                                <td>{items.EmployeeCode}</td>
-                                <td>{items.EmployeeName}</td>
-                                <td>{items.Age}</td>
-                                <td>{items.Status}</td>
-                              </tr>
-                            )
-                          })
-                            : ""
-                        }
-                      </table>
+                                  </td>
 
-                    </div>
-                   )}
-{this.state.activeTab === 'Approved' && (
-                    <div id="Approved" className="tabcontent">
-                      <h3>Approved</h3>
-                      <table className="table ">
-                        <tr>
-                          <th>Action</th>
+                                  <td>{items.Title}</td>
+                                  <td>{items.EmployeeCode}</td>
+                                  <td>{items.EmployeeName}</td>
+                                  <td>{items.Age}</td>
+                                  <td>{items.Status}</td>
+                                </tr>
+                              )
+                            })
+                              : ""
+                          }
+                        </table>
 
-                          <th>VM ID</th>
-                          <th>EmployeeID</th>
-                          <th>EmployeeName</th>
-                          <th>Age</th>
-                          <th>Status</th>
-                        </tr>
-                        {
-                          this.state.userApprovedDashboard.length > 0 ? this.state.userApprovedDashboard.map((items) => {
-                            return (
-                              <tr>
-                                <td>
-                                <a href={'#/ViewVehicle/' + items.ID}>
-                                  <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                    title='View'  />
+                      </div>
+                    )}
+                    {this.state.activeTab === 'Approved' && (
+                      <div id="Approved" className="tabcontent">
+                        <h3>Approved</h3>
+                        <table className="table ">
+                          <tr>
+                            <th>Action</th>
 
-                                  </a>
+                            <th>VM ID</th>
+                            <th>EmployeeID</th>
+                            <th>EmployeeName</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                          </tr>
+                          {
+                            this.state.userApprovedDashboard.length > 0 ? this.state.userApprovedDashboard.map((items) => {
+                              return (
+                                <tr>
+                                  <td>
+                                    <a href={'#/ViewVehicle/' + items.ID}>
+                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
+                                        title='View' />
 
-                                  {/* {
-                                    items.Status === "Draft" &&
-                                    // <Link to={'/EditVehicle/' + items.ID}>
-                                    //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                    // </Link>
-                                    <a href={'#/EditVehicle/' + items.ID}>
-                                      <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
 
-
-
-                                  } */}
-
-                                </td>
-
-                                <td>{items.Title}</td>
-                                <td>{items.EmployeeCode}</td>
-                                <td>{items.EmployeeName}</td>
-                                <td>{items.Age}</td>
-                                <td>{items.Status}</td>
-                              </tr>
-                            )
-                          })
-                            : ""
-                        }
-                      </table>
-                    </div>
-                                                              )}
-  {this.state.activeTab === 'Rejected' && (
-                    <div id="Rejected" className="tabcontent">
-                      <h3>Rejected</h3>
-                      <table className="table ">
-                        <tr>
-                          <th>Action</th>
-
-                          <th>VM ID</th>
-                          <th>EmployeeID</th>
-                          <th>EmployeeName</th>
-                          <th>Age</th>
-                          <th>Status</th>
-                        </tr>
-                        {
-                          this.state.userRejectedDashboard.length > 0 ? this.state.userRejectedDashboard.map((items) => {
-                            return (
-                              <tr>
-                                <td>
-                                <a href={'#/ViewVehicle/' + items.ID}>
-                                  <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                    title='View'  />
-
-                                  </a>
-
-                                  {/* {
+                                    {/* {
                                     items.Status === "Draft" &&
                                     // <Link to={'/EditVehicle/' + items.ID}>
                                     //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
@@ -344,21 +292,73 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
 
                                   } */}
 
-                                </td>
+                                  </td>
 
-                                <td>{items.Title}</td>
-                                <td>{items.EmployeeCode}</td>
-                                <td>{items.EmployeeName}</td>
-                                <td>{items.Age}</td>
-                                <td>{items.Status}</td>
-                              </tr>
-                            )
-                          })
-                            : ""
-                        }
-                      </table>
-                    </div>
-                     )}
+                                  <td>{items.Title}</td>
+                                  <td>{items.EmployeeCode}</td>
+                                  <td>{items.EmployeeName}</td>
+                                  <td>{items.Age}</td>
+                                  <td>{items.Status}</td>
+                                </tr>
+                              )
+                            })
+                              : ""
+                          }
+                        </table>
+                      </div>
+                    )}
+                    {this.state.activeTab === 'Rejected' && (
+                      <div id="Rejected" className="tabcontent">
+                        <h3>Rejected</h3>
+                        <table className="table ">
+                          <tr>
+                            <th>Action</th>
+
+                            <th>VM ID</th>
+                            <th>EmployeeID</th>
+                            <th>EmployeeName</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                          </tr>
+                          {
+                            this.state.userRejectedDashboard.length > 0 ? this.state.userRejectedDashboard.map((items) => {
+                              return (
+                                <tr>
+                                  <td>
+                                    <a href={'#/ViewVehicle/' + items.ID}>
+                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
+                                        title='View' />
+
+                                    </a>
+
+                                    {/* {
+                                    items.Status === "Draft" &&
+                                    // <Link to={'/EditVehicle/' + items.ID}>
+                                    //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
+                                    // </Link>
+                                    <a href={'#/EditVehicle/' + items.ID}>
+                                      <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
+                                    </a>
+
+
+
+                                  } */}
+
+                                  </td>
+
+                                  <td>{items.Title}</td>
+                                  <td>{items.EmployeeCode}</td>
+                                  <td>{items.EmployeeName}</td>
+                                  <td>{items.Age}</td>
+                                  <td>{items.Status}</td>
+                                </tr>
+                              )
+                            })
+                              : ""
+                          }
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

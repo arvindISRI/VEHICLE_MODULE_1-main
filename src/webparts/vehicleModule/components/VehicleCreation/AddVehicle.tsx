@@ -106,7 +106,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       isClearable: true,
       isSearchable: true,
 
-
       filteredOptions: [],
 
       selectedId: null,
@@ -117,13 +116,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       vehicleRows: [
         {
 
-          // POutstandingLoanasOnDate: 0,
-          // PAmount: 0,
-          // PDatePurposeofWithdrawal: ''
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
-          // expectedLife:0,
+
           DatePurposeofWithdrawal: '',
         }
       ],
@@ -229,273 +225,16 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
 
   };
 
-  // public BtnSubmitRequest = async () => {
-
-  //   this.setState({ isSubmitting: true });
-
-  //   this.state;
-  //   this.setState({ isSubmitting: false });
-
-  //   const spCrudObj = await useSPCRUD();
-  //   var VehicleRequestItem;
-  //     VehicleRequestItem = {
-
-  //       EmployeeCode: this.state.EmployeeID,
-  //       EmployeeName: this.state.EmployeeName,
-  //       Age: ''+this.state.Age,
-  //       Status: "Pending",
-  //       DateOfJoining:this.state.DateOfJoining?new Date(this.state.DateOfJoining):null,
-  //       ResidenceAddress:this.state.CurrentOfficeLocation,
-  //       Designation: this.state.DesignationTitle,
-  //       TotalEmoluments	:	+this.state.ExpenseDetails.TotalEmolumentspm	,
-  //       Emoluments25	:	+this.state.ExpenseDetails.TwentyFiveofthetotalemoluments	,
-  //       TotalDeductions	:	+this.state.ExpenseDetails.Totaldeductions	,
-  //       NetEmoluments50	:	+this.state.ExpenseDetails.FityofNetemoluments	,
-  //       EmiTenure	:	this.state.ExpenseDetails.RepaymenttenureinEMI?+this.state.ExpenseDetails.RepaymenttenureinEMI:0	,
-  //       CostOfVehicle	:	this.state.ExpenseDetails.CostofVehicle?+this.state.ExpenseDetails.CostofVehicle:0	,
-  //       VehicleType:this.state.typeOfVehicle	,
-  //       ManufactureYear:this.state.yearOfManufacture1?(this.state.yearOfManufacture1):""	,
-  //       VehicleCondition:this.state.ConditionOfVehicle	,
-  //       MakeModel:this.state.ExpenseDetails.MakeModel?this.state.ExpenseDetails.MakeModel:""	,
-  //       SellerDetails:this.state.ExpenseDetails.NameandAddressoftheSeller?this.state.ExpenseDetails.NameandAddressoftheSeller:""	,
-  //       ExpectedLife:''+this.state.ExpenseDetails.ExpectedlifeofVehicle	,
-  //       FinalRepaymentDate:this.state.ExpenseDetails.Dateoffinalrepaymentofloan?new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan):null	,
-  //       AmountofLoanAvailed:this.state.ExpenseDetails.AmountofLoanavailed?+this.state.ExpenseDetails.AmountofLoanavailed:0,
-  //       DateofLoanAvailed:this.state.ExpenseDetails.DateofAvailmentofLoan?new Date(this.state.ExpenseDetails.DateofAvailmentofLoan):null
-
-  //     };
-
-  //   return await spCrudObj.insertData("PersonalAdvanceVehicle", VehicleRequestItem, this.props).then(async (req) => {
-  //     this.setState({ reqID: req.data.ID });
-
-  //     const RequestNoGenerate = {
-  //       Title: 'VM000' + req.data.ID,
-  //     };
-
-  //     await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-
-  //    if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
-
-
-  //       await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-  //       alert('Vehicle Request Submitted Successfully!');
-
-  //      // PrevPersonalAdvanceHistory
-
-  //     } else {
-  //       alert('Vehicle Request Submitted without attachments.');
-  //     }
-
-  //     this.setState({ isSubmitting: false });
-
-  //     //window.location.href = `${ENV_CONFIG.siteUrl}/SitePages/CHSModule.aspx`;  
-
-  //     return req;
-  //   });
-  // };
-
-
-  //   async InsertPrevPersonalAdvanceHistory(ListName, RequestNoGenerate, itemArray) {
-  //   const spCrudObj = await useSPCRUD();
-  //   for (let i = 0; i < itemArray.length; i++) {
-  //     var objVehicleHistoryitems;
-  //     objVehicleHistoryitems = {
-  //       PersonalAdvanceVehicleIdId:RequestNoGenerate,
-  //       WithdrawalDetails:itemArray[i].DatePurposeofWithdrawal?itemArray[i].DatePurposeofWithdrawal:'',
-  //       WithdrawalAmount:itemArray[i].PAmount?+itemArray[i].PAmount:0,
-  //       ExpectedLife:itemArray[i].expectedLife?+itemArray[i].expectedLife:0,
-  //       OutstandingLoan:itemArray[i].POutstandingLoanasOnDate?+itemArray[i].POutstandingLoanasOnDate:0,
-  //       FinalRepaymentDate:itemArray[i].PDatePurposeofWithdrawal?new Date(itemArray[i].PDatePurposeofWithdrawal):null
-  //     }
-  //   }
-  //     try {
-  //        await spCrudObj.insertData(ListName, objVehicleHistoryitems, this.props).then(async (req) => {
-
-  //       })
-  //     } catch (error) {
-  //       console.log(`Error uploading ${objVehicleHistoryitems}:`, error);
-  //     }
-
-  // }
-
-
-  // public BtnSubmitRequest = async (SubmittionType) => {
-
-
-  //   if (this.state.ExpenseDetails.TotalEmolumentspm == 0 || this.state.ExpenseDetails.TotalEmolumentspm == '') {
-  //     alert('Please Fill Total Emoluments p.m. (Salary and allowance)');
-  //     return false
-  //   }
-  //   if (this.state.ExpenseDetails.Totaldeductions == 0 || this.state.ExpenseDetails.Totaldeductions == '') {
-  //     alert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance ');
-  //     return false
-  //   } if (this.state.ExpenseDetails.RepaymenttenureinEMI == 0 || this.state.ExpenseDetails.RepaymenttenureinEMI == undefined) {
-  //     alert('Please Fill Repayment tenure in EMI ');
-  //     return false
-  //   } 
-    
-  //   if (this.state.ExpenseDetails.RepaymenttenureinEMI >20) {
-  //     alert('Please Fill Repayment tenure in EMI less than 20');
-  //     return false
-  //   }
-  //   if (this.state.typeOfVehicle == 0 || this.state.typeOfVehicle == '') {
-  //     alert('Please Select Type of Vehicle');
-  //     return false
-  //   } if (this.state.ConditionOfVehicle == 0 || this.state.ConditionOfVehicle == '') {
-  //     alert('Please Select Whether new or second hand');
-  //     return false
-  //   } 
-  //   if (this.state.ExpenseDetails.MakeModel == undefined|| this.state.ExpenseDetails.MakeModel == '') {
-  //     alert('Please Fill Make/ Model ');
-  //     return false
-  //   } if (this.state.yearOfManufacture1 == 0 || this.state.yearOfManufacture1 == '') {
-  //     alert('Please Select Year of Manufacture');
-  //     return false
-  //   } if (this.state.ExpenseDetails.CostofVehicle == 0 || this.state.ExpenseDetails.CostofVehicle == '') {
-  //     alert('Please Fill Cost of Vehicle');
-  //     return false
-  //   } if (this.state.ExpenseDetails.NameandAddressoftheSeller == undefined || this.state.ExpenseDetails.NameandAddressoftheSeller == '') {
-  //     alert('Please Fill Name and Address of the Seller / Dealer ');
-  //     return false
-  //   }
-
-
-  //   if (this.state.ExpectlifeShow) {//==0 || this.state.ExpenseDetails.NameandAddressoftheSeller==''){
-  //     if (this.state.ExpenseDetails.ExpectedlifeofVehicle =='' || this.state.ExpenseDetails.ExpectedlifeofVehicle ==0 ) {
-  //       alert('Please Fill Expected life of Vehicle');
-  //       return false
-  //     }
-
-
-  //   }
-
-
-
-  //   // ExpenseDetails.Totaldeductions
-
-  //   // ExpenseDetails.RepaymenttenureinEMI  MAX 20
-
-  //   // this.state.typeOfVehicle
-  //   // this.state.ConditionOfVehicle
-  //   // ExpenseDetails.MakeModel
-  //   // this.state.yearOfManufacture1
-  //   // this.state.ExpenseDetails.CostofVehicle
-
-  //   // this.state.ExpenseDetails.NameandAddressoftheSeller
-
-
-  //   // ExpenseDetails.ExpectedlifeofVehicle
-  //   // this.state.ExpectlifeShow
-
-
-  //   var VehicleRequestItem
-  //   // if(SubmittionType=='Draft'){
-  //   //   VehicleRequestItem  = {
-  //   //     EmployeeCode: this.state.EmployeeID,
-  //   //     EmployeeName: this.state.EmployeeName,
-  //   //     Age: '' + this.state.Age,
-  //   //     Status: "Draft",
-  //   //     DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-  //   //     ResidenceAddress: this.state.CurrentOfficeLocation,
-  //   //     Designation: this.state.DesignationTitle,
-  //   //     TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-  //   //     Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-  //   //     TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-  //   //     NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-  //   //     EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-  //   //     CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-  //   //     VehicleType: this.state.typeOfVehicle,
-
-  //   //     ManufactureYear: this.state.yearOfManufacture1 || "",
-  //   //     VehicleCondition: this.state.ConditionOfVehicle,
-  //   //     MakeModel: this.state.ExpenseDetails.MakeModel || "",
-  //   //     SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-  //   //     ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
-  //   //     PrevVehicleLoanType:this.state.typeOfVehicle1,
-  //   //     PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-  //   //     PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-  //   //     PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-  //   //   };
-  //   // }
-
-  //   if (SubmittionType == 'Submitted') {
-
-
-  //     VehicleRequestItem = {
-  //       EmployeeCode: this.state.EmployeeID,
-  //       EmployeeName: this.state.EmployeeName,
-  //       Age: '' + this.state.Age,
-  //       Status: "Pending",
-  //       DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-  //       ResidenceAddress: this.state.CurrentOfficeLocation,
-  //       Designation: this.state.DesignationTitle,
-  //       TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-  //       Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-  //       TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-  //       NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-  //       EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-  //       CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-  //       VehicleType: this.state.typeOfVehicle,
-  //       HR1Response: 'Pending with HR1',
-  //       HR2Response: 'Pending with HR2',
-
-  //       DateOfConfirmation: this.state.DateOfConfirmation
-  //         ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
-  //         : null,
-  //       GHResponse: 'Pending with Group Head',
-  //       ManufactureYear: this.state.yearOfManufacture1 || "",
-  //       VehicleCondition: this.state.ConditionOfVehicle,
-  //       MakeModel: this.state.ExpenseDetails.MakeModel || "",
-  //       SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-  //       ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
-  //       PrevVehicleLoanType: this.state.typeOfVehicle1,
-  //       PrevLoanRepaymentDate: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-  //       PrevLoanAmount: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-  //       PrevLoanDate: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-  //     };
-  //   }
-  //   this.setState({ isSubmitting: true });
-
-  //   const spCrudObj = await useSPCRUD();
-
-
-
-  //   try {
-  //     const req = await spCrudObj.insertData("PersonalAdvanceVehicle", VehicleRequestItem, this.props);
-  //     this.setState({ reqID: req.data.ID });
-
-  //     const RequestNoGenerate = {
-  //       Title: 'VM000' + req.data.ID
-  //     };
-
-  //     await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-
-  //     if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
-  //       await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-  //       alert('Vehicle Request Submitted Successfully!');
-  //       window.location.href = '#/InitiatorDashboard'
-
-  //     } else {
-  //       alert('Vehicle Request Submitted without attachments.');
-  //     }
-  //   } catch (error) {
-  //     console.error("Submission error:", error);
-  //     alert("Error submitting the vehicle request.");
-  //   } finally {
-  //     this.setState({ isSubmitting: false });
-  //   }
-  // };
-
   public BtnSubmitRequest = async (SubmittionType) => {
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
-  
+
     const showAlert = (message) => {
       swal("Validation Error", message, "warning");
       return false;
     };
-  
+
     const isEmpty = (val) => val === '' || val === null || val === undefined || val === 0;
-  
+
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
     if (isEmpty(ExpenseDetails.RepaymenttenureinEMI)) return showAlert('Please Fill Repayment tenure in EMI');
@@ -507,9 +246,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     if (isEmpty(ExpenseDetails.CostofVehicle)) return showAlert('Please Fill Cost of Vehicle');
     if (isEmpty(ExpenseDetails.NameandAddressoftheSeller)) return showAlert('Please Fill Name and Address of the Seller / Dealer');
     if (ExpectlifeShow && isEmpty(ExpenseDetails.ExpectedlifeofVehicle)) return showAlert('Please Fill Expected life of Vehicle');
-  
+
     let VehicleRequestItem = null;
-  
+
     if (SubmittionType === 'Submitted') {
       VehicleRequestItem = {
         EmployeeCode: this.state.EmployeeID,
@@ -543,38 +282,38 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         PrevLoanDate: ExpenseDetails.DateofAvailmentofLoan ? new Date(ExpenseDetails.DateofAvailmentofLoan) : null
       };
     }
-  
+
     this.setState({ isSubmitting: true });
-  
+
     const spCrudObj = await useSPCRUD();
-  
+
     try {
       const req = await spCrudObj.insertData("PersonalAdvanceVehicle", VehicleRequestItem, this.props);
       this.setState({ reqID: req.data.ID });
-  
+
       const RequestNoGenerate = {
         Title: 'VM000' + req.data.ID
       };
-  
+
       await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-  
+
       if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-  
+
         swal("Success", "Vehicle Request Submitted Successfully!", "success").then(() => {
           window.location.href = '#/InitiatorDashboard';
         });
       } else {
         swal("Notice", "Vehicle Request Submitted Failed.", "info");
       }
-  
+
     } catch (error) {
       console.error("Submission error:", error);
-      swal("Notice", "Vehicle Request Submitted Failed.", "info");    } finally {
+      swal("Notice", "Vehicle Request Submitted Failed.", "info");
+    } finally {
       this.setState({ isSubmitting: false });
     }
   };
-  
 
   public BtnSaveAsDraft = async (SubmittionType) => {
     var VehicleRequestItem
@@ -609,39 +348,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       };
     }
 
-    // if(SubmittionType=='Submitted'){
-    //    VehicleRequestItem = {
-    //     EmployeeCode: this.state.EmployeeID,
-    //     EmployeeName: this.state.EmployeeName,
-    //     Age: '' + this.state.Age,
-    //     Status: "Pending",
-    //     DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-    //     ResidenceAddress: this.state.CurrentOfficeLocation,
-    //     Designation: this.state.DesignationTitle,
-    //     TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-    //     Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-    //     TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-    //     NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-    //     EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-    //     CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-    //     VehicleType: this.state.typeOfVehicle,
-
-    //     ManufactureYear: this.state.yearOfManufacture1 || "",
-    //     VehicleCondition: this.state.ConditionOfVehicle,
-    //     MakeModel: this.state.ExpenseDetails.MakeModel || "",
-    //     SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-    //     ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
-    //     PrevVehicleLoanType:this.state.typeOfVehicle1,
-    //     PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-    //     PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-    //     PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-    //   };
-    // }
     this.setState({ isSave: true });
 
     const spCrudObj = await useSPCRUD();
-
-
 
     try {
       const req = await spCrudObj.insertData("PersonalAdvanceVehicle", VehicleRequestItem, this.props);
@@ -659,7 +368,8 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           window.location.href = '#/InitiatorDashboard';
         });
       } else {
-        swal("Notice", "Vehicle Request Saved Failed.", "info");      }
+        swal("Notice", "Vehicle Request Saved Failed.", "info");
+      }
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -676,7 +386,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         PersonalAdvanceVehicleIdId: RequestNoGenerate,
         WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
         WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
-        // ExpectedLife: itemArray[i].expectedLife ? +itemArray[i].expectedLife : 0,
+
         OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
         FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
       };
@@ -688,8 +398,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       }
     }
   }
-
-
 
   private getYearOptions(): IDropdownOption[] {
     const currentYear = new Date().getFullYear();
@@ -765,14 +473,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         ...prevState.vehicleRows,
         {
 
-          // POutstandingLoanasOnDate: 0,
-          // PAmount: 0,
-          // PDatePurposeofWithdrawal: ''
-
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
-          // expectedLife:0,
+
           DatePurposeofWithdrawal: '',
         }
       ]
@@ -1111,14 +815,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                   onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
                 />
               </div>
-              {/* <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Expected Life</Label>
-                <TextField
-                  type="number"
-                  value={row.expectedLife}
-                  onChanged={(val) => this.handleRowChange(index, 'expectedLife', val)}
-                />
-              </div> */}
+              { }
 
               <div className="col-sm-4 d-flex align-items-center mt-4">
                 <IconButton
@@ -1153,7 +850,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             {this.state.isSave ? <Spinner size={SpinnerSize.small} /> : "Save As Draft"}
           </PrimaryButton>
           <a href={'#/InitiatorDashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
-
 
         </div>
 

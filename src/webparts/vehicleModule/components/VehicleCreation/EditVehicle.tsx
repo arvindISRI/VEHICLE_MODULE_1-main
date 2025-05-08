@@ -9,7 +9,7 @@ import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
 import * as yup from 'yup';
 import { Web } from '@pnp/sp/presets/all';
 import { BaseButton, Button, Checkbox, FontWeights, IconButton, IPersonaProps } from 'office-ui-fabric-react';
-// import { Link, useHistory } from 'react-router-dom';
+
 import useSPCRUD, { ISPCRUD } from '../../../services/bal/spcrud';
 import SPCRUD from '../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../services/bal/PersonalAdvanceVehicleMaster';
@@ -105,7 +105,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       reqID: '',
       isClearable: true,
       isSearchable: true,
-     
 
       filteredOptions: [],
 
@@ -114,12 +113,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
 
       vehicleOptions: [],
 
-      // vehicleRows: [],               // For displaying in UI (merged from new + existing - soft-deleted)
-      newVehicleRows: [],            // New rows not saved to DB
-      updatedVehicleRows: [],        // Modified existing rows
-      removedVehicleRowIds: [],     // IDs of rows to be deleted (only for existing)
-
-
+      newVehicleRows: [],
+      updatedVehicleRows: [],
+      removedVehicleRowIds: [],
 
       vehicleRows: [
         {
@@ -129,9 +125,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
           PDatePurposeofWithdrawal: null,
           expectedLife: 0,
           DatePurposeofWithdrawal: ''
-
-
-
 
         }
       ],
@@ -154,7 +147,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
   }
   async componentDidMount() {
 
-    // document.getElementById('divLoading').style.display = 'block';
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
@@ -164,7 +156,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     await this.getAllPrevPersonalAdvanceHistory();
 
     await this.getCurrentUser();
-    // await this.getEmployee();
+
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -181,8 +173,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     });
   }
 
-
-
   public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       let employeeData = results;
@@ -192,9 +182,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       })
 
       if (currentEmpResult && currentEmpResult.length > 0) {
-
-
-
 
         this.setState({
           EmployeeInfodb: currentEmpResult,
@@ -215,10 +202,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
             CostofVehicle: currentEmpResult[0].CostOfVehicle,
             NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
 
-
             AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
-            // Dateoffinalrepaymentofloan:currentEmpResult[0].PrevLoanDate?new Date(currentEmpResult[0].PrevLoanDate):null ,
-            // DateofAvailmentofLoan:currentEmpResult[0].PrevLoanRepaymentDate?new Date(currentEmpResult[0].PrevLoanRepaymentDate):null,
 
             DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
             Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
@@ -237,62 +221,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     });
   };
 
-  // public getAllPrevPersonalAdvanceHistory = async (): Promise<IPrevPersonalAdvanceHistory |any> => {
-  //   return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
-  //     let employeeDataHisty = results;
-
-  //     var currentEmpResultHistory = employeeDataHisty.filter((item) => {
-  //       return item.PersonalAdvanceVehicleId.Id== +this.state.VMId;
-  //   })
-
-  //   if(currentEmpResultHistory && currentEmpResultHistory.length>0){
-
-
-
-
-  //     this.setState({
-  //       EmployeeInfodb: currentEmpResultHistory,
-  //       AllEmployeeCollObj: [],
-
-
-  //     });
-  //   }
-  //    return currentEmpResultHistory;
-  //   });
-  // };
-
-
-
-  // public getEmployee = async (): Promise<IEmployeeMaster> => {
-  //   return await PersonalAdvanceVehicleMasterOps().getEmployeeMaster(this.props).then(async (results) => {
-  //     let employeeData = results;
-  //     this.setState({
-  //       EmployeeInfodb: employeeData,
-  //       AllEmployeeCollObj: [],
-  //       EmployeeName: employeeData.EmployeeName,
-  //       DateOfJoining: employeeData.DateOfJoining ? new Date(employeeData.DateOfJoining) : null,
-  //       CurrentOfficeLocation: employeeData.CurrentOfficeLocation,
-
-  //       EmployeeIDId: employeeData.Id,
-  //       DependentType: "",
-  //       ActualClaimAmountLable: "",
-
-  //       CompanyEmail: employeeData.CompanyEmail,
-
-  //       EmployeeID: employeeData.EmployeeId,
-  //       DesignationId: employeeData.DesignationId,
-  //       DesignationTitle: employeeData.DesignationTitle,
-  //       DateofBirth: employeeData.DateofBirth,
-  //       Scale: employeeData.Scale,
-  //       Age: parseInt(employeeData.Age),
-  //       EmpType: employeeData.EmpType,
-
-  //     });
-  //     return employeeData;
-  //   });
-  // };
-
-
   public getAllPrevPersonalAdvanceHistory = async (): Promise<any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
       let employeeDataHisty = results;
@@ -307,8 +235,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
           DatePurposeofWithdrawal: item.WithdrawalDetails || '',
           PAmount: item.WithdrawalAmount || 0,
           POutstandingLoanasOnDate: item.OutstandingLoan || 0,
-          PDatePurposeofWithdrawal: item.FinalRepaymentDate ? new Date(item.FinalRepaymentDate).toISOString().split('T')[0] : null,// item.FinalRepaymentDate || '',
-          // expectedLife: item.ExpectedLife || 0,
+          PDatePurposeofWithdrawal: item.FinalRepaymentDate ? new Date(item.FinalRepaymentDate).toISOString().split('T')[0] : null,
+
           Id: item.ID || 0,
           isNew: false,
 
@@ -326,7 +254,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       return currentEmpResultHistory;
     });
   };
-
 
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
@@ -363,13 +290,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
 
   };
 
-
   public BtnSaveAsDraft = async (SubmittionType) => {
 
     const spCrudObj = await useSPCRUD();
-
-
-
 
     if (this.state.removedVehicleRowIds && this.state.removedVehicleRowIds.length > 0) {
 
@@ -412,46 +335,10 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       };
     }
 
-    //     PrevVehicleLoanType	Choice	
-    // PrevLoanAmount	Number	
-    // PrevLoanDate	Date and Time	
-    // PrevLoanRepaymentDate
-
-    // if (SubmittionType == 'Submitted') {
-    //   VehicleRequestItem = {
-    //     EmployeeCode: this.state.EmployeeID,
-    //     EmployeeName: this.state.EmployeeName,
-    //     Age: '' + this.state.Age,
-    //     Status: "Pending",
-    //     DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-    //     ResidenceAddress: this.state.CurrentOfficeLocation,
-    //     Designation: this.state.DesignationTitle,
-    //     TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-    //     Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-    //     TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-    //     NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-    //     EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-    //     CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-    //     VehicleType: this.state.typeOfVehicle,
-    //     ManufactureYear: this.state.yearOfManufacture1 || "",
-    //     VehicleCondition: this.state.ConditionOfVehicle,
-    //     MakeModel: this.state.ExpenseDetails.MakeModel || "",
-    //     SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-    //     ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
-
-    //     PrevVehicleLoanType:this.state.typeOfVehicle1,
-
-    //     PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-    //     PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-    //     PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-
-    //   };
-    // }
     this.setState({ isSave: true });
 
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
-      //this.setState({ reqID: req.data.ID });
 
       const RequestNoGenerate = this.state.VMId;
       const newRows = this.state.vehicleRows.filter(row => row.isNew === true);
@@ -474,8 +361,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         swal("Notice", "Vehicle Request Submitted Failed.", "info");
       }
 
-
-
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -484,190 +369,15 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     }
   };
 
-  // public BtnSubmitRequest = async (SubmittionType) => {
-
-    
-  //   if (this.state.ExpenseDetails.TotalEmolumentspm == 0 || this.state.ExpenseDetails.TotalEmolumentspm == '') {
-  //     alert('Please Fill Total Emoluments p.m. (Salary and allowance)');
-  //     return false
-  //   }
-  //   if (this.state.ExpenseDetails.Totaldeductions == 0 || this.state.ExpenseDetails.Totaldeductions == '') {
-  //     alert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance ');
-  //     return false
-  //   } if (this.state.ExpenseDetails.RepaymenttenureinEMI == 0 || this.state.ExpenseDetails.RepaymenttenureinEMI == undefined) {
-  //     alert('Please Fill Repayment tenure in EMI ');
-  //     return false
-  //   } 
-    
-  //   if (this.state.ExpenseDetails.RepaymenttenureinEMI >20) {
-  //     alert('Please Fill Repayment tenure in EMI less than 20');
-  //     return false
-  //   }
-  //   if (this.state.typeOfVehicle == 0 ||this.state.typeOfVehicle==null ||this.state.typeOfVehicle==undefined || this.state.typeOfVehicle == '') {
-  //     alert('Please Select Type of Vehicle');
-  //     return false
-  //   } if (this.state.ConditionOfVehicle == 0 ||this.state.ConditionOfVehicle==null ||this.state.ConditionOfVehicle==undefined || this.state.ConditionOfVehicle == '') {
-  //     alert('Please Select Whether new or second hand');
-  //     return false
-  //   } 
-  //   if (this.state.ExpenseDetails.MakeModel == undefined ||this.state.ExpenseDetails.MakeModel==null || this.state.ExpenseDetails.MakeModel == '') {
-  //     alert('Please Fill Make/ Model ');
-  //     return false
-  //   } if (this.state.yearOfManufacture1 == 0 ||this.state.yearOfManufacture1 == undefined || this.state.yearOfManufacture1 == null|| this.state.yearOfManufacture1 == '') {
-  //     alert('Please Select Year of Manufacture');
-  //     return false
-  //   } if (this.state.ExpenseDetails.CostofVehicle == 0 || this.state.ExpenseDetails.CostofVehicle == '') {
-  //     alert('Please Fill Cost of Vehicle');
-  //     return false
-  //   } if (this.state.ExpenseDetails.NameandAddressoftheSeller == undefined || this.state.ExpenseDetails.NameandAddressoftheSeller==null|| this.state.ExpenseDetails.NameandAddressoftheSeller == '') {
-  //     alert('Please Fill Name and Address of the Seller / Dealer ');
-  //     return false
-  //   }
-
-
-  //   if (this.state.ExpectlifeShow) {//==0 || this.state.ExpenseDetails.NameandAddressoftheSeller==''){
-  //     if (this.state.ExpenseDetails.ExpectedlifeofVehicle =='' ||this.state.ExpenseDetails.ExpectedlifeofVehicle ==null||this.state.ExpenseDetails.ExpectedlifeofVehicle ==undefined || this.state.ExpenseDetails.ExpectedlifeofVehicle ==0 ) {
-  //       alert('Please Fill Expected life of Vehicle');
-  //       return false
-  //     }
-
-
-  //   }
-
-
-  //   const spCrudObj = await useSPCRUD();
-
-
-
-
-  //   if (this.state.removedVehicleRowIds && this.state.removedVehicleRowIds.length > 0) {
-
-  //     for (var r = 0; r < this.state.removedVehicleRowIds.length; r++) {
-  //       await spCrudObj.deleteData("PrevPersonalAdvanceHistory", this.state.removedVehicleRowIds[r], this.props);
-
-  //     }
-  //   }
-  //   var VehicleRequestItem
-  //   // if (SubmittionType == 'Draft') {
-  //   //   VehicleRequestItem = {
-  //   //     EmployeeCode: this.state.EmployeeID,
-  //   //     EmployeeName: this.state.EmployeeName,
-  //   //     Age: '' + this.state.Age,
-  //   //     Status: "Draft",
-  //   //     DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-  //   //     ResidenceAddress: this.state.CurrentOfficeLocation,
-  //   //     Designation: this.state.DesignationTitle,
-  //   //     TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-  //   //     Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-  //   //     TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-  //   //     NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-  //   //     EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-  //   //     CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-  //   //     VehicleType: this.state.typeOfVehicle,
-
-  //   //     ManufactureYear: this.state.yearOfManufacture1 || "",
-  //   //     VehicleCondition: this.state.ConditionOfVehicle,
-  //   //     MakeModel: this.state.ExpenseDetails.MakeModel || "",
-  //   //     SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-  //   //     ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
-
-  //   //     PrevVehicleLoanType:this.state.typeOfVehicle1,
-  //   //     PrevLoanRepaymentDate	: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-  //   //     PrevLoanAmount	: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-  //   //     PrevLoanDate	: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-  //   //   };
-  //   // }
-
-  //   //     PrevVehicleLoanType	Choice	
-  //   // PrevLoanAmount	Number	
-  //   // PrevLoanDate	Date and Time	
-  //   // PrevLoanRepaymentDate
-
-  //   if (SubmittionType == 'Submitted') {
-  //     VehicleRequestItem = {
-  //       EmployeeCode: this.state.EmployeeCode,
-  //       EmployeeName: this.state.EmployeeName,
-  //       Age: '' + this.state.Age,
-  //       Status: "Pending",
-
-  //       HR1Response: 'Pending with HR1',
-  //       HR2Response: 'Pending with HR2',
-  //       GHResponse: 'Pending with Group Head',
-
-  //       DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-  //       ResidenceAddress: this.state.CurrentOfficeLocation,
-  //       Designation: this.state.DesignationTitle,
-  //       TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
-  //       Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
-  //       TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
-  //       NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
-  //       EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
-  //       CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
-  //       VehicleType: this.state.typeOfVehicle,
-  //       ManufactureYear: this.state.yearOfManufacture1 || "",
-  //       VehicleCondition: this.state.ConditionOfVehicle,
-  //       MakeModel: this.state.ExpenseDetails.MakeModel || "",
-  //       SellerDetails: this.state.ExpenseDetails.NameandAddressoftheSeller || "",
-  //       ExpectedLife: '' + this.state.ExpenseDetails.ExpectedlifeofVehicle,
-
-  //       PrevVehicleLoanType: this.state.typeOfVehicle1,
-
-  //       PrevLoanRepaymentDate: this.state.ExpenseDetails.Dateoffinalrepaymentofloan ? new Date(this.state.ExpenseDetails.Dateoffinalrepaymentofloan) : null,
-  //       PrevLoanAmount: this.state.ExpenseDetails.AmountofLoanavailed ? +this.state.ExpenseDetails.AmountofLoanavailed : 0,
-  //       PrevLoanDate: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
-
-  //     };
-  //   }
-  //   this.setState({ isSubmitting: true });
-
-  //   try {
-  //     await spCrudObj.updateData("PersonalAdvanceVehicle", +this.state.VMId, VehicleRequestItem, this.props);
-  //     // this.setState({ reqID: req.data.ID });
-
-  //     const RequestNoGenerate = this.state.VMId;
-  //     const newRows = this.state.vehicleRows.filter(row => row.isNew === true);
-
-  //     const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
-
-  //     if (existingRows && existingRows.length > 0) {
-  //       await this.UpdatePrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, existingRows);
-  //     }
-  //     if (newRows && newRows.length > 0) {
-  //       await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, newRows);
-  //     }
-
-  //     if ((existingRows && existingRows.length > 0) || (newRows && newRows.length > 0)) {
-  //       alert('Vehicle Request Submitted Successfully!');
-  //       window.location.href = '#/InitiatorDashboard'
-
-  //     } else {
-  //       alert('Vehicle Request Submitted without attachments.');
-  //     }
-
-
-
-  //   } catch (error) {
-  //     console.error("Submission error:", error);
-  //     alert("Error submitting the vehicle request.");
-  //   } finally {
-  //     this.setState({ isSubmitting: false });
-  //   }
-  // };
-
- 
-
-
-
   public BtnSubmitRequest = async (SubmittionType) => {
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
-  
+
     const showAlert = (message) => {
       swal("Validation Error", message, "warning");
     };
-  
+
     const isEmpty = (val) => val === '' || val === null || val === undefined || val === 0;
-  
-    // Validations
+
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
     if (isEmpty(ExpenseDetails.RepaymenttenureinEMI)) return showAlert('Please Fill Repayment tenure in EMI');
@@ -679,17 +389,15 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     if (isEmpty(ExpenseDetails.CostofVehicle)) return showAlert('Please Fill Cost of Vehicle');
     if (isEmpty(ExpenseDetails.NameandAddressoftheSeller)) return showAlert('Please Fill Name and Address of the Seller / Dealer');
     if (ExpectlifeShow && isEmpty(ExpenseDetails.ExpectedlifeofVehicle)) return showAlert('Please Fill Expected life of Vehicle');
-  
+
     const spCrudObj = await useSPCRUD();
-  
-    // Handle deleted rows
+
     if (this.state.removedVehicleRowIds.length > 0) {
       for (let id of this.state.removedVehicleRowIds) {
         await spCrudObj.deleteData("PrevPersonalAdvanceHistory", id, this.props);
       }
     }
-  
-    // Build request item
+
     let VehicleRequestItem;
     if (SubmittionType === 'Submitted') {
       VehicleRequestItem = {
@@ -721,23 +429,23 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         PrevLoanDate: ExpenseDetails.DateofAvailmentofLoan ? new Date(ExpenseDetails.DateofAvailmentofLoan) : null
       };
     }
-  
+
     this.setState({ isSubmitting: true });
-  
+
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", +this.state.VMId, VehicleRequestItem, this.props);
-  
+
       const RequestNoGenerate = this.state.VMId;
       const newRows = this.state.vehicleRows.filter(row => row.isNew);
       const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
-  
+
       if (existingRows.length > 0) {
         await this.UpdatePrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, existingRows);
       }
       if (newRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, newRows);
       }
-  
+
       if (existingRows.length > 0 || newRows.length > 0) {
         swal("Success", "Vehicle Request Submitted Successfully!", "success").then(() => {
           window.location.href = '#/InitiatorDashboard';
@@ -745,7 +453,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       } else {
         swal("Submitted", "Vehicle Request Submitted without attachments.", "info");
       }
-  
+
     } catch (error) {
       console.error("Submission error:", error);
       swal("Error", "Error submitting the vehicle request.", "error");
@@ -753,7 +461,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       this.setState({ isSubmitting: false });
     }
   };
-  
+
   async InsertPrevPersonalAdvanceHistory(ListName, RequestNoGenerate, itemArray) {
     const spCrudObj = await useSPCRUD();
     if (itemArray && itemArray.length > 0) {
@@ -763,7 +471,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
           PersonalAdvanceVehicleIdId: +RequestNoGenerate,
           WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
           WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
-          // ExpectedLife: itemArray[i].expectedLife ? +itemArray[i].expectedLife : 0,
+
           OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
           FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
         };
@@ -786,7 +494,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
           PersonalAdvanceVehicleIdId: +RequestNoGenerate,
           WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
           WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
-          // ExpectedLife: itemArray[i].expectedLife ? +itemArray[i].expectedLife : 0,
+
           OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
           FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
         };
@@ -799,7 +507,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       }
     }
   }
-
 
   private getYearOptions(): IDropdownOption[] {
     const currentYear = new Date().getFullYear();
@@ -869,35 +576,13 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     }));
   };
 
-  // private addRow = () => {
-  //   this.setState(prevState => ({
-  //     vehicleRows: [
-  //       ...prevState.vehicleRows,
-  //       {
-
-  //         // POutstandingLoanasOnDate: 0,
-  //         // PAmount: 0,
-  //         // PDatePurposeofWithdrawal: ''
-
-
-  //         POutstandingLoanasOnDate: 0,
-  //         PAmount: 0,
-  //         PDatePurposeofWithdrawal: null,
-  //         expectedLife:0,
-  //         DatePurposeofWithdrawal:''
-  //       }
-  //     ]
-  //   }));
-  // };
-
-
   private addRow = () => {
     const newRow = {
-      Id: Date.now(), // temporary ID or UUID
+      Id: Date.now(),
       POutstandingLoanasOnDate: 0,
       PAmount: 0,
       PDatePurposeofWithdrawal: null,
-      // expectedLife:0,
+
       DatePurposeofWithdrawal: '',
 
       isNew: true
@@ -909,12 +594,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     }));
   };
 
-
-  // private handleRowChange = (index: number, field: string, value: string) => {
-  //   const updatedRows = [...this.state.vehicleRows];
-  //   updatedRows[index][field] = value;
-  //   this.setState({ vehicleRows: updatedRows });
-  // };
   private handleRowChange = (index: number, field: string, value: string) => {
     const updatedRows = [...this.state.vehicleRows];
     const row = { ...updatedRows[index], [field]: value };
@@ -933,13 +612,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     }));
   };
 
-
-  // private removeRow = (index: number) => {
-  //   this.setState(prevState => ({
-  //     vehicleRows: prevState.vehicleRows.filter((_, i) => i !== index)
-  //   }));
-  // };
-
   private removeRow = (index: number, object) => {
     const rowToRemove = this.state.vehicleRows[index];
     const updatedVehicleRows = this.state.vehicleRows.filter((_, i) => i !== index);
@@ -950,13 +622,13 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         ? prevState.newVehicleRows.filter(r => r.Id !== rowToRemove.Id)
         : prevState.newVehicleRows;
 
-        const newVehicleRows1 = isNew
+      const newVehicleRows1 = isNew
         ? prevState.newVehicleRows.filter(r => r.Id === rowToRemove.Id)
         : prevState.newVehicleRows;
-        newVehicleRows1.map((item)=>{
-          item.PDatePurposeofWithdrawal=null;
-          item.PDatePurposeofWithdrawal="";
-        })
+      newVehicleRows1.map((item) => {
+        item.PDatePurposeofWithdrawal = null;
+        item.PDatePurposeofWithdrawal = "";
+      })
 
       const removedVehicleRowIds = isNew
         ? prevState.removedVehicleRowIds
@@ -972,9 +644,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       };
     });
   };
-
-
-
 
   public render(): React.ReactElement<IVehicleModuleProps> {
     return (
@@ -1262,166 +931,20 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
 
         <h4><b>E). Previous Personal Advance History </b> </h4>
 
-        {/* {this.state.vehicleRows.map((row, index) => (
-          <div className='card mb-1' key={index}>
-            <div className="row form-group">
+        { }
 
-              <div className="col-sm-1">
-                <Label className="control-Label font-weight-bold">Sr No</Label>
-                <label className="control-Label font-weight-bold">{index + 1}</label>
-              </div>
-
-              <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>
-                <TextField
-                  multiline
-                  value={row.DatePurposeofWithdrawal}
-                  onChanged={(val) => this.handleRowChange(index, 'DatePurposeofWithdrawal', val)}
-                />
-              </div>
-              <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Amount</Label>
-                <TextField
-                  type="number"
-                  value={row.PAmount}
-                  onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
-                />
-              </div>
-              <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Outstanding Loan amount as on date
-                </Label>
-                <TextField
-                  type='number'
-                  value={row.POutstandingLoanasOnDate}
-                  onChanged={(val) => this.handleRowChange(index, 'POutstandingLoanasOnDate', val)}
-                />
-              </div>
-
-            </div>
-
-            <div className="row form-group">
-              <div className="col-sm-1">
-              </div>
-
-              <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Date of Final Repayment </Label>
-                <TextField
-                  type='date'
-                  value={row.PDatePurposeofWithdrawal}
-                  onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
-                />
-              </div>
-              <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Expected Life</Label>
-                <TextField
-                  type="number"
-                  value={row.expectedLife}
-                  onChanged={(val) => this.handleRowChange(index, 'expectedLife', val)}
-                />
-              </div>
-
-              <div className="col-sm-4 d-flex align-items-center mt-4">
-                <IconButton
-                  iconProps={{ iconName: 'Add' }}
-                  title="Add Row"
-                  onClick={this.addRow}
-                />
-                {this.state.vehicleRows.length > 1 && (
-                  <IconButton
-                    iconProps={{ iconName: 'Delete' }}
-                    title="Remove Row"
-                    onClick={() => this.removeRow(index)}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-        ))} */}
-
-        {/* {this.state.vehicleRows.map((row, index) => (
-  <div className="card p-3 mb-3" key={index}>
-    <div className="row">
-    <div className="col-sm-1">
-                <Label className="control-Label font-weight-bold">Sr No</Label>
-                <label className="control-Label font-weight-bold">{index + 1}</label>
-              </div>
-
-      <div className="col-sm-4 mb-3">
-        <Label className="control-label font-weight-bold">Date/Purpose of Withdrawal</Label>
-        <TextField
-          multiline
-          value={row.DatePurposeofWithdrawal}
-          onChanged={(val) => this.handleRowChange(index, 'DatePurposeofWithdrawal', val)}
-        />
-      </div>
-
-      <div className="col-sm-4 mb-2">
-        <Label className="control-label font-weight-bold">Date of Final Repayment</Label>
-        <TextField
-          type="date"
-          value={row.PDatePurposeofWithdrawal}
-          onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
-        />
-      </div>
-
-      <div className="col-sm-4 mb-3">
-        <Label className="control-label font-weight-bold">Amount</Label>
-        <TextField
-          type="number"
-          value={row.PAmount}
-          onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
-        />
-      </div>
-
-      <div className="col-sm-4 mb-3">
-        <Label className="control-label font-weight-bold">Outstanding Loan Amount as on Date</Label>
-        <TextField
-          type="number"
-          value={row.POutstandingLoanasOnDate}
-          onChanged={(val) => this.handleRowChange(index, 'POutstandingLoanasOnDate', val)}
-        />
-      </div>
-
-      <div className="col-sm-4 mb-2">
-        <Label className="control-label font-weight-bold">Expected Life</Label>
-        <TextField
-          type="number"
-          value={row.expectedLife}
-          onChanged={(val) => this.handleRowChange(index, 'expectedLife', val)}
-        />
-      </div>
-
-      <div className="col-sm-4 d-flex align-items-end mb-3">
-        <div>
-          <IconButton
-            iconProps={{ iconName: 'Add' }}
-            title="Add Row"
-            onClick={this.addRow}
-          />
-          {this.state.vehicleRows.length > 1 && (
-            <IconButton
-              iconProps={{ iconName: 'Delete' }}
-              title="Remove Row"
-              onClick={() => this.removeRow(index)}
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-))} */}
-
+        { }
 
         {this.state.vehicleRows && this.state.vehicleRows.map((row, index) => (
           <div className="card p-3 mb-3" key={index}>
             <div className="row mb-2">
-              {/* Serial Number */}
+              { }
               <div className="col-sm-1 d-flex flex-column justify-content-center">
                 <Label className="control-label font-weight-bold">Sr No</Label>
                 <label className="control-label">{index + 1}</label>
               </div>
 
-              {/* Date/Purpose of Withdrawal */}
+              { }
               <div className="col-sm-3">
                 <Label className="control-label font-weight-bold">Date/Purpose of Withdrawal</Label>
                 <TextField
@@ -1431,15 +954,15 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
                 />
               </div>
 
-              {/* Date of Final Repayment */}
+              { }
               <div className="col-sm-4">
                 <Label className="control-label font-weight-bold">Date of Final Repayment</Label>
                 <TextField
-          type="date"
-          value={row.PDatePurposeofWithdrawal}
-          onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
-        />
-                {/* <input type='date'  value={row.PDatePurposeofWithdrawal} onChange={(e) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', e.target.value)}></input> */}
+                  type="date"
+                  value={row.PDatePurposeofWithdrawal}
+                  onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
+                />
+                { }
               </div>
 
               <div className="col-sm-4">
@@ -1454,19 +977,13 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
             </div>
 
             <div className="row mb-1">
-              {/* Amount */}
+              { }
 
               <div className="col-sm-1">
-                {/* <Label className="control-label font-weight-bold">Amount</Label>
-        <TextField
-          type="number"
-          value={row.PAmount}
-          onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
-        /> */}
+                { }
               </div>
 
-
-              {/* Outstanding Loan Amount */}
+              { }
               <div className="col-sm-3">
                 <Label className="control-label font-weight-bold">Outstanding Loan Amount as on Date</Label>
                 <TextField
@@ -1476,15 +993,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
                 />
               </div>
 
-              {/* Expected Life */}
-              {/* <div className="col-sm-4">
-        <Label className="control-label font-weight-bold">Expected Life</Label>
-        <TextField
-          type="number"
-          value={row.expectedLife}
-          onChanged={(val) => this.handleRowChange(index, 'expectedLife', val)}
-        />
-      </div> */}
+              { }
+              { }
 
               <div className="d-flex justify-content-end">
                 <IconButton
@@ -1503,29 +1013,21 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
             </div>
 
             <div className="row">
-              {/* Add / Remove Buttons */}
+              { }
 
             </div>
           </div>
         ))}
 
-
-
-
         <div className='text-center'>
-          {/* <PrimaryButton
+          { }
+
+          <PrimaryButton
             onClick={() => this.BtnSubmitRequest('Submitted')}
             disabled={this.state.isSubmitting}
           >
             {this.state.isSubmitting ? <Spinner size={SpinnerSize.small} /> : "Submit"}
-          </PrimaryButton> */}
-
-<PrimaryButton
-  onClick={() => this.BtnSubmitRequest('Submitted')}
-  disabled={this.state.isSubmitting}
->
-  {this.state.isSubmitting ? <Spinner size={SpinnerSize.small} /> : "Submit"}
-</PrimaryButton>
+          </PrimaryButton>
 
           <PrimaryButton
             onClick={() => this.BtnSaveAsDraft('Draft')}
@@ -1541,5 +1043,3 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     );
   }
 }
-
-

@@ -76,62 +76,62 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
     });
   }
 
-  
-    public async checkUserInGroups(groups: any) {
-      try {
-        const spCrudObj = await useSPCRUD();
-        const userGroups = await spCrudObj.currentUserGroup(this.props);
-        if (!userGroups || userGroups.length === 0) {
-          console.log("User is not part of any group.");
-          return false;
-        }
-        const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
-        if (isUserInGroup) {
-          this.setState({ showhideEmployeeNameLab: true, OnBehalf: 'No', isOnBehalfDisabled: true })
-          console.log(`User exists in at least one of the specified groups.`);
-        } else {
-          this.setState({ showhideEmployeeNameLab: false, OnBehalf: 'No', isOnBehalfDisabled: false })
-          console.log(`User does not exist in any of the specified groups.`);
-        }
-      } catch (error) {
-        console.error("Error checking user in groups:", error);
-      }
-    }
-    public async checkUserInGroupsForHR2Tab(groups: any) {
-      try {
-        const spCrudObj = await useSPCRUD();
-        const userGroups = await spCrudObj.currentUserGroup(this.props);
-        if (!userGroups || userGroups.length === 0) {
-          console.log("User is not part of any group.");
-          return false;
-        }
-        const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
-        if (isUserInGroup) {
-          console.log(`User exists in at least one of the specified groups.`);
-          this.setState({ ShowHR2Tab: true })
-        }
-      } catch (error) {
-        console.error("Error checking user in groups:", error);
+
+  public async checkUserInGroups(groups: any) {
+    try {
+      const spCrudObj = await useSPCRUD();
+      const userGroups = await spCrudObj.currentUserGroup(this.props);
+      if (!userGroups || userGroups.length === 0) {
+        console.log("User is not part of any group.");
         return false;
       }
+      const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
+      if (isUserInGroup) {
+        this.setState({ showhideEmployeeNameLab: true, OnBehalf: 'No', isOnBehalfDisabled: true })
+        console.log(`User exists in at least one of the specified groups.`);
+      } else {
+        this.setState({ showhideEmployeeNameLab: false, OnBehalf: 'No', isOnBehalfDisabled: false })
+        console.log(`User does not exist in any of the specified groups.`);
+      }
+    } catch (error) {
+      console.error("Error checking user in groups:", error);
     }
-    public async checkUserInGroupsForHR1Tab(groups: any) {
-      try {
-        const spCrudObj = await useSPCRUD();
-        const userGroups = await spCrudObj.currentUserGroup(this.props);
-        if (!userGroups || userGroups.length === 0) {
-          console.log("User is not part of any group.");
-          return false;
-        }
-        const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
-        if (isUserInGroup) {
-          this.setState({ ShowHR1Tab: true })
-        }
-      } catch (error) {
-        console.error("Error checking user in groups:", error);
+  }
+  public async checkUserInGroupsForHR2Tab(groups: any) {
+    try {
+      const spCrudObj = await useSPCRUD();
+      const userGroups = await spCrudObj.currentUserGroup(this.props);
+      if (!userGroups || userGroups.length === 0) {
+        console.log("User is not part of any group.");
         return false;
       }
+      const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
+      if (isUserInGroup) {
+        console.log(`User exists in at least one of the specified groups.`);
+        this.setState({ ShowHR2Tab: true })
+      }
+    } catch (error) {
+      console.error("Error checking user in groups:", error);
+      return false;
     }
+  }
+  public async checkUserInGroupsForHR1Tab(groups: any) {
+    try {
+      const spCrudObj = await useSPCRUD();
+      const userGroups = await spCrudObj.currentUserGroup(this.props);
+      if (!userGroups || userGroups.length === 0) {
+        console.log("User is not part of any group.");
+        return false;
+      }
+      const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
+      if (isUserInGroup) {
+        this.setState({ ShowHR1Tab: true })
+      }
+    } catch (error) {
+      console.error("Error checking user in groups:", error);
+      return false;
+    }
+  }
 
 
   public HR2PendingDashboard = async () => {
@@ -198,89 +198,89 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
             <PivotItem linkText='HR2 Dashboard'>
               <div className='row'>
                 <div className={styles.tabnav + " " + 'col-md-2'}>
-                <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
-                <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
-                <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
+                  <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
+                  <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
+                  <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
                 </div>
                 <div className='col-md-10'>
                   <div className={styles.panelbody}>
-                  {this.state.activeTab === 'Pending' && (
-                    <div id="Pending" className="tabcontent active table-responsive">
-                      <h3>Pending</h3>
-                      <table className="table ">
-                        <tr>
-                          <th>Action</th>
-                          <th>VM ID</th>
-                          <th>EmployeeID</th>
-                          <th>EmployeeName</th>
-                          <th>Age</th>
-                          <th>Status</th>
-                        </tr>
-                        {
-                          this.state.HR2Dashboard.length > 0 ? this.state.HR2Dashboard.map((items) => {
-                            return (
-                              <tr>
-                                <td>
-                                <a href={'#/HR2ViewVehicle/' + items.ID}>
-                                  <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                    title='View'  />
+                    {this.state.activeTab === 'Pending' && (
+                      <div id="Pending" className="tabcontent active table-responsive">
+                        <h3>Pending</h3>
+                        <table className="table ">
+                          <tr>
+                            <th>Action</th>
+                            <th>VM ID</th>
+                            <th>EmployeeID</th>
+                            <th>EmployeeName</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                          </tr>
+                          {
+                            this.state.HR2Dashboard.length > 0 ? this.state.HR2Dashboard.map((items) => {
+                              return (
+                                <tr>
+                                  <td>
+                                    <a href={'#/HR2ViewVehicle/' + items.ID}>
+                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
+                                        title='View' />
 
-                                  </a>
-
-                                  {
-                                    items.Status === "Pending" &&
-                                    // <Link to={'/EditVehicle/' + items.ID}>
-                                    //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                    // </Link>
-                                    <a href={'#/HR2ApproveVehicle/'+ items.ID}>
-                                      <Icon iconName='CheckMark'  title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
 
+                                    {
+                                      items.Status === "Pending" &&
+                                      // <Link to={'/EditVehicle/' + items.ID}>
+                                      //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
+                                      // </Link>
+                                      <a href={'#/HR2ApproveVehicle/' + items.ID}>
+                                        <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
+                                      </a>
 
 
-                                  }
 
-                                </td>
+                                    }
 
-                                <td>{items.Title}</td>
-                                <td>{items.EmployeeCode}</td>
-                                <td>{items.EmployeeName}</td>
-                                <td>{items.Age}</td>
-                                <td>{items.Status}</td>
-                              </tr>
-                            )
-                          })
-                            : ""
-                        }
-                      </table>
+                                  </td>
 
-                    </div>
+                                  <td>{items.Title}</td>
+                                  <td>{items.EmployeeCode}</td>
+                                  <td>{items.EmployeeName}</td>
+                                  <td>{items.Age}</td>
+                                  <td>{items.Status}</td>
+                                </tr>
+                              )
+                            })
+                              : ""
+                          }
+                        </table>
+
+                      </div>
                     )}
-{this.state.activeTab === 'Approved' && (
+                    {this.state.activeTab === 'Approved' && (
 
-                    <div id="Approved" className="tabcontent">
-                      <h3>Approved</h3>
-                      <table className="table ">
-                        <tr>
-                          <th>Action</th>
-                          <th>VM ID</th>
-                          <th>EmployeeID</th>
-                          <th>EmployeeName</th>
-                          <th>Age</th>
-                          <th>Status</th>
-                        </tr>
-                        {
-                          this.state.HR2ApprovedDashboard.length > 0 ? this.state.HR2ApprovedDashboard.map((items) => {
-                            return (
-                              <tr>
-                                <td>
-                                <a href={'#/HR2ViewVehicle/' + items.ID}>
-                                  <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                    title='View'  />
+                      <div id="Approved" className="tabcontent">
+                        <h3>Approved</h3>
+                        <table className="table ">
+                          <tr>
+                            <th>Action</th>
+                            <th>VM ID</th>
+                            <th>EmployeeID</th>
+                            <th>EmployeeName</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                          </tr>
+                          {
+                            this.state.HR2ApprovedDashboard.length > 0 ? this.state.HR2ApprovedDashboard.map((items) => {
+                              return (
+                                <tr>
+                                  <td>
+                                    <a href={'#/HR2ViewVehicle/' + items.ID}>
+                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
+                                        title='View' />
 
-                                  </a>
+                                    </a>
 
-                                  {/* {
+                                    {/* {
                                     items.Status === "Pending" &&
                                     // <Link to={'/EditVehicle/' + items.ID}>
                                     //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
@@ -293,47 +293,47 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
 
                                   } */}
 
-                                </td>
+                                  </td>
 
-                                <td>{items.Title}</td>
-                                <td>{items.EmployeeCode}</td>
-                                <td>{items.EmployeeName}</td>
-                                <td>{items.Age}</td>
-                                <td>{items.Status}</td>
-                              </tr>
-                            )
-                          })
-                            : ""
-                        }
-                      </table>
-                    </div>
-                      )}
+                                  <td>{items.Title}</td>
+                                  <td>{items.EmployeeCode}</td>
+                                  <td>{items.EmployeeName}</td>
+                                  <td>{items.Age}</td>
+                                  <td>{items.Status}</td>
+                                </tr>
+                              )
+                            })
+                              : ""
+                          }
+                        </table>
+                      </div>
+                    )}
 
-{this.state.activeTab === 'Rejected' && (
+                    {this.state.activeTab === 'Rejected' && (
 
-                    <div id="Rejected" className="tabcontent">
-                      <h3>Rejected</h3>
-                      <table className="table ">
-                        <tr>
-                          <th>Action</th>
-                          <th>VM ID</th>
-                          <th>EmployeeID</th>
-                          <th>EmployeeName</th>
-                          <th>Age</th>
-                          <th>Status</th>
-                        </tr>
-                        {
-                          this.state.HR2RejectedDashboard.length > 0 ? this.state.HR2RejectedDashboard.map((items) => {
-                            return (
-                              <tr>
-                                <td>
-                                <a href={'#/HR2ViewVehicle/' + items.ID}>
-                                  <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                    title='View'  />
+                      <div id="Rejected" className="tabcontent">
+                        <h3>Rejected</h3>
+                        <table className="table ">
+                          <tr>
+                            <th>Action</th>
+                            <th>VM ID</th>
+                            <th>EmployeeID</th>
+                            <th>EmployeeName</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                          </tr>
+                          {
+                            this.state.HR2RejectedDashboard.length > 0 ? this.state.HR2RejectedDashboard.map((items) => {
+                              return (
+                                <tr>
+                                  <td>
+                                    <a href={'#/HR2ViewVehicle/' + items.ID}>
+                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
+                                        title='View' />
 
-                                  </a>
+                                    </a>
 
-                                  {/* {
+                                    {/* {
                                     items.Status === "Pending" &&
                                     // <Link to={'/EditVehicle/' + items.ID}>
                                     //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
@@ -346,21 +346,21 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
 
                                   } */}
 
-                                </td>
+                                  </td>
 
-                                <td>{items.Title}</td>
-                                <td>{items.EmployeeCode}</td>
-                                <td>{items.EmployeeName}</td>
-                                <td>{items.Age}</td>
-                                <td>{items.Status}</td>
-                              </tr>
-                            )
-                          })
-                            : ""
-                        }
-                      </table>
-                    </div>
-                                          )}
+                                  <td>{items.Title}</td>
+                                  <td>{items.EmployeeCode}</td>
+                                  <td>{items.EmployeeName}</td>
+                                  <td>{items.Age}</td>
+                                  <td>{items.Status}</td>
+                                </tr>
+                              )
+                            })
+                              : ""
+                          }
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

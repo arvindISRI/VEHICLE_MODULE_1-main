@@ -10,7 +10,7 @@ import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
 import * as yup from 'yup';
 import { Web } from '@pnp/sp/presets/all';
 import { BaseButton, Button, Checkbox, FontWeights, IconButton, IPersonaProps } from 'office-ui-fabric-react';
-// import { Link, useHistory } from 'react-router-dom';
+
 import useSPCRUD, { ISPCRUD } from '../../../../services/bal/spcrud';
 import SPCRUD from '../../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../../services/bal/PersonalAdvanceVehicleMaster';
@@ -105,7 +105,6 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       reqID: '',
       isClearable: true,
       isSearchable: true,
-     
 
       filteredOptions: [],
 
@@ -120,11 +119,8 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
-          expectedLife:0,
-          DatePurposeofWithdrawal:''
-
-
-
+          expectedLife: 0,
+          DatePurposeofWithdrawal: ''
 
         }
       ],
@@ -142,31 +138,28 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       typeOfVehicle1: '',
       typeOfVehicle: '',
 
-
-      HR1Response	:''	,
-      HR1Remark		:''	,
-      HR2Response		:''	,
-      HR2Remark		:''	,
-      GHResponse		:''	,
-      GHRemark:''	,
-      
+      HR1Response: '',
+      HR1Remark: '',
+      HR2Response: '',
+      HR2Remark: '',
+      GHResponse: '',
+      GHRemark: '',
 
     };
 
   }
   async componentDidMount() {
 
-   // document.getElementById('divLoading').style.display = 'block';
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
 
     this.setState({ VMId: VMId });
     await this.getAllPersonalAdvanceVehicle();
-await this.getAllPrevPersonalAdvanceHistory();
+    await this.getAllPrevPersonalAdvanceHistory();
 
     await this.getCurrentUser();
-    // await this.getEmployee();
+
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -183,164 +176,97 @@ await this.getAllPrevPersonalAdvanceHistory();
     });
   }
 
-  
-
-  public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest |any> => {
+  public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       let employeeData = results;
 
       var currentEmpResult = employeeData.filter((item) => {
         return item.ID == +this.state.VMId;
-    })
+      })
 
-    if(currentEmpResult && currentEmpResult.length>0){
+      if (currentEmpResult && currentEmpResult.length > 0) {
 
-      
-   
+        this.setState({
+          EmployeeInfodb: currentEmpResult,
+          AllEmployeeCollObj: [],
+          EmployeeName: currentEmpResult[0].EmployeeName,
+          DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
+          CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
+          EmployeeCode: '' + currentEmpResult[0].EmployeeCode,
+          DesignationTitle: currentEmpResult[0].Designation,
+          Age: (currentEmpResult[0].Age),
+          ExpenseDetails: {
+            TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+            TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
+            Totaldeductions: +currentEmpResult[0].TotalDeductions,
+            FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
+            RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
+            MakeModel: currentEmpResult[0].MakeModel,
+            CostofVehicle: currentEmpResult[0].CostOfVehicle,
+            NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
 
-      this.setState({
-        EmployeeInfodb: currentEmpResult,
-        AllEmployeeCollObj: [],
-        EmployeeName: currentEmpResult[0].EmployeeName,
-        DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
-        CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
-        EmployeeCode: ''+currentEmpResult[0].EmployeeCode,
-        DesignationTitle: currentEmpResult[0].Designation,
-        Age: (currentEmpResult[0].Age),
-        ExpenseDetails: {
-          TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
-          TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
-          Totaldeductions: +currentEmpResult[0].TotalDeductions,
-          FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
-          RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
-          MakeModel:currentEmpResult[0].MakeModel,
-          CostofVehicle:currentEmpResult[0].CostOfVehicle,
-          NameandAddressoftheSeller:currentEmpResult[0].SellerDetails,
+            AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
 
+            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
+              ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
+              : '',
+            Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
+              ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
+              : '',
+            ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
 
-          AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount?+currentEmpResult[0].PrevLoanAmount:0 ,
-          // Dateoffinalrepaymentofloan:currentEmpResult[0].PrevLoanDate?new Date(currentEmpResult[0].PrevLoanDate):null ,
-          // DateofAvailmentofLoan:currentEmpResult[0].PrevLoanRepaymentDate?new Date(currentEmpResult[0].PrevLoanRepaymentDate):null,
+          },
+          typeOfVehicle: currentEmpResult[0].VehicleType,
+          typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
 
-          DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
-          ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
-          : '',
-        Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
-          ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
-          : '',
-          ExpectedlifeofVehicle:currentEmpResult[0].ExpectedLife ||"",
+          ConditionOfVehicle: currentEmpResult[0].VehicleCondition,
+          yearOfManufacture1: currentEmpResult[0].ManufactureYear,
 
-
-        }          ,
-        typeOfVehicle:currentEmpResult[0].VehicleType,
-        typeOfVehicle1:currentEmpResult[0].PrevVehicleLoanType,
-
-        ConditionOfVehicle:currentEmpResult[0].VehicleCondition,
-        yearOfManufacture1:currentEmpResult[0].ManufactureYear,
-
-
-        HR1Response	:currentEmpResult[0].HR1Response,	
-        HR1Remark		:currentEmpResult[0].HR1Remark	,
-        HR2Response		:currentEmpResult[0].HR2Response	,
-        HR2Remark		:currentEmpResult[0].HR2Remark	,
-        GHResponse		:currentEmpResult[0].GHResponse	,
-        GHRemark:currentEmpResult[0].GHRemark,
+          HR1Response: currentEmpResult[0].HR1Response,
+          HR1Remark: currentEmpResult[0].HR1Remark,
+          HR2Response: currentEmpResult[0].HR2Response,
+          HR2Remark: currentEmpResult[0].HR2Remark,
+          GHResponse: currentEmpResult[0].GHResponse,
+          GHRemark: currentEmpResult[0].GHRemark,
 
         });
-    }
-     return currentEmpResult;
+      }
+      return currentEmpResult;
     });
   };
-
-  // public getAllPrevPersonalAdvanceHistory = async (): Promise<IPrevPersonalAdvanceHistory |any> => {
-  //   return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
-  //     let employeeDataHisty = results;
-
-  //     var currentEmpResultHistory = employeeDataHisty.filter((item) => {
-  //       return item.PersonalAdvanceVehicleId.Id== +this.state.VMId;
-  //   })
-
-  //   if(currentEmpResultHistory && currentEmpResultHistory.length>0){
-
-      
-   
-
-  //     this.setState({
-  //       EmployeeInfodb: currentEmpResultHistory,
-  //       AllEmployeeCollObj: [],
-       
-        
-  //     });
-  //   }
-  //    return currentEmpResultHistory;
-  //   });
-  // };
-
-  
-
-  // public getEmployee = async (): Promise<IEmployeeMaster> => {
-  //   return await PersonalAdvanceVehicleMasterOps().getEmployeeMaster(this.props).then(async (results) => {
-  //     let employeeData = results;
-  //     this.setState({
-  //       EmployeeInfodb: employeeData,
-  //       AllEmployeeCollObj: [],
-  //       EmployeeName: employeeData.EmployeeName,
-  //       DateOfJoining: employeeData.DateOfJoining ? new Date(employeeData.DateOfJoining) : null,
-  //       CurrentOfficeLocation: employeeData.CurrentOfficeLocation,
-
-  //       EmployeeIDId: employeeData.Id,
-  //       DependentType: "",
-  //       ActualClaimAmountLable: "",
-
-  //       CompanyEmail: employeeData.CompanyEmail,
-
-  //       EmployeeID: employeeData.EmployeeId,
-  //       DesignationId: employeeData.DesignationId,
-  //       DesignationTitle: employeeData.DesignationTitle,
-  //       DateofBirth: employeeData.DateofBirth,
-  //       Scale: employeeData.Scale,
-  //       Age: parseInt(employeeData.Age),
-  //       EmpType: employeeData.EmpType,
-
-  //     });
-  //     return employeeData;
-  //   });
-  // };
-
 
   public getAllPrevPersonalAdvanceHistory = async (): Promise<any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
       let employeeDataHisty = results;
-  
+
       var currentEmpResultHistory = employeeDataHisty.filter((item) => {
         return item.PersonalAdvanceVehicleId.Id == +this.state.VMId;
       });
-  
+
       if (currentEmpResultHistory && currentEmpResultHistory.length > 0) {
-  
+
         const vehicleRowsFromDB = currentEmpResultHistory.map((item) => ({
           DatePurposeofWithdrawal: item.WithdrawalDetails || '',
           PAmount: item.WithdrawalAmount || 0,
           POutstandingLoanasOnDate: item.OutstandingLoan || 0,
-          PDatePurposeofWithdrawal:item.FinalRepaymentDate? new Date(item.FinalRepaymentDate).toISOString().split('T')[0]: '',// item.FinalRepaymentDate || '',
+          PDatePurposeofWithdrawal: item.FinalRepaymentDate ? new Date(item.FinalRepaymentDate).toISOString().split('T')[0] : '',
           expectedLife: item.ExpectedLife || 0,
           Id: item.ID || 0,
           PersonalAdvanceVehicleId: item.PersonalAdvanceVehicleId || 0
 
         }));
-  
+
         this.setState({
           EmployeeInfodb: currentEmpResultHistory,
-          vehicleRows: vehicleRowsFromDB, 
+          vehicleRows: vehicleRowsFromDB,
           AllEmployeeCollObj: [],
         });
       }
-  
+
       return currentEmpResultHistory;
     });
   };
 
-  
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
@@ -376,64 +302,42 @@ await this.getAllPrevPersonalAdvanceHistory();
 
   };
 
-  
-
   public BtnRejectRequest = async () => {
 
-    if(this.state.ExpenseDetails.HR1Remarks=="" || this.state.ExpenseDetails.HR1Remarks==null || this.state.ExpenseDetails.HR1Remarks==undefined){
+    if (this.state.ExpenseDetails.HR1Remarks == "" || this.state.ExpenseDetails.HR1Remarks == null || this.state.ExpenseDetails.HR1Remarks == undefined) {
       swal("Notice", "Please Fill Remarks.", "info");
-        return false ;//window.location.href = '#/InitiatorDashboard';
-      
+      return false;
 
     }
     var VehicleRequestItem
-      VehicleRequestItem = {
+    VehicleRequestItem = {
 
-        HR1Response:'Rejected by HR1',
-        HR2Response:'Pending with HR2',
-        GHResponse:'Pending with Group Head',
-        Status:'Rejected',
+      HR1Response: 'Rejected by HR1',
+      HR2Response: 'Pending with HR2',
+      GHResponse: 'Pending with Group Head',
+      Status: 'Rejected',
 
-        HR1ApproverNameId: this.state.Currentuser.Id,
-        HR1ResponseDate: new Date(),
-        HR1Remark:this.state.ExpenseDetails.HR1Remarks
+      HR1ApproverNameId: this.state.Currentuser.Id,
+      HR1ResponseDate: new Date(),
+      HR1Remark: this.state.ExpenseDetails.HR1Remarks
 
-      };
-    
+    };
 
     this.setState({ isSubmitting: true });
 
     const spCrudObj = await useSPCRUD();
 
-
-
     try {
-     await spCrudObj.updateData("PersonalAdvanceVehicle",this.state.VMId, VehicleRequestItem, this.props);
-      // this.setState({ reqID: req.data.ID });
-      //  alert('Vehicle Request Rejected Successfully!');
-      // window.location.href='#/HR1Dashboard'
+      await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
+
       swal("Success", "Vehicle Request Rejected Successfully!", "success").then(() => {
         window.location.href = '#/HR1Dashboard';
       });
-      // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      // alert('Vehicle Request Submitted Successfully!');
-      // const RequestNoGenerate = {
-      //   Title: 'VM000' + req.data.ID
-      // };
 
-    //  await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-
-      // if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
-      //   await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      //   alert('Vehicle Request Submitted Successfully!');
-      // } else {
-      //   alert('Vehicle Request Submitted without attachments.');
-      // }
     } catch (error) {
       console.error("Submission error:", error);
       swal("Notice", "Error submitting the vehicle request.", "info");
 
-      // alert("Error submitting the vehicle request.");
     } finally {
       this.setState({ isSubmitting: false });
     }
@@ -441,47 +345,30 @@ await this.getAllPrevPersonalAdvanceHistory();
 
   public BtnApproveHR1Request = async () => {
     var VehicleRequestItem
-      VehicleRequestItem = {
+    VehicleRequestItem = {
 
-        HR1Response:'Approved by HR1',
-        HR2Response:'Pending with HR2',
-        GHResponse:'Pending with Group Head',
-        Status:'Pending',
+      HR1Response: 'Approved by HR1',
+      HR2Response: 'Pending with HR2',
+      GHResponse: 'Pending with Group Head',
+      Status: 'Pending',
 
-        HR1ApproverNameId: this.state.Currentuser.Id,
-        HR1ResponseDate: new Date(),
-        HR1Remark:this.state.ExpenseDetails.HR1Remarks
+      HR1ApproverNameId: this.state.Currentuser.Id,
+      HR1ResponseDate: new Date(),
+      HR1Remark: this.state.ExpenseDetails.HR1Remarks
 
-      };
-    
+    };
 
     this.setState({ isSubmitting: true });
 
     const spCrudObj = await useSPCRUD();
 
-
-
     try {
-     await spCrudObj.updateData("PersonalAdvanceVehicle",this.state.VMId, VehicleRequestItem, this.props);
-      // this.setState({ reqID: req.data.ID });
-      // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      // alert('Vehicle Request Submitted Successfully!');
-      // window.location.href='#/HR1Dashboard'
+      await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
+
       swal("Success", "Vehicle Request Approved Successfully!", "success").then(() => {
         window.location.href = '#/HR1Dashboard';
       });
-      // const RequestNoGenerate = {
-      //   Title: 'VM000' + req.data.ID
-      // };
 
-    //  await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-
-      // if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
-      //   await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      //   alert('Vehicle Request Submitted Successfully!');
-      // } else {
-      //   alert('Vehicle Request Submitted without attachments.');
-      // }
     } catch (error) {
       console.error("Submission error:", error);
       swal("Notice", "Error submitting the vehicle request.", "info");
@@ -510,8 +397,6 @@ await this.getAllPrevPersonalAdvanceHistory();
       }
     }
   }
-
-
 
   private getYearOptions(): IDropdownOption[] {
     const currentYear = new Date().getFullYear();
@@ -667,8 +552,8 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance) </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
-              value={this.state.ExpenseDetails.TotalEmolumentspm}
+              <TextField type='number' disabled
+                value={this.state.ExpenseDetails.TotalEmolumentspm}
                 name="ExpenseDetails.TotalEmolumentspm"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -685,8 +570,8 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
-               value={this.state.ExpenseDetails.Totaldeductions}
+              <TextField type='number' disabled
+                value={this.state.ExpenseDetails.Totaldeductions}
 
                 name="ExpenseDetails.Totaldeductions"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
@@ -706,7 +591,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 20)  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
+              <TextField type='number' disabled
                 value={this.state.ExpenseDetails.RepaymenttenureinEMI}
 
                 name="ExpenseDetails.RepaymenttenureinEMI"
@@ -749,7 +634,7 @@ await this.getAllPrevPersonalAdvanceHistory();
             </div>
             <div className="col-sm-2">
               <TextField disabled
-              value={this.state.ExpenseDetails.MakeModel}
+                value={this.state.ExpenseDetails.MakeModel}
 
                 name="ExpenseDetails.MakeModel"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
@@ -776,7 +661,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               { }
 
               <TextField
-                 type="number"  disabled
+                type="number" disabled
                 name="ExpenseDetails.CostofVehicle"
                 value={this.state.ExpenseDetails.CostofVehicle || ''}
                 onChanged={(value: string) => {
@@ -799,7 +684,7 @@ await this.getAllPrevPersonalAdvanceHistory();
             <div className="col-sm-2">
               <TextField
                 multiline
-                name="ExpenseDetails.NameandAddressoftheSeller" disabled 
+                name="ExpenseDetails.NameandAddressoftheSeller" disabled
                 value={this.state.ExpenseDetails.NameandAddressoftheSeller || ''}
                 onChanged={(value: string) => {
                   this.setState(prevState => ({
@@ -813,14 +698,14 @@ await this.getAllPrevPersonalAdvanceHistory();
 
             </div>
 
-            <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle =='Second Hand')}>
+            <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)  </Label>
             </div>
-            <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle =='Second Hand')}>
+            <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
 
               <TextField
 
-                 type='text'  disabled
+                type='text' disabled
                 name="ExpenseDetails.ExpectedlifeofVehicle"
                 value={this.state.ExpenseDetails.ExpectedlifeofVehicle}
                 onChanged={(value: string) => {
@@ -859,7 +744,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Amount of Loan availed  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='number'  disabled
+              <TextField type='number' disabled
                 value={this.state.ExpenseDetails.AmountofLoanavailed}
 
                 name="ExpenseDetails.AmountofLoanavailed"
@@ -868,24 +753,24 @@ await this.getAllPrevPersonalAdvanceHistory();
               <Label className="control-Label font-weight-bold">Date of Availment of Loan   </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='date'  disabled
-              value={this.state.ExpenseDetails.DateofAvailmentofLoan}
+              <TextField type='date' disabled
+                value={this.state.ExpenseDetails.DateofAvailmentofLoan}
 
                 name="ExpenseDetails.DateofAvailmentofLoan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}/>   
-                
-                               </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)} />
+
+            </div>
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Date of final repayment of loan  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField  type='date'  disabled
-              value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
+              <TextField type='date' disabled
+                value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
 
                 name="ExpenseDetails.Dateoffinalrepaymentofloan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}/>  </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
 
           </div>
 
@@ -913,7 +798,7 @@ await this.getAllPrevPersonalAdvanceHistory();
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Amount</Label>
                 <TextField
-                   type="number"  disabled
+                  type="number" disabled
                   value={row.PAmount}
                   onChanged={(val) => this.handleRowChange(index, 'PAmount', val)}
                 />
@@ -937,104 +822,69 @@ await this.getAllPrevPersonalAdvanceHistory();
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date of Final Repayment </Label>
                 <TextField
-                   type='date'  disabled  
+                  type='date' disabled
                   value={row.PDatePurposeofWithdrawal}
                   onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
                 />
               </div>
-              {/* <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Expected Life</Label>
-                <TextField
-                  type="number" disabled
-                  value={row.expectedLife}
-                  onChanged={(val) => this.handleRowChange(index, 'expectedLife', val)}
-                />
-              </div> */}
+              { }
 
-              {/* <div className="col-sm-4 d-flex align-items-center mt-4">
-                <IconButton
-                  iconProps={{ iconName: 'Add' }}
-                  title="Add Row"
-                  onClick={this.addRow}
-                />
-                {this.state.vehicleRows.length > 1 && (
-                  <IconButton
-                    iconProps={{ iconName: 'Delete' }}
-                    title="Remove Row"
-                    onClick={() => this.removeRow(index)}
-                  />
-                )}
-              </div> */}
+              { }
             </div>
           </div>
         ))}
 
-        
-        
-                <hr></hr>
-        
-        
-        
-                <div className="row form-group">
-                  <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
-                    <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-                  </div>
-                  <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
-                    <TextField
-                      multiline disabled
-                      value={this.state.HR1Remark}
-                    />
-        
-                  </div>
-        
-                  <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
-                    <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-                  </div>
-                  <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
-                    <TextField
-                      multiline disabled
-                      value={this.state.HR2Remark}
-                    /> </div>
-        
-        <div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
-        <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-                  </div>
-                  <div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
-                  <TextField
-                      multiline disabled
-                      value={this.state.GHRemark}
-                    /> </div>
-        
-                </div>
-        
+        <hr></hr>
 
-
-<div className="row form-group">
-<div className="col-sm-6">
-              <Label className="control-Label font-weight-bold">Remarks</Label>
-              <TextField type='text'
-                name="ExpenseDetails.HR1Remarks"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+        <div className="row form-group">
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1')}>
+            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
           </div>
-          
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR1Remark}
+            />
+
           </div>
-          <div className='text-center'>
-            <PrimaryButton onClick={() => this.BtnApproveHR1Request()} >Approve</PrimaryButton>
-            <PrimaryButton onClick={() => this.BtnRejectRequest()} >Reject</PrimaryButton>
-            <a  href={'#/HR1Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
-            </div>
 
-        
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2')}>
+            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR2Remark}
+            /> </div>
 
-         
-
-            
+          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved')}>
+            <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved')}>
+            <TextField
+              multiline disabled
+              value={this.state.GHRemark}
+            /> </div>
 
         </div>
 
-      
+        <div className="row form-group">
+          <div className="col-sm-6">
+            <Label className="control-Label font-weight-bold">Remarks</Label>
+            <TextField type='text'
+              name="ExpenseDetails.HR1Remarks"
+              onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+          </div>
+
+        </div>
+        <div className='text-center'>
+          <PrimaryButton onClick={() => this.BtnApproveHR1Request()} >Approve</PrimaryButton>
+          <PrimaryButton onClick={() => this.BtnRejectRequest()} >Reject</PrimaryButton>
+          <a href={'#/HR1Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
+        </div>
+
+      </div>
+
     );
   }
 }
-
-
