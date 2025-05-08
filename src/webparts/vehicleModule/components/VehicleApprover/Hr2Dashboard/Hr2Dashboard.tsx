@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import styles from '../../VehicleModule.module.scss'
 import * as moment from 'moment'
-// import { IChsModuleProps } from '../IChsModuleProps';
+
 import UseUtilities, { IUtilities } from '../../../../services/bal/utilities';
 import Utilities from '../../../../services/bal/utilities';
 import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
@@ -26,8 +26,7 @@ import { SPComponentLoader } from '@microsoft/sp-loader';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Items, sp } from 'sp-pnp-js';
 import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers';
-// import Swal from "sweetalert2";
-// import Select from "react-select";
+
 import Select from 'react-select-plus';
 import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
@@ -37,8 +36,6 @@ import { SPFxAdalClient } from '@pnp/common';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
-
-
 export default class HR2Dashboard extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
@@ -46,25 +43,20 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       HR2Dashboard: [],
       HR2ApprovedDashboard: [],
       HR2RejectedDashboard: [],
-      activeTab: 'Pending' // <- Default tab on load
+      activeTab: 'Pending' 
 
     };
-
 
   }
   async componentDidMount() {
 
-    // await this.checkUserInGroups(["HR1_Group", "HR2_Group"]);
-    // await this.checkUserInGroupsForHR1Tab(["HR1_Group"]);
     await this.checkUserInGroupsForHR2Tab(["HR2_Group"]);
-
 
     await this.getCurrentHR2();
     await this.HR2PendingDashboard();
 
     await this.HR2ApprovedDashboards();
     await this.HR2RejectedDashboards();
-
 
   }
 
@@ -75,7 +67,6 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       return cuser;
     });
   }
-
 
   public async checkUserInGroups(groups: any) {
     try {
@@ -133,7 +124,6 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
     }
   }
 
-
   public HR2PendingDashboard = async () => {
     return await PersonalAdvanceVehicleMasterOps().getHR2Dashboard(this.props).then(HR2Pending => {
       this.setState({ HR2Dashboard: HR2Pending });
@@ -156,30 +146,13 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
     });
   };
 
-  // public openPage(pageName, elmnt, color) {
-  //   var i, tabcontent, tablinks;
-  //   tabcontent = document.getElementsByClassName("tabcontent");
-  //   for (i = 0; i < tabcontent.length; i++) {
-  //     tabcontent[i].style.display = "none";
-  //   }
-  //   tablinks = document.getElementsByClassName("tablink");
-  //   for (i = 0; i < tablinks.length; i++) {
-  //     tablinks[i].style.backgroundColor = "";
-  //   }
-  //   document.getElementById(pageName).style.display = "block";
-  //   elmnt.style.backgroundColor = color;
-  // }
-
   public setActiveTab = (tabName: string) => {
     this.setState({ activeTab: tabName });
   };
 
-
   public render(): React.ReactElement<IVehicleModuleProps> {
     const { selectedOption } = this.state;
     const value = selectedOption;
-    // const valueq = selectedOptionCHBx ;  
-
 
     return (
       <div className='widget-card' hidden={!this.state.ShowHR2Tab}>
@@ -188,10 +161,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
             <Icon iconName='ContactInfo' />
           </span>
           <h2 className='widget-card-head-title'>HR2 Dashboard</h2>
-          {/* <span className='widget-card-head-btn'>
-            <PrimaryButton data-automation-id='btn-update-profile' iconProps={{ iconName: 'EditContact' }}
-              text='Add Vehicle' onClick={() => { window.location.href = '#/AddVehicle' }} />
-          </span> */}
+          {}
         </div>
         <div className='widget-card-body'>
           <Pivot linkSize={PivotLinkSize.large} linkFormat={PivotLinkFormat.tabs} >
@@ -229,14 +199,10 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
 
                                     {
                                       items.Status === "Pending" &&
-                                      // <Link to={'/EditVehicle/' + items.ID}>
-                                      //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                      // </Link>
+
                                       <a href={'#/HR2ApproveVehicle/' + items.ID}>
                                         <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                       </a>
-
-
 
                                     }
 
@@ -280,18 +246,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
 
                                     </a>
 
-                                    {/* {
-                                    items.Status === "Pending" &&
-                                    // <Link to={'/EditVehicle/' + items.ID}>
-                                    //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                    // </Link>
-                                    <a href={'#/HR2ApproveVehicle/' + items.ID}>
-                                      <Icon iconName='CheckMark'  title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                    </a>
-
-
-
-                                  } */}
+                                    {}
 
                                   </td>
 
@@ -333,18 +288,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
 
                                     </a>
 
-                                    {/* {
-                                    items.Status === "Pending" &&
-                                    // <Link to={'/EditVehicle/' + items.ID}>
-                                    //   <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                    // </Link>
-                                    <a href={'#/HR2ApproveVehicle/' + items.ID}>
-                                      <Icon iconName='CheckMark'  title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                    </a>
-
-
-
-                                  } */}
+                                    {}
 
                                   </td>
 
@@ -370,14 +314,12 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
         </div>
       </div>
 
-
     );
   }
 
   public editDraftItem = async (Items) => {
     console.log(Items);
     const ApproverViewReqItems = Items;
-
 
   }
   viewItem(items: any): void {
