@@ -173,7 +173,7 @@ export default class ViewVehicle extends React.Component<IVehicleModuleProps, an
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
-
+    
 
     this.setState({ VMId: VMId });
     this.calculateEMICheck();
