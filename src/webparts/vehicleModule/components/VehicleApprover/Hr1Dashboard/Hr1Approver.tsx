@@ -284,15 +284,15 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       [name.split('.')[1]]: numericValue
     };
 
-    if (name === "ExpenseDetails.TotalEmolumentspm") {
+    if (name == "ExpenseDetails.TotalEmolumentspm") {
       updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
     }
 
-    const totalEmoluments = name === "ExpenseDetails.TotalEmolumentspm"
+    const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
       ? numericValue
       : this.state.ExpenseDetails.TotalEmolumentspm || 0;
 
-    const totalDeductions = name === "ExpenseDetails.Totaldeductions"
+    const totalDeductions = name == "ExpenseDetails.Totaldeductions"
       ? numericValue
       : this.state.ExpenseDetails.Totaldeductions || 0;
 
@@ -430,7 +430,7 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     option: IDropdownOption,
     index?: number
   ): void => {
-    const isSecondHand = option.key.toString() === 'Second Hand';
+    const isSecondHand = option.key.toString() == 'Second Hand';
 
     this.setState(prevState => ({
       ConditionOfVehicle: option.key.toString(),
@@ -654,7 +654,10 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
 
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
+                            <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
+              <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
+                <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
+
             </div>
 
             <div className="col-sm-2">
@@ -836,37 +839,39 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
 
         <hr></hr>
 
-        <div className="row form-group">
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1')}>
-            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR1Remark}
-            />
+      <div className="row form-group">
+               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+                 <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+               </div>
+               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+                 <TextField
+                   multiline disabled
+                   value={this.state.HR1Remark}
+                 />
+     
+               </div>
+     
+               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+                 <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+               </div>
+               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+                 <TextField
+                   multiline disabled
+                   value={this.state.HR2Remark}
+                 /> </div>
+     
+               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+                 <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+               </div>
+               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+                 <TextField
+                   multiline disabled
+                   value={this.state.GHRemark}
+                 /> </div>
+     
+             </div>
 
-          </div>
 
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2')}>
-            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR2Remark}
-            /> </div>
-
-          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved')}>
-            <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved')}>
-            <TextField
-              multiline disabled
-              value={this.state.GHRemark}
-            /> </div>
-
-        </div>
 
         <div className="row form-group">
           <div className="col-sm-6">

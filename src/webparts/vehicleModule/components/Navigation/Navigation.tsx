@@ -55,7 +55,7 @@ export default class Navigation extends React.Component<IVehicleModuleProps, ITo
           try {
             const spCrudObj = await useSPCRUD();
             const userGroups = await spCrudObj.currentUserGroup(this.props);
-            if (!userGroups || userGroups.length === 0) {
+            if (!userGroups || userGroups.length == 0) {
               console.log("User is not part of any group.");
               return false;
             }
@@ -73,7 +73,7 @@ export default class Navigation extends React.Component<IVehicleModuleProps, ITo
           try {
             const spCrudObj = await useSPCRUD();
             const userGroups = await spCrudObj.currentUserGroup(this.props);
-            if (!userGroups || userGroups.length === 0) {
+            if (!userGroups || userGroups.length == 0) {
               console.log("User is not part of any group.");
               return false;
             }

@@ -72,7 +72,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
-      if (!userGroups || userGroups.length === 0) {
+      if (!userGroups || userGroups.length == 0) {
         console.log("User is not part of any group.");
         return false;
       }
@@ -92,7 +92,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
-      if (!userGroups || userGroups.length === 0) {
+      if (!userGroups || userGroups.length == 0) {
         console.log("User is not part of any group.");
         return false;
       }
@@ -110,7 +110,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
-      if (!userGroups || userGroups.length === 0) {
+      if (!userGroups || userGroups.length == 0) {
         console.log("User is not part of any group.");
         return false;
       }
@@ -174,7 +174,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                 </div>
                 <div className='col-md-10'>
                   <div className={styles.panelbody}>
-                    {this.state.activeTab === 'Pending' && (
+                    {this.state.activeTab == 'Pending' && (
                       <div id="Pending" className="tabcontent active table-responsive">
                         <h3>Pending</h3>
                         <table className="table ">
@@ -198,7 +198,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                                     </a>
 
                                     {
-                                      items.Status === "Pending" &&
+                                      items.Status == "Pending" &&
 
                                       <a href={'#/HR2ApproveVehicle/' + items.ID}>
                                         <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
@@ -222,7 +222,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
 
                       </div>
                     )}
-                    {this.state.activeTab === 'Approved' && (
+                    {this.state.activeTab == 'Approved' && (
 
                       <div id="Approved" className="tabcontent">
                         <h3>Approved</h3>
@@ -264,7 +264,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                       </div>
                     )}
 
-                    {this.state.activeTab === 'Rejected' && (
+                    {this.state.activeTab == 'Rejected' && (
 
                       <div id="Rejected" className="tabcontent">
                         <h3>Rejected</h3>

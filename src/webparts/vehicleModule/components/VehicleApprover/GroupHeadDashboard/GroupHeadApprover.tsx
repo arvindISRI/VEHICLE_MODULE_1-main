@@ -235,10 +235,10 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
     const { isConfirmed, applicationCorrect, disciplinaryPending, isEMILessThan50Percent } = this.state;
 
     const total =
-      (isConfirmed === 'Yes' ? 1 : 0) +
-      (applicationCorrect === 'Yes' ? 1 : 0) +
-      (disciplinaryPending === 'No' ? 1 : 0) +
-      (isEMILessThan50Percent === 'Yes' ? 1 : 0);
+      (isConfirmed == 'Yes' ? 1 : 0) +
+      (applicationCorrect == 'Yes' ? 1 : 0) +
+      (disciplinaryPending == 'No' ? 1 : 0) +
+      (isEMILessThan50Percent == 'Yes' ? 1 : 0);
 
     this.setState({ totalMarks: total });
   };
@@ -365,15 +365,15 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
       [name.split('.')[1]]: numericValue
     };
 
-    if (name === "ExpenseDetails.TotalEmolumentspm") {
+    if (name == "ExpenseDetails.TotalEmolumentspm") {
       updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
     }
 
-    const totalEmoluments = name === "ExpenseDetails.TotalEmolumentspm"
+    const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
       ? numericValue
       : this.state.ExpenseDetails.TotalEmolumentspm || 0;
 
-    const totalDeductions = name === "ExpenseDetails.Totaldeductions"
+    const totalDeductions = name == "ExpenseDetails.Totaldeductions"
       ? numericValue
       : this.state.ExpenseDetails.Totaldeductions || 0;
 
@@ -405,7 +405,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
       TotalMarks: this.state.totalMarks,
       IsEmiLessThan50: this.state.isEMILessThan50Percent,
       VehicleLoanEMI: this.state.VehicleLoanEMI || 0,
-      EligibleLoanAmount: this.state.eligibleLoanAmount,
+      EligibleLoanAmount: +this.state.eligibleLoanAmount,
       ApplicationCorrect: this.state.applicationCorrect,
       DisciplinaryProceedings: this.state.disciplinaryPending,
       SanctionAmount: this.state.recommendedSanctionAmount,
@@ -443,7 +443,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
       VehicleLoanEMI
     } = this.state;
 
-    if (totalMarks === 4 && recommendedSanctionAmount <= 0) {
+    if (totalMarks == 4 && recommendedSanctionAmount <= 0) {
       return swal("Warning", "Please Add Sanction Amount", "warning");
     }
 
@@ -482,7 +482,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
       TotalMarks: this.state.totalMarks,
       IsEmiLessThan50: this.state.isEMILessThan50Percent,
       VehicleLoanEMI: this.state.VehicleLoanEMI || 0,
-      EligibleLoanAmount: this.state.eligibleLoanAmount,
+      EligibleLoanAmount: +this.state.eligibleLoanAmount,
       ApplicationCorrect: this.state.applicationCorrect,
       DisciplinaryProceedings: this.state.disciplinaryPending,
       SanctionAmount: this.state.recommendedSanctionAmount,
@@ -562,7 +562,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
     option: IDropdownOption,
     index?: number
   ): void => {
-    const isSecondHand = option.key.toString() === 'Second Hand';
+    const isSecondHand = option.key.toString() == 'Second Hand';
 
     this.setState(prevState => ({
       ConditionOfVehicle: option.key.toString(),
@@ -786,7 +786,10 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
 
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
+                            <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
+              <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
+                <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
+
             </div>
 
             <div className="col-sm-2">
@@ -968,37 +971,39 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
 
         <hr></hr>
 
-        <div className="row form-group">
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1')}>
-            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR1Remark}
-            />
+       <div className="row form-group">
+                <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+                  <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+                </div>
+                <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+                  <TextField
+                    multiline disabled
+                    value={this.state.HR1Remark}
+                  />
+      
+                </div>
+      
+                <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+                  <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+                </div>
+                <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+                  <TextField
+                    multiline disabled
+                    value={this.state.HR2Remark}
+                  /> </div>
+      
+                <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+                  <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+                </div>
+                <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+                  <TextField
+                    multiline disabled
+                    value={this.state.GHRemark}
+                  /> </div>
+      
+              </div>
 
-          </div>
 
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2')}>
-            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR2Remark}
-            /> </div>
-
-          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved')}>
-            <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved')}>
-            <TextField
-              multiline disabled
-              value={this.state.GHRemark}
-            /> </div>
-
-        </div>
 
         <h2>Recommendation by Group Head</h2>
 
@@ -1023,7 +1028,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
               <td style={cellStyle}>
                 <input type="text" name="isConfirmed" value={this.state.isConfirmed} readOnly />
               </td>
-              <td style={cellStyle}>{this.state.isConfirmed === 'Yes' ? 1 : 0}</td>
+              <td style={cellStyle}>{this.state.isConfirmed == 'Yes' ? 1 : 0}</td>
             </tr>
 
             <tr>
@@ -1035,7 +1040,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
                   <option value="No">No</option>
                 </select>
               </td>
-              <td style={cellStyle}>{this.state.applicationCorrect === 'Yes' ? 1 : 0}</td>
+              <td style={cellStyle}>{this.state.applicationCorrect == 'Yes' ? 1 : 0}</td>
             </tr>
 
             <tr>
@@ -1068,7 +1073,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
                   <option value="No">No</option>
                 </select>
               </td>
-              <td style={cellStyle}>{this.state.disciplinaryPending === 'No' ? 1 : 0}</td>
+              <td style={cellStyle}>{this.state.disciplinaryPending == 'No' ? 1 : 0}</td>
             </tr>
 
             <tr>
@@ -1105,7 +1110,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
               <td style={cellStyle}>
                 <input type="text" value={this.state.isEMILessThan50Percent} readOnly />
               </td>
-              <td style={cellStyle}>{this.state.isEMILessThan50Percent === 'Yes' ? 1 : 0}</td>
+              <td style={cellStyle}>{this.state.isEMILessThan50Percent == 'Yes' ? 1 : 0}</td>
             </tr>
 
             <tr>

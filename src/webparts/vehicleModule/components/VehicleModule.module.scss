@@ -79,6 +79,13 @@ $ms-color-white: #fff;
 
 
 :global{
+
+  .ms-CommandBar{
+    display:block !important;
+    height:auto !important;
+    
+    }
+    
   .CanvasSection.CanvasSection-col {
     &.CanvasSection-xl12 {
       .OneColumnSection-1 {

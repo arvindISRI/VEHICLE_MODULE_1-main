@@ -21,7 +21,7 @@ export interface IUtilities {
 export default function Utilities() {
     const filterData = async (jsonData: any, filterValue: string, includeColumns: Array<string>) => {
         const lowercasedValue = filterValue.toLowerCase().trim();
-        if (lowercasedValue === "") return jsonData;
+        if (lowercasedValue == "") return jsonData;
         else {
             const filteredData = jsonData.filter(item => {
                 // return Object.keys(item).some(key =>

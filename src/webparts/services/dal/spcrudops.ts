@@ -151,7 +151,7 @@ export default async function SPCRUDOPS(): Promise<ISPCRUDOPS> {
         const query = startItemId > 0 ? `ID gt ${startItemId}` : "";
         let web = Web(props.currentSPContext.pageContext.web.absoluteUrl);
         const items: any[] = await web.lists.getByTitle(listName).items.select(columnsToRetrieve).expand(columnsToExpand).filter(query).orderBy(orderby.column, orderby.isAscending).top(itemCount).getAll();
-        if (items.length === 0) {
+        if (items.length == 0) {
             return items1;
         }else{
             items1.push(...items);

@@ -207,15 +207,15 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       [name.split('.')[1]]: numericValue
     };
 
-    if (name === "ExpenseDetails.TotalEmolumentspm") {
+    if (name == "ExpenseDetails.TotalEmolumentspm") {
       updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
     }
 
-    const totalEmoluments = name === "ExpenseDetails.TotalEmolumentspm"
+    const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
       ? numericValue
       : this.state.ExpenseDetails.TotalEmolumentspm || 0;
 
-    const totalDeductions = name === "ExpenseDetails.Totaldeductions"
+    const totalDeductions = name == "ExpenseDetails.Totaldeductions"
       ? numericValue
       : this.state.ExpenseDetails.Totaldeductions || 0;
 
@@ -233,7 +233,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       return false;
     };
 
-    const isEmpty = (val) => val === '' || val === null || val === undefined || val === 0;
+    const isEmpty = (val) => val == '' || val == null || val == undefined || val == 0;
 
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
@@ -249,7 +249,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
 
     let VehicleRequestItem = null;
 
-    if (SubmittionType === 'Submitted') {
+    if (SubmittionType == 'Submitted') {
       VehicleRequestItem = {
         EmployeeCode: this.state.EmployeeID,
         EmployeeName: this.state.EmployeeName,
@@ -431,7 +431,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     option: IDropdownOption,
     index?: number
   ): void => {
-    const isSecondHand = option.key.toString() === 'Second Hand';
+    const isSecondHand = option.key.toString() == 'Second Hand';
 
     this.setState(prevState => ({
       ConditionOfVehicle: option.key.toString(),
@@ -497,7 +497,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
 
   public render(): React.ReactElement<IVehicleModuleProps> {
     return (
-      <div >
+      <div  >
 
         <h1>Add Form</h1>
 
@@ -552,7 +552,8 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
 
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance) </Label>
+              <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance)<span style={{color:'red'}}>*</span> </Label>
+              
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -560,7 +561,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">25% of the total emoluments </Label>
+              <Label className="control-Label font-weight-bold">25% of the total emoluments   <span style={{color:'red'}}>*</span></Label>
+            
+
             </div>
             <div className="col-sm-2">
               <TextField type='number' disabled
@@ -569,7 +572,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance </Label>
+              <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance <span style={{color:'red'}}>*</span></Label>
+              
+
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -580,6 +585,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">50% of Net emoluments p.m. </Label>
+
             </div>
             <div className="col-sm-2">
               <TextField type='number' disabled
@@ -588,7 +594,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 name="ExpenseDetails.FityofNetemoluments"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120)  </Label>
+              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120)  <span style={{color:'red'}}>*</span> </Label>
+             
+
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -606,7 +614,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
 
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Type of Vehicle</Label>
+              <Label className="control-Label font-weight-bold">Type of Vehicle <span style={{color:'red'}}>*</span></Label>
+              
+
             </div>
             <div className="col-sm-2">
               <Dropdown placeHolder="Select vehicle type" options={vehicleOptions}
@@ -615,7 +625,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Whether new or second hand </Label>
+              <Label className="control-Label font-weight-bold">Whether new or second hand <span style={{color:'red'}}>*</span> </Label>
+              
+
             </div>
 
             <div className="col-sm-2">
@@ -628,7 +640,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
 
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Make/ Model  </Label>
+              <Label className="control-Label font-weight-bold">Make/ Model  <span style={{color:'red'}}>*</span> </Label>
+             
+
             </div>
             <div className="col-sm-2">
               <TextField
@@ -638,7 +652,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Year of Manufacture  </Label>
+              <Label className="control-Label font-weight-bold">Year of Manufacture  <span style={{color:'red'}}>*</span> </Label>
+              
+
             </div>
             <div className="col-sm-2">
               <Dropdown
@@ -650,7 +666,11 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
 
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
+                            <Label className="control-Label font-weight-bold">Cost of Vehicle <span style={{color:'red'}}>*</span>  </Label>
+
+              <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
+                <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
+
             </div>
 
             <div className="col-sm-2">
@@ -674,7 +694,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer  </Label>
+              <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer <span style={{color:'red'}}>*</span>  </Label>
             </div>
 
             <div className="col-sm-2">
@@ -695,7 +715,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
 
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow}>
-              <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)  </Label>
+              <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{color:'red'}}>*</span>   </Label>
             </div>
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow}>
 

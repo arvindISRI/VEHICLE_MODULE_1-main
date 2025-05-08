@@ -112,7 +112,7 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
       Status: '',
       isClearable: true,
       isSearchable: true,
-     
+
 
       filteredOptions: [],
 
@@ -166,12 +166,12 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
       VehicleLoanEMI: 0,
 
 
-      HR1Response	:''	,
-HR1Remark		:''	,
-HR2Response		:''	,
-HR2Remark		:''	,
-GHResponse		:''	,
-GHRemark:''	,
+      HR1Response: '',
+      HR1Remark: '',
+      HR2Response: '',
+      HR2Remark: '',
+      GHResponse: '',
+      GHRemark: '',
 
     };
 
@@ -241,10 +241,10 @@ GHRemark:''	,
     const { isConfirmed, applicationCorrect, disciplinaryPending, isEMILessThan50Percent } = this.state;
 
     const total =
-      (isConfirmed === 'Yes' ? 1 : 0) +
-      (applicationCorrect === 'Yes' ? 1 : 0) +
-      (disciplinaryPending === 'No' ? 1 : 0) +
-      (isEMILessThan50Percent === 'Yes' ? 1 : 0);
+      (isConfirmed == 'Yes' ? 1 : 0) +
+      (applicationCorrect == 'Yes' ? 1 : 0) +
+      (disciplinaryPending == 'No' ? 1 : 0) +
+      (isEMILessThan50Percent == 'Yes' ? 1 : 0);
 
     this.setState({ totalMarks: total });
   };
@@ -295,9 +295,9 @@ GHRemark:''	,
 
   //   let total = 0;
 
-  //   if (isConfirmed === 'Yes') total += 1;
-  //   if (disciplinaryProceedings === 'No') total += 1;
-  //   if (applicationCorrect === 'Yes') total += 1;
+  //   if (isConfirmed == 'Yes') total += 1;
+  //   if (disciplinaryProceedings == 'No') total += 1;
+  //   if (applicationCorrect == 'Yes') total += 1;
 
   //   const fiftyPercentOfSalary = parseFloat(netMonthlySalary) * 0.5;
   //   if (parseFloat(vehicleLoanEMI) < fiftyPercentOfSalary) total += 1;
@@ -348,23 +348,23 @@ GHRemark:''	,
 
 
 
-          totalMarks:  currentEmpResult[0].TotalMarks,
-          isEMILessThan50Percent:  currentEmpResult[0].IsEmiLessThan50,
-          VehicleLoanEMI:  currentEmpResult[0].VehicleLoanEMI || 0,
-          eligibleLoanAmount:  currentEmpResult[0].EligibleLoanAmount,
-          applicationCorrect:  currentEmpResult[0].ApplicationCorrect,
-          disciplinaryPending:  currentEmpResult[0].DisciplinaryProceedings,
+          totalMarks: currentEmpResult[0].TotalMarks,
+          isEMILessThan50Percent: currentEmpResult[0].IsEmiLessThan50,
+          VehicleLoanEMI: currentEmpResult[0].VehicleLoanEMI || 0,
+          eligibleLoanAmount: currentEmpResult[0].EligibleLoanAmount,
+          applicationCorrect: currentEmpResult[0].ApplicationCorrect,
+          disciplinaryPending: currentEmpResult[0].DisciplinaryProceedings,
           recommendedSanctionAmount: currentEmpResult[0].SanctionAmount,
 
-      
 
 
-          HR1Response	:currentEmpResult[0].HR1Response,	
-          HR1Remark		:currentEmpResult[0].HR1Remark	,
-          HR2Response		:currentEmpResult[0].HR2Response	,
-          HR2Remark		:currentEmpResult[0].HR2Remark	,
-          GHResponse		:currentEmpResult[0].GHResponse	,
-          GHRemark:currentEmpResult[0].GHRemark,	
+
+          HR1Response: currentEmpResult[0].HR1Response,
+          HR1Remark: currentEmpResult[0].HR1Remark,
+          HR2Response: currentEmpResult[0].HR2Response,
+          HR2Remark: currentEmpResult[0].HR2Remark,
+          GHResponse: currentEmpResult[0].GHResponse,
+          GHRemark: currentEmpResult[0].GHRemark,
 
           ExpenseDetails: {
             TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
@@ -509,15 +509,15 @@ GHRemark:''	,
       [name.split('.')[1]]: numericValue
     };
 
-    if (name === "ExpenseDetails.TotalEmolumentspm") {
+    if (name == "ExpenseDetails.TotalEmolumentspm") {
       updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
     }
 
-    const totalEmoluments = name === "ExpenseDetails.TotalEmolumentspm"
+    const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
       ? numericValue
       : this.state.ExpenseDetails.TotalEmolumentspm || 0;
 
-    const totalDeductions = name === "ExpenseDetails.Totaldeductions"
+    const totalDeductions = name == "ExpenseDetails.Totaldeductions"
       ? numericValue
       : this.state.ExpenseDetails.Totaldeductions || 0;
 
@@ -708,7 +708,7 @@ GHRemark:''	,
     option: IDropdownOption,
     index?: number
   ): void => {
-    const isSecondHand = option.key.toString() === 'Second Hand';
+    const isSecondHand = option.key.toString() == 'Second Hand';
 
     this.setState(prevState => ({
       ConditionOfVehicle: option.key.toString(),
@@ -768,10 +768,10 @@ GHRemark:''	,
   // handleChange = (e) => {
   //   const { name, value } = e.target;
 
-  //   if (name === 'disciplinaryPending') {
-  //     const marks = value === 'No' ? 1 : 0;
+  //   if (name == 'disciplinaryPending') {
+  //     const marks = value == 'No' ? 1 : 0;
   //     this.setState({ [name]: value, marks });
-  //   } else if (name === 'eligibleLoanAmount') {
+  //   } else if (name == 'eligibleLoanAmount') {
   //     const cappedValue = Math.min(parseFloat(value || 0), 1000000);
   //     this.setState({ [name]: cappedValue });
   //   } else {
@@ -948,6 +948,9 @@ GHRemark:''	,
             </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'New')} > (as per enclosed invoice) </span>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
+
             </div>
 
             <div className="col-sm-2">
@@ -1152,37 +1155,39 @@ GHRemark:''	,
 
 
 
-        <div className="row form-group">
-          <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
-            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR1Response=='Approved by HR1')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR1Remark}
-            />
+      <div className="row form-group">
+               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+                 <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+               </div>
+               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+                 <TextField
+                   multiline disabled
+                   value={this.state.HR1Remark}
+                 />
+     
+               </div>
+     
+               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+                 <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+               </div>
+               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+                 <TextField
+                   multiline disabled
+                   value={this.state.HR2Remark}
+                 /> </div>
+     
+               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+                 <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+               </div>
+               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+                 <TextField
+                   multiline disabled
+                   value={this.state.GHRemark}
+                 /> </div>
+     
+             </div>
 
-          </div>
 
-          <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
-            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR2Response=='Approved by HR2')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR2Remark}
-            /> </div>
-
-<div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
-<Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.Status=='Approved')}>
-          <TextField
-              multiline disabled
-              value={this.state.GHRemark}
-            /> </div>
-
-        </div>
 
 
 
@@ -1209,9 +1214,9 @@ GHRemark:''	,
               <tr>
                 <td style={cellStyle}>1. Whether Confirmed (Auto Populated)</td>
                 <td style={cellStyle}>
-                  <input type="text"  name="isConfirmed" value={this.state.isConfirmed} readOnly />
+                  <input type="text" name="isConfirmed" value={this.state.isConfirmed} readOnly />
                 </td>
-                <td style={cellStyle}>{this.state.isConfirmed === 'Yes' ? 1 : 0}</td>
+                <td style={cellStyle}>{this.state.isConfirmed == 'Yes' ? 1 : 0}</td>
               </tr>
 
               <tr>
@@ -1223,13 +1228,13 @@ GHRemark:''	,
                     <option value="No">No</option>
                   </select>
                 </td>
-                <td style={cellStyle}>{this.state.applicationCorrect === 'Yes' ? 1 : 0}</td>
+                <td style={cellStyle}>{this.state.applicationCorrect == 'Yes' ? 1 : 0}</td>
               </tr>
 
               <tr>
                 <td style={cellStyle}>3. Cost of the Vehicle (Auto Populated)</td>
                 <td style={cellStyle}>
-                  <input type="number" disabled value={this.state.ExpenseDetails.CostofVehicle || ''}  />
+                  <input type="number" disabled value={this.state.ExpenseDetails.CostofVehicle || ''} />
                 </td>
                 <td style={cellStyle}>-</td>
               </tr>
@@ -1256,7 +1261,7 @@ GHRemark:''	,
                     <option value="No">No</option>
                   </select>
                 </td>
-                <td style={cellStyle}>{this.state.disciplinaryPending === 'No' ? 1 : 0}</td>
+                <td style={cellStyle}>{this.state.disciplinaryPending == 'No' ? 1 : 0}</td>
               </tr>
 
               <tr>
@@ -1293,7 +1298,7 @@ GHRemark:''	,
                 <td style={cellStyle}>
                   <input type="text" disabled value={this.state.isEMILessThan50Percent} readOnly />
                 </td>
-                <td style={cellStyle}>{this.state.isEMILessThan50Percent === 'Yes' ? 1 : 0}</td>
+                <td style={cellStyle}>{this.state.isEMILessThan50Percent == 'Yes' ? 1 : 0}</td>
               </tr>
 
               <tr>

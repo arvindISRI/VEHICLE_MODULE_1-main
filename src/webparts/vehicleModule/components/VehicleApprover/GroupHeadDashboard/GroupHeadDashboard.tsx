@@ -65,7 +65,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
-      if (!userGroups || userGroups.length === 0) {
+      if (!userGroups || userGroups.length == 0) {
         console.log("User is not part of any group.");
         return false;
       }
@@ -85,7 +85,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
-      if (!userGroups || userGroups.length === 0) {
+      if (!userGroups || userGroups.length == 0) {
         console.log("User is not part of any group.");
         return false;
       }
@@ -104,7 +104,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
-      if (!userGroups || userGroups.length === 0) {
+      if (!userGroups || userGroups.length == 0) {
         console.log("User is not part of any group.");
         return false;
       }
@@ -121,7 +121,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
-      if (!userGroups || userGroups.length === 0) {
+      if (!userGroups || userGroups.length == 0) {
         console.log("User is not part of any group.");
         return false;
       }
@@ -207,7 +207,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
                 </div>
                 <div className='col-md-10'>
                   <div className={styles.panelbody}>
-                    {this.state.activeTab === 'Pending' && (
+                    {this.state.activeTab == 'Pending' && (
 
                       <div id="Pending" className="tabcontent active table-responsive">
                         <h3>Pending</h3>
@@ -232,7 +232,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
                                     </a>
 
                                     {
-                                      items.Status === "Pending" &&
+                                      items.Status == "Pending" &&
 
                                       <a href={'#/GroupHeadApproveVehicle/' + items.ID}>
                                         <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
@@ -256,7 +256,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
 
                       </div>
                     )}
-                    {this.state.activeTab === 'Approved' && (
+                    {this.state.activeTab == 'Approved' && (
                       <div id="Approved" className="tabcontent">
                         <h3>Approved</h3>
                         <table className="table ">
@@ -297,7 +297,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
                       </div>
                     )}
 
-                    {this.state.activeTab === 'Rejected' && (
+                    {this.state.activeTab == 'Rejected' && (
                       <div id="Rejected" className="tabcontent">
                         <h3>Rejected</h3>
                         <table className="table ">
