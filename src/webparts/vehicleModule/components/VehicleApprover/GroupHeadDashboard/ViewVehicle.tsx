@@ -1220,7 +1220,7 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
               </tr>
 
               <tr>
-                <td style={cellStyle}>2. Application Correct</td>
+                <td style={cellStyle}>2. Particulars mentioned in the application are correct</td>
                 <td style={cellStyle}>
                   <select name="applicationCorrect" disabled value={this.state.applicationCorrect} onChange={this.handleChange} required>
                     <option value="">--Select--</option>

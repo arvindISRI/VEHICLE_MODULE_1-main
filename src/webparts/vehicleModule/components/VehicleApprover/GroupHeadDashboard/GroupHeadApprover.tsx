@@ -452,7 +452,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
     }
 
     if (!applicationCorrect) {
-      return swal("Warning", "Please Select Application Correct", "warning");
+      return swal("Warning", "Please Select Particulars mentioned in the application are correct", "warning");
     }
 
     if (!eligibleLoanAmount || eligibleLoanAmount > 1000000) {
@@ -1032,7 +1032,7 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
             </tr>
 
             <tr>
-              <td style={cellStyle}>2. Application Correct</td>
+              <td style={cellStyle}>2. Particulars mentioned in the application are correct</td>
               <td style={cellStyle}>
                 <select name="applicationCorrect" value={this.state.applicationCorrect} onChange={this.handleChange} required>
                   <option value="">--Select--</option>
