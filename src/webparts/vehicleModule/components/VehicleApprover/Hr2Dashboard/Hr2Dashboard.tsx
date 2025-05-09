@@ -30,23 +30,128 @@ import { IVehicleModuleProps } from '../../IVehicleModuleProps';
 import { SPFxAdalClient } from '@pnp/common';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-export default class HR2Dashboard extends React.Component<IVehicleModuleProps, any> {
+export default class Hr2Dashboard extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
     this.state = {
       HR2Dashboard: [],
       HR2ApprovedDashboard: [],
       HR2RejectedDashboard: [],
-      activeTab: 'Pending' 
+      ShowHR2Tab: false,
+      activeTab: 'Pending',
+      // filteredData: [],            // Filtered data after search
+       ApprovedFilter:[],
+    PendingfilteredData:[],
+    RejectedfilteredData:[],
+    PendingHR2Dashboardfiltered:[],
+    ApprovedHR2Dashboardfiltered:[],
+    RejectedHR2Dashboardfiltered:[],
+    PedingFilter:[],
+    RejectedFilter:[],
+
+
+
+      currentPage: 1,
+      itemsPerPage: 5,
+      searchTerm: ''
     };
   }
   async componentDidMount() {
-    await this.checkUserInGroupsForHR2Tab(["HR2_Group"]);
     await this.getCurrentHR2();
+    await this.checkUserInGroupsForHR2Tab(["HR2_Group"]);
     await this.HR2PendingDashboard();
     await this.HR2ApprovedDashboards();
     await this.HR2RejectedDashboards();
+
+
   }
+
+// pagination and common filter search--
+ 
+
+
+PendinghandleSearch = (e) => {
+  const term = e.target.value.toLowerCase();
+  const PendingHR2Dashboardfiltered = this.state.HR2Dashboard.filter(item =>
+    item.EmployeeCode.toLowerCase().includes(term) ||
+    item.EmployeeName.toLowerCase().includes(term) ||
+    item.Title.toLowerCase().includes(term) ||
+    item.Status.toLowerCase().includes(term)
+  );
+  this.setState({ searchTerm: term, PedingFilter: PendingHR2Dashboardfiltered, currentPage: 1 });
+}
+PendinghandlePageChange = (direction) => {
+  const { currentPage } = this.state;
+  if (direction === 'prev' && currentPage > 1) {
+    this.setState({ currentPage: currentPage - 1 });
+  } else if (direction === 'next' && currentPage < this.PendingpageCount()) {
+    this.setState({ currentPage: currentPage + 1 });
+  }
+}
+PendingpageCount = () => {
+  return Math.ceil(this.state.PedingFilter.length / this.state.itemsPerPage);
+}
+
+
+
+
+  ApprovedhandleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    const ApprovedHR2Dashboardfiltered = this.state.HR2ApprovedDashboard.filter(item =>
+      item.EmployeeCode.toLowerCase().includes(term) ||
+      item.EmployeeName.toLowerCase().includes(term) ||
+      item.Title.toLowerCase().includes(term) ||
+      item.Status.toLowerCase().includes(term)
+    );
+    this.setState({ searchTerm: term, ApprovedFilter: ApprovedHR2Dashboardfiltered, currentPage: 1 });
+  }
+  ApprovedhandlePageChange = (direction) => {
+    const { currentPage } = this.state;
+    if (direction === 'prev' && currentPage > 1) {
+      this.setState({ currentPage: currentPage - 1 });
+    } else if (direction === 'next' && currentPage < this.ApprovedpageCount()) {
+      this.setState({ currentPage: currentPage + 1 });
+    }
+  }
+  ApprovedpageCount = () => {
+    return Math.ceil(this.state.ApprovedFilter.length / this.state.itemsPerPage);
+  }
+
+
+
+  
+
+
+  
+  RejectedhandleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    const RejectedHR2Dashboardfiltered = this.state.HR2RejectedDashboard.filter(item =>
+      item.EmployeeCode.toLowerCase().includes(term) ||
+      item.EmployeeName.toLowerCase().includes(term) ||
+      item.Title.toLowerCase().includes(term) ||
+      item.Status.toLowerCase().includes(term)
+    );
+    this.setState({ searchTerm: term, RejectedFilter: RejectedHR2Dashboardfiltered, currentPage: 1 });
+  }
+  RejectedhandlePageChange = (direction) => {
+    const { currentPage } = this.state;
+    if (direction === 'prev' && currentPage > 1) {
+      this.setState({ currentPage: currentPage - 1 });
+    } else if (direction === 'next' && currentPage < this.RejectedpageCount()) {
+      this.setState({ currentPage: currentPage + 1 });
+    }
+  }
+  RejectedpageCount = () => {
+    return Math.ceil(this.state.RejectedFilter.length / this.state.itemsPerPage);
+  }
+
+
+
+
+
+
+
+  // 
   public getCurrentHR2 = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -54,6 +159,9 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       return cuser;
     });
   }
+  public setActiveTab = (tabName: string) => {
+    this.setState({ activeTab: tabName });
+  };
   public async checkUserInGroups(groups: any) {
     try {
       const spCrudObj = await useSPCRUD();
@@ -102,7 +210,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       }
       const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
       if (isUserInGroup) {
-        this.setState({ ShowHR1Tab: true })
+        this.setState({ ShowHR2Tab: true })
       }
     } catch (error) {
       console.error("Error checking user in groups:", error);
@@ -113,6 +221,9 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
     return await PersonalAdvanceVehicleMasterOps().getHR2Dashboard(this.props).then(HR2Pending => {
       this.setState({ HR2Dashboard: HR2Pending });
       console.log(HR2Pending);
+      const PendingHR2Dashboardfiltered = this.state.HR2Dashboard;
+      this.setState({ PedingFilter: PendingHR2Dashboardfiltered, currentPage: 1 });
+  
       return HR2Pending;
       console.log(HR2Pending);
     });
@@ -120,21 +231,40 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
   public HR2ApprovedDashboards = async () => {
     return await PersonalAdvanceVehicleMasterOps().getHR2ApprovedDashboard(this.props).then(HR2Approved => {
       this.setState({ HR2ApprovedDashboard: HR2Approved });
+
+      // const HR2Dashboardfiltered = this.state.HR2ApprovedDashboard;
+      // this.setState({ ApprovedFilter: HR2Dashboardfiltered, currentPage: 1 });
+    
+      const ApprovedHR2Dashboardfiltered = this.state.HR2ApprovedDashboard;
+      this.setState({ ApprovedFilter: ApprovedHR2Dashboardfiltered, currentPage: 1 });
+
       return HR2Approved;
     });
   };
   public HR2RejectedDashboards = async () => {
     return await PersonalAdvanceVehicleMasterOps().getHR2RejectedDashboard(this.props).then(HR2Rejected => {
       this.setState({ HR2RejectedDashboard: HR2Rejected });
+      const RejectedHR2Dashboardfiltered = this.state.HR2RejectedDashboard;
+      this.setState({ RejectedFilter: RejectedHR2Dashboardfiltered, currentPage: 1 });
+
       return HR2Rejected;
     });
-  };
-  public setActiveTab = (tabName: string) => {
-    this.setState({ activeTab: tabName });
   };
   public render(): React.ReactElement<IVehicleModuleProps> {
     const { selectedOption } = this.state;
     const value = selectedOption;
+    const { PedingFilter,ApprovedFilter,RejectedFilter, currentPage, itemsPerPage, searchTerm } = this.state;
+    
+
+    // Pagination logic
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const PendingcurrentItems = this.state.PedingFilter.slice(startIndex, startIndex + itemsPerPage);
+    const ApprovedcurrentItems = this.state.ApprovedFilter.slice(startIndex, startIndex + itemsPerPage);
+    const RejectedcurrentItems = this.state.RejectedFilter.slice(startIndex, startIndex + itemsPerPage);
+    // ApprovedFilter
+    // PendingfilteredData
+    // RejectedfilteredData
+
     return (
       <div className='widget-card' hidden={!this.state.ShowHR2Tab}>
         <div className='widget-card-head'>
@@ -142,7 +272,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
             <Icon iconName='ContactInfo' />
           </span>
           <h2 className='widget-card-head-title'>HR2 Dashboard</h2>
-          {}
+          { }
         </div>
         <div className='widget-card-body'>
           <Pivot linkSize={PivotLinkSize.large} linkFormat={PivotLinkFormat.tabs} >
@@ -158,114 +288,181 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                     {this.state.activeTab == 'Pending' && (
                       <div id="Pending" className="tabcontent active table-responsive">
                         <h3>Pending</h3>
-                        <table className="table ">
-                          <tr>
-                            <th>Action</th>
-                            <th>VM ID</th>
-                            <th>EmployeeID</th>
-                            <th>EmployeeName</th>
-                            <th>Age</th>
-                            <th>Status</th>
-                          </tr>
-                          {
-                            this.state.HR2Dashboard.length > 0 ? this.state.HR2Dashboard.map((items) => {
-                              return (
-                                <tr>
-                                  <td>
-                                    <a href={'#/HR2ViewVehicle/' + items.ID}>
-                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                        title='View' />
+
+                        <input
+                          type="text"
+                          placeholder="Search..."
+                          value={searchTerm}
+                          onChange={this.PendinghandleSearch}
+                          style={{ marginBottom: '10px', padding: '5px' }}
+                        />
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Action</th>
+                              <th>VM ID</th>
+                              <th>EmployeeID</th>
+                              <th>EmployeeName</th>
+                              <th>Age</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {PendingcurrentItems.length > 0 ? PendingcurrentItems.map(items => (
+                              <tr key={items.ID}>
+                                <td>
+                                  <a href={'#/HR2ViewVehicle/' + items.ID}>
+                                    <Icon iconName='View' style={{ cursor: 'pointer' }} title='View' />
+                                  </a>
+                                  {items.Status === "Pending" &&
+                                    <a href={'#/HR2ApproveVehicle/' + items.ID}>
+                                      <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
-                                    {
-                                      items.Status == "Pending" &&
-                                      <a href={'#/HR2ApproveVehicle/' + items.ID}>
-                                        <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
-                                      </a>
-                                    }
-                                  </td>
-                                  <td>{items.Title}</td>
-                                  <td>{items.EmployeeCode}</td>
-                                  <td>{items.EmployeeName}</td>
-                                  <td>{items.Age}</td>
-                                  <td>{items.Status}</td>
-                                </tr>
-                              )
-                            })
-                              : ""
-                          }
+                                  }
+                                </td>
+                                <td>{items.Title}</td>
+                                <td>{items.EmployeeCode}</td>
+                                <td>{items.EmployeeName}</td>
+                                <td>{items.Age}</td>
+                                <td>{items.Status}</td>
+                              </tr>
+                            )) : (
+                              <tr>
+  <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
+    No Data Available
+  </td>
+</tr>
+                            )}
+                          </tbody>
                         </table>
+
+                        {/* Pagination Controls */}
+                        <div style={{ marginTop: '10px' }}>
+                          <button onClick={() => this.PendinghandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
+                          <span style={{ margin: '0 10px' }}>Page {currentPage} of {this.PendingpageCount()}</span>
+                          <button onClick={() => this.PendinghandlePageChange('next')} disabled={currentPage === this.PendingpageCount()}>Next</button>
+                        </div>
+
                       </div>
                     )}
+
+                    
                     {this.state.activeTab == 'Approved' && (
                       <div id="Approved" className="tabcontent">
                         <h3>Approved</h3>
-                        <table className="table ">
-                          <tr>
-                            <th>Action</th>
-                            <th>VM ID</th>
-                            <th>EmployeeID</th>
-                            <th>EmployeeName</th>
-                            <th>Age</th>
-                            <th>Status</th>
-                          </tr>
-                          {
-                            this.state.HR2ApprovedDashboard.length > 0 ? this.state.HR2ApprovedDashboard.map((items) => {
-                              return (
-                                <tr>
-                                  <td>
-                                    <a href={'#/HR2ViewVehicle/' + items.ID}>
-                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                        title='View' />
+                        
+                        <input
+                          type="text"
+                          placeholder="Search..."
+                          value={searchTerm}
+                          onChange={this.ApprovedhandleSearch}
+                          style={{ marginBottom: '10px', padding: '5px' }}
+                        />
+    <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Action</th>
+                              <th>VM ID</th>
+                              <th>EmployeeID</th>
+                              <th>EmployeeName</th>
+                              <th>Age</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {ApprovedcurrentItems.length > 0 ? ApprovedcurrentItems.map(items => (
+                              <tr key={items.ID}>
+                                <td>
+                                  <a href={'#/HR2ViewVehicle/' + items.ID}>
+                                    <Icon iconName='View' style={{ cursor: 'pointer' }} title='View' />
+                                  </a>
+                                  {/* {items.Status === "Pending" &&
+                                    <a href={'#/HR2ApproveVehicle/' + items.ID}>
+                                      <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
-                                    {}
-                                  </td>
-                                  <td>{items.Title}</td>
-                                  <td>{items.EmployeeCode}</td>
-                                  <td>{items.EmployeeName}</td>
-                                  <td>{items.Age}</td>
-                                  <td>{items.Status}</td>
-                                </tr>
-                              )
-                            })
-                              : ""
-                          }
+                                  } */}
+                                </td>
+                                <td>{items.Title}</td>
+                                <td>{items.EmployeeCode}</td>
+                                <td>{items.EmployeeName}</td>
+                                <td>{items.Age}</td>
+                                <td>{items.Status}</td>
+                              </tr>
+                            )) : (
+                              <tr>
+  <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
+    No Data Available
+  </td>
+</tr>
+                            )}
+                          </tbody>
                         </table>
+
+                        {/* Pagination Controls */}
+                        <div style={{ marginTop: '10px' }}>
+                          <button onClick={() => this.ApprovedhandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
+                          <span style={{ margin: '0 10px' }}>Page {currentPage} of {this.ApprovedpageCount()}</span>
+                          <button onClick={() => this.ApprovedhandlePageChange('next')} disabled={currentPage === this.ApprovedpageCount()}>Next</button>
+                        </div>
                       </div>
                     )}
                     {this.state.activeTab == 'Rejected' && (
                       <div id="Rejected" className="tabcontent">
                         <h3>Rejected</h3>
-                        <table className="table ">
-                          <tr>
-                            <th>Action</th>
-                            <th>VM ID</th>
-                            <th>EmployeeID</th>
-                            <th>EmployeeName</th>
-                            <th>Age</th>
-                            <th>Status</th>
-                          </tr>
-                          {
-                            this.state.HR2RejectedDashboard.length > 0 ? this.state.HR2RejectedDashboard.map((items) => {
-                              return (
-                                <tr>
-                                  <td>
-                                    <a href={'#/HR2ViewVehicle/' + items.ID}>
-                                      <Icon iconName='View' style={{ cursor: 'pointer' }}
-                                        title='View' />
+                        
+                        <input
+                          type="text"
+                          placeholder="Search..."
+                          value={searchTerm}
+                          onChange={this.RejectedhandleSearch}
+                          style={{ marginBottom: '10px', padding: '5px' }}
+                        />
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Action</th>
+                              <th>VM ID</th>
+                              <th>EmployeeID</th>
+                              <th>EmployeeName</th>
+                              <th>Age</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {RejectedcurrentItems.length > 0 ? RejectedcurrentItems.map(items => (
+                              <tr key={items.ID}>
+                                <td>
+                                  <a href={'#/HR2ViewVehicle/' + items.ID}>
+                                    <Icon iconName='View' style={{ cursor: 'pointer' }} title='View' />
+                                  </a>
+                                  {/* {items.Status === "Pending" &&
+                                    <a href={'#/HR2ApproveVehicle/' + items.ID}>
+                                      <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
-                                    {}
-                                  </td>
-                                  <td>{items.Title}</td>
-                                  <td>{items.EmployeeCode}</td>
-                                  <td>{items.EmployeeName}</td>
-                                  <td>{items.Age}</td>
-                                  <td>{items.Status}</td>
-                                </tr>
-                              )
-                            })
-                              : ""
-                          }
+                                  } */}
+                                </td>
+                                <td>{items.Title}</td>
+                                <td>{items.EmployeeCode}</td>
+                                <td>{items.EmployeeName}</td>
+                                <td>{items.Age}</td>
+                                <td>{items.Status}</td>
+                              </tr>
+                            )) : (
+                              <tr>
+  <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
+    No Data Available
+  </td>
+</tr>
+                            )}
+                          </tbody>
                         </table>
+
+                        {/* Pagination Controls */}
+                        <div style={{ marginTop: '10px' }}>
+                          <button onClick={() => this.RejectedhandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
+                          <span style={{ margin: '0 10px' }}>Page {currentPage} of {this.RejectedpageCount()}</span>
+                          <button onClick={() => this.RejectedhandlePageChange('next')} disabled={currentPage === this.RejectedpageCount()}>Next</button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -276,12 +473,5 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
         </div>
       </div>
     );
-  }
-  public editDraftItem = async (Items) => {
-    console.log(Items);
-    const ApproverViewReqItems = Items;
-  }
-  viewItem(items: any): void {
-    throw new Error('Method not implemented.');
   }
 }

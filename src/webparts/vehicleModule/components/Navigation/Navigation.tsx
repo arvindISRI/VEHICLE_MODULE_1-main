@@ -117,10 +117,10 @@ export default class Navigation extends React.Component<IVehicleModuleProps, ITo
                             name: 'User Dashboard', url: '#/', icon: 'ContactInfo', key: 'UserDash'
                         },
                         {
-                            name: 'HR1  Dashboard', url: '#/HR1Dashboard', iconProps: { iconName: 'WorkFlow' }, key: 'HR2Dashboard'
+                            name: 'HR1  Dashboard', url: '#/HR1Dashboard', iconProps: { iconName: 'WorkFlow' }, key: 'HR1Dashboard'
                         },
                         {
-                            name: 'HR2  Dashboard', url: '#/HR2Dashboard', iconProps: { iconName: 'WorkFlow' }, key: 'HR1Dashboard'
+                            name: 'HR2  Dashboard', url: '#/HR2Dashboard', iconProps: { iconName: 'WorkFlow' }, key: 'HR2Dashboard'
                         },
                         {
                             name: 'Group Head  Dashboard', url: '#/GroupHeadDashboard', iconProps: { iconName: 'WorkFlow' }, key: 'GroupHeadDashboard'

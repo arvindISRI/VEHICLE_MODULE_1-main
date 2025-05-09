@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
-import styles from '../../VehicleModule.module.scss'
+import styles from '../../../VehicleModule.module.scss'
 import * as moment from 'moment'
-import UseUtilities, { IUtilities } from '../../../../services/bal/utilities';
-import Utilities from '../../../../services/bal/utilities';
+import UseUtilities, { IUtilities } from '../../../../../services/bal/utilities';
+import Utilities from '../../../../../services/bal/utilities';
 import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
 import * as yup from 'yup';
 import { Web } from '@pnp/sp/presets/all';
 import { BaseButton, Button, Checkbox, FontWeights, IPersonaProps } from 'office-ui-fabric-react';
 import { Link, useHistory } from 'react-router-dom';
-import useSPCRUD, { ISPCRUD } from '../../../../services/bal/spcrud';
-import SPCRUD from '../../../../services/bal/spcrud';
-import PersonalAdvanceVehicleMasterOps from '../../../../services/bal/PersonalAdvanceVehicleMaster';
-import { IEmployeeMaster } from '../../../../services/interface/IEmployeeMaster';
+import useSPCRUD, { ISPCRUD } from '../../../../../services/bal/spcrud';
+import SPCRUD from '../../../../../services/bal/spcrud';
+import PersonalAdvanceVehicleMasterOps from '../../../../../services/bal/PersonalAdvanceVehicleMaster';
+import { IEmployeeMaster } from '../../../../../services/interface/IEmployeeMaster';
 import { keys } from '@microsoft/sp-lodash-subset';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
@@ -25,27 +25,27 @@ import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers';
 import Select from 'react-select-plus';
 import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
-import { ENV_CONFIG } from '../../../../../Enviroment/envConfig';
-import { IVehicleModuleProps } from '../../IVehicleModuleProps';
+import { ENV_CONFIG } from '../../../../../../Enviroment/envConfig';
+import { IVehicleModuleProps } from '../../../IVehicleModuleProps';
 import { SPFxAdalClient } from '@pnp/common';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-export default class GroupHeadDashboard extends React.Component<IVehicleModuleProps, any> {
+export default class PendingGHDashboard extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      GroupHeadDashboard: [],
-      GroupHeadApprovedDashboard: [],
-      GroupHeadRejectedDashboard: [],
-      ShowGHTab: false,
+      HR1Dashboard: [],
+      HR1ApprovedDashboard: [],
+      HR1RejectedDashboard: [],
+      ShowHR1Tab: false,
       activeTab: 'Pending',
       // filteredData: [],            // Filtered data after search
        ApprovedFilter:[],
     PendingfilteredData:[],
     RejectedfilteredData:[],
-    PendingGroupHeadDashboardfiltered:[],
-    ApprovedGroupHeadDashboardfiltered:[],
-    RejectedGroupHeadDashboardfiltered:[],
+    PendingHR1Dashboardfiltered:[],
+    ApprovedHR1Dashboardfiltered:[],
+    RejectedHR1Dashboardfiltered:[],
     PedingFilter:[],
     RejectedFilter:[],
 
@@ -57,11 +57,11 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
     };
   }
   async componentDidMount() {
-    await this.getCurrentGroupHead();
-    await this.checkUserInGroupsForGHTab(["GROUPHEAD"]);
-    await this.GroupHeadPendingDashboard();
-    await this.GroupHeadApprovedDashboards();
-    await this.GroupHeadRejectedDashboards();
+    await this.getCurrentHR1();
+    await this.checkUserInGroupsForHR1Tab(["HR1_Group"]);
+    await this.HR1PendingDashboard();
+    await this.HR1ApprovedDashboards();
+    await this.HR1RejectedDashboards();
 
 
   }
@@ -72,13 +72,13 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
 
 PendinghandleSearch = (e) => {
   const term = e.target.value.toLowerCase();
-  const PendingGroupHeadDashboardfiltered = this.state.GroupHeadDashboard.filter(item =>
+  const PendingHR1Dashboardfiltered = this.state.HR1Dashboard.filter(item =>
     item.EmployeeCode.toLowerCase().includes(term) ||
     item.EmployeeName.toLowerCase().includes(term) ||
     item.Title.toLowerCase().includes(term) ||
     item.Status.toLowerCase().includes(term)
   );
-  this.setState({ searchTerm: term, PedingFilter: PendingGroupHeadDashboardfiltered, currentPage: 1 });
+  this.setState({ searchTerm: term, PedingFilter: PendingHR1Dashboardfiltered, currentPage: 1 });
 }
 PendinghandlePageChange = (direction) => {
   const { currentPage } = this.state;
@@ -97,13 +97,13 @@ PendingpageCount = () => {
 
   ApprovedhandleSearch = (e) => {
     const term = e.target.value.toLowerCase();
-    const ApprovedGroupHeadDashboardfiltered = this.state.GroupHeadApprovedDashboard.filter(item =>
+    const ApprovedHR1Dashboardfiltered = this.state.HR1ApprovedDashboard.filter(item =>
       item.EmployeeCode.toLowerCase().includes(term) ||
       item.EmployeeName.toLowerCase().includes(term) ||
       item.Title.toLowerCase().includes(term) ||
       item.Status.toLowerCase().includes(term)
     );
-    this.setState({ searchTerm: term, ApprovedFilter: ApprovedGroupHeadDashboardfiltered, currentPage: 1 });
+    this.setState({ searchTerm: term, ApprovedFilter: ApprovedHR1Dashboardfiltered, currentPage: 1 });
   }
   ApprovedhandlePageChange = (direction) => {
     const { currentPage } = this.state;
@@ -125,13 +125,13 @@ PendingpageCount = () => {
   
   RejectedhandleSearch = (e) => {
     const term = e.target.value.toLowerCase();
-    const RejectedGroupHeadDashboardfiltered = this.state.GroupHeadRejectedDashboard.filter(item =>
+    const RejectedHR1Dashboardfiltered = this.state.HR1RejectedDashboard.filter(item =>
       item.EmployeeCode.toLowerCase().includes(term) ||
       item.EmployeeName.toLowerCase().includes(term) ||
       item.Title.toLowerCase().includes(term) ||
       item.Status.toLowerCase().includes(term)
     );
-    this.setState({ searchTerm: term, RejectedFilter: RejectedGroupHeadDashboardfiltered, currentPage: 1 });
+    this.setState({ searchTerm: term, RejectedFilter: RejectedHR1Dashboardfiltered, currentPage: 1 });
   }
   RejectedhandlePageChange = (direction) => {
     const { currentPage } = this.state;
@@ -152,7 +152,7 @@ PendingpageCount = () => {
 
 
   // 
-  public getCurrentGroupHead = async () => {
+  public getCurrentHR1 = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
       this.setState({ Currentuser: cuser });
@@ -200,7 +200,7 @@ PendingpageCount = () => {
       return false;
     }
   }
-  public async checkUserInGroupsForGHTab(groups: any) {
+  public async checkUserInGroupsForHR1Tab(groups: any) {
     try {
       const spCrudObj = await useSPCRUD();
       const userGroups = await spCrudObj.currentUserGroup(this.props);
@@ -210,44 +210,44 @@ PendingpageCount = () => {
       }
       const isUserInGroup = userGroups.some(group => groups.includes(group.Title));
       if (isUserInGroup) {
-        this.setState({ ShowGHTab: true })
+        this.setState({ ShowHR1Tab: true })
       }
     } catch (error) {
       console.error("Error checking user in groups:", error);
       return false;
     }
   }
-  public GroupHeadPendingDashboard = async () => {
-    return await PersonalAdvanceVehicleMasterOps().getGroupHeadDashboard(this.props).then(GroupHeadPending => {
-      this.setState({ GroupHeadDashboard: GroupHeadPending });
-      console.log(GroupHeadPending);
-      const PendingGroupHeadDashboardfiltered = this.state.GroupHeadDashboard;
-      this.setState({ PedingFilter: PendingGroupHeadDashboardfiltered, currentPage: 1 });
+  public HR1PendingDashboard = async () => {
+    return await PersonalAdvanceVehicleMasterOps().getHR1Dashboard(this.props).then(HR1Pending => {
+      this.setState({ HR1Dashboard: HR1Pending });
+      console.log(HR1Pending);
+      const PendingHR1Dashboardfiltered = this.state.HR1Dashboard;
+      this.setState({ PedingFilter: PendingHR1Dashboardfiltered, currentPage: 1 });
   
-      return GroupHeadPending;
-      console.log(GroupHeadPending);
+      return HR1Pending;
+      console.log(HR1Pending);
     });
   };
-  public GroupHeadApprovedDashboards = async () => {
-    return await PersonalAdvanceVehicleMasterOps().getGroupHeadApprovedDashboard(this.props).then(GroupHeadApproved => {
-      this.setState({ GroupHeadApprovedDashboard: GroupHeadApproved });
+  public HR1ApprovedDashboards = async () => {
+    return await PersonalAdvanceVehicleMasterOps().getHR1ApprovedDashboard(this.props).then(HR1Approved => {
+      this.setState({ HR1ApprovedDashboard: HR1Approved });
 
-      // const GroupHeadDashboardfiltered = this.state.GroupHeadApprovedDashboard;
-      // this.setState({ ApprovedFilter: GroupHeadDashboardfiltered, currentPage: 1 });
+      // const HR1Dashboardfiltered = this.state.HR1ApprovedDashboard;
+      // this.setState({ ApprovedFilter: HR1Dashboardfiltered, currentPage: 1 });
     
-      const ApprovedGroupHeadDashboardfiltered = this.state.GroupHeadApprovedDashboard;
-      this.setState({ ApprovedFilter: ApprovedGroupHeadDashboardfiltered, currentPage: 1 });
+      const ApprovedHR1Dashboardfiltered = this.state.HR1ApprovedDashboard;
+      this.setState({ ApprovedFilter: ApprovedHR1Dashboardfiltered, currentPage: 1 });
 
-      return GroupHeadApproved;
+      return HR1Approved;
     });
   };
-  public GroupHeadRejectedDashboards = async () => {
-    return await PersonalAdvanceVehicleMasterOps().getGroupHeadRejectedDashboard(this.props).then(GroupHeadRejected => {
-      this.setState({ GroupHeadRejectedDashboard: GroupHeadRejected });
-      const RejectedGroupHeadDashboardfiltered = this.state.GroupHeadRejectedDashboard;
-      this.setState({ RejectedFilter: RejectedGroupHeadDashboardfiltered, currentPage: 1 });
+  public HR1RejectedDashboards = async () => {
+    return await PersonalAdvanceVehicleMasterOps().getHR1RejectedDashboard(this.props).then(HR1Rejected => {
+      this.setState({ HR1RejectedDashboard: HR1Rejected });
+      const RejectedHR1Dashboardfiltered = this.state.HR1RejectedDashboard;
+      this.setState({ RejectedFilter: RejectedHR1Dashboardfiltered, currentPage: 1 });
 
-      return GroupHeadRejected;
+      return HR1Rejected;
     });
   };
   public render(): React.ReactElement<IVehicleModuleProps> {
@@ -266,17 +266,17 @@ PendingpageCount = () => {
     // RejectedfilteredData
 
     return (
-      <div className='widget-card' hidden={!this.state.ShowGHTab}>
+      <div className='widget-card' hidden={!this.state.ShowHR1Tab}>
         <div className='widget-card-head'>
           <span className='widget-card-head-icon'>
             <Icon iconName='ContactInfo' />
           </span>
-          <h2 className='widget-card-head-title'>GroupHead Dashboard</h2>
+          <h2 className='widget-card-head-title'>HR1 Dashboard</h2>
           { }
         </div>
         <div className='widget-card-body'>
           <Pivot linkSize={PivotLinkSize.large} linkFormat={PivotLinkFormat.tabs} >
-            <PivotItem linkText='GroupHead Dashboard'>
+            <PivotItem linkText='HR1 Dashboard'>
               <div className='row'>
                 <div className={styles.tabnav + " " + 'col-md-2'}>
                   <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
@@ -311,11 +311,11 @@ PendingpageCount = () => {
                             {PendingcurrentItems.length > 0 ? PendingcurrentItems.map(items => (
                               <tr key={items.ID}>
                                 <td>
-                                  <a href={'#/GHViewVehicle/' + items.ID}>
+                                  <a href={'#/HR1ViewVehicle/' + items.ID}>
                                     <Icon iconName='View' style={{ cursor: 'pointer' }} title='View' />
                                   </a>
                                   {items.Status === "Pending" &&
-                                    <a href={'#/GroupHeadApproveVehicle/' + items.ID}>
+                                    <a href={'#/HR1ApproveVehicle/' + items.ID}>
                                       <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
                                   }
@@ -373,14 +373,14 @@ PendingpageCount = () => {
                             {ApprovedcurrentItems.length > 0 ? ApprovedcurrentItems.map(items => (
                               <tr key={items.ID}>
                                 <td>
-                                  <a href={'#/GHViewVehicle/' + items.ID}>
+                                  <a href={'#/HR1ViewVehicle/' + items.ID}>
                                     <Icon iconName='View' style={{ cursor: 'pointer' }} title='View' />
                                   </a>
-                                  {/* {items.Status === "Pending" &&
-                                    <a href={'#/GroupHeadApproveVehicle/' + items.ID}>
+                                  {items.Status === "Pending" &&
+                                    <a href={'#/HR1ApproveVehicle/' + items.ID}>
                                       <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
-                                  } */}
+                                  }
                                 </td>
                                 <td>{items.Title}</td>
                                 <td>{items.EmployeeCode}</td>
@@ -432,14 +432,14 @@ PendingpageCount = () => {
                             {RejectedcurrentItems.length > 0 ? RejectedcurrentItems.map(items => (
                               <tr key={items.ID}>
                                 <td>
-                                  <a href={'#/GHViewVehicle/' + items.ID}>
+                                  <a href={'#/HR1ViewVehicle/' + items.ID}>
                                     <Icon iconName='View' style={{ cursor: 'pointer' }} title='View' />
                                   </a>
-                                  {/* {items.Status === "Pending" &&
-                                    <a href={'#/GroupHeadApproveVehicle/' + items.ID}>
+                                  {items.Status === "Pending" &&
+                                    <a href={'#/HR1ApproveVehicle/' + items.ID}>
                                       <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
-                                  } */}
+                                  }
                                 </td>
                                 <td>{items.Title}</td>
                                 <td>{items.EmployeeCode}</td>
