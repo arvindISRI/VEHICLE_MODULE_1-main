@@ -2,19 +2,16 @@ import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import styles from '../../VehicleModule.module.scss'
 import * as moment from 'moment'
-
 import UseUtilities, { IUtilities } from '../../../../services/bal/utilities';
 import Utilities from '../../../../services/bal/utilities';
 import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
 import * as yup from 'yup';
 import { Web } from '@pnp/sp/presets/all';
 import { BaseButton, Button, Checkbox, FontWeights, IconButton, IPersonaProps } from 'office-ui-fabric-react';
-
 import useSPCRUD, { ISPCRUD } from '../../../../services/bal/spcrud';
 import SPCRUD from '../../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../../services/bal/PersonalAdvanceVehicleMaster';
 import { IEmployeeMaster } from '../../../../services/interface/IEmployeeMaster';
-
 import { keys } from '@microsoft/sp-lodash-subset';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
@@ -24,7 +21,6 @@ import { SPComponentLoader } from '@microsoft/sp-loader';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Items, sp } from 'sp-pnp-js';
 import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers';
-
 import Select from 'react-select-plus';
 import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
@@ -49,18 +45,14 @@ const validate = yup.object().shape({
     then: yup.string().required('Sanction Type is required'),
     otherwise: yup.string()
   }),
-
 });
-
 export interface ISelectState {
   selectedOption?: string;
 }
-
 const vehicleOptions: IDropdownOption[] = [
   { key: 'Two Wheeler', text: 'Two Wheeler' },
   { key: 'Four Wheeler', text: 'Four Wheeler' }
 ];
-
 const ConditionofvehicleOptions: IDropdownOption[] = [
   { key: 'New', text: 'New' },
   { key: 'Second Hand', text: 'Second Hand' }
@@ -70,7 +62,6 @@ const cellStyle = {
   padding: '8px',
   textAlign: 'left',
 };
-
 const onbehalfoption: IDropdownOption[] = [
   { key: 'Yes', text: 'Yes' },
   { key: 'No', text: 'No' }
@@ -79,74 +70,55 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
   constructor(props: any) {
     super(props);
     this.state = {
-
       AllEmployeeCollObj: [],
       yearOfManufacture: '',
       yearOfManufacture1: '',
-
       isSubmitting: false,
       selectedOption: '',
-
       filteredData: [],
       showhideEmployeeNameLab: false,
-
       Currentuser: "",
-
       allDashboardData2: [],
-
       filteredDashboard: [],
       EmployeeName: "",
-
       searchValue: "",
       filteredEmployees: [],
-
       EmployeeID: '',
       EmployeeIDId: '',
       DesignationId: '',
       CompanyEmail: '',
       DateOfConfirmation: null,
-
       file: null,
       reqID: '',
       Status: '',
       isClearable: true,
       isSearchable: true,
-
       filteredOptions: [],
-
       selectedId: null,
       isDropdownOpen: false,
-
       vehicleOptions: [],
-
       vehicleRows: [
         {
-
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
           expectedLife: 0,
           DatePurposeofWithdrawal: ''
-
         }
       ],
-
       ExpenseDetails: {
         TotalEmolumentspm: 0,
         TwentyFiveofthetotalemoluments: 0,
         Totaldeductions: 0,
         FityofNetemoluments: 0,
         ExpectedlifeofVehicle: 0
-
       },
       ConditionOfVehicle: '',
       ExpectlifeShow: false,
       typeOfVehicle1: '',
       typeOfVehicle: '',
-
       isConfirmed: '',
       applicationCorrect: '',
-
       eligibleLoanAmount: '',
       disciplinaryPending: '',
       netMonthlySalary: '',
@@ -158,33 +130,25 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       totalMarks: 0,
       recommendedSanctionAmount: 0,
       VehicleLoanEMI: 0,
-
       HR1Response: '',
       HR1Remark: '',
       HR2Response: '',
       HR2Remark: '',
       GHResponse: '',
       GHRemark: '',
-
     };
-
   }
   async componentDidMount() {
-
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
-
     this.setState({ VMId: VMId });
     this.calculateEMICheck();
     this.calculateTotalMarks();
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
-
     await this.getCurrentUser();
-
   }
-
   componentDidUpdate(prevProps, prevState) {
     if (
       prevState.VehicleLoanEMI !== this.state.VehicleLoanEMI ||
@@ -192,7 +156,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
     ) {
       this.calculateEMICheck();
     }
-
     if (
       prevState.isConfirmed !== this.state.isConfirmed ||
       prevState.applicationCorrect !== this.state.applicationCorrect ||
@@ -202,10 +165,8 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       this.calculateTotalMarks();
     }
   }
-
   handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name.startsWith('ExpenseDetails.')) {
       const key = name.split('.')[1];
       this.setState((prevState) => ({
@@ -218,27 +179,21 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       this.setState({ [name]: value });
     }
   };
-
   calculateEMICheck = () => {
     const emi = parseFloat(this.state.VehicleLoanEMI || 0);
     const fiftyPercentSalary = parseFloat(this.state.ExpenseDetails.FityofNetemoluments || 0);
-
     const isEMILess = emi < fiftyPercentSalary;
     this.setState({ isEMILessThan50Percent: isEMILess ? 'Yes' : 'No' });
   };
-
   calculateTotalMarks = () => {
     const { isConfirmed, applicationCorrect, disciplinaryPending, isEMILessThan50Percent } = this.state;
-
     const total =
       (isConfirmed == 'Yes' ? 1 : 0) +
       (applicationCorrect == 'Yes' ? 1 : 0) +
       (disciplinaryPending == 'No' ? 1 : 0) +
       (isEMILessThan50Percent == 'Yes' ? 1 : 0);
-
     this.setState({ totalMarks: total });
   };
-
   public getCurrentUser = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -246,33 +201,26 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       return cuser;
     });
   }
-
   public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       let employeeData = results;
-
       var currentEmpResult = employeeData.filter((item) => {
         return item.ID == +this.state.VMId;
       })
-
       if (currentEmpResult && currentEmpResult.length > 0) {
-
         this.setState({
           EmployeeInfodb: currentEmpResult,
           AllEmployeeCollObj: [],
           EmployeeName: currentEmpResult[0].EmployeeName,
           Created: currentEmpResult[0].Created,
           DateOfConfirmation: currentEmpResult[0].DateOfConfirmation,
-
           isConfirmed: currentEmpResult[0].Created > currentEmpResult[0].DateOfConfirmation ? 'Yes' : 'No',
-
           DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
           CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
           EmployeeCode: '' + currentEmpResult[0].EmployeeCode,
           DesignationTitle: currentEmpResult[0].Designation,
           Age: (currentEmpResult[0].Age),
           Status: currentEmpResult[0].Status,
-
           totalMarks: currentEmpResult[0].TotalMarks,
           isEMILessThan50Percent: currentEmpResult[0].IsEmiLessThan50,
           VehicleLoanEMI: currentEmpResult[0].VehicleLoanEMI || 0,
@@ -280,14 +228,12 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
           applicationCorrect: currentEmpResult[0].ApplicationCorrect,
           disciplinaryPending: currentEmpResult[0].DisciplinaryProceedings,
           recommendedSanctionAmount: currentEmpResult[0].SanctionAmount,
-
           HR1Response: currentEmpResult[0].HR1Response,
           HR1Remark: currentEmpResult[0].HR1Remark,
           HR2Response: currentEmpResult[0].HR2Response,
           HR2Remark: currentEmpResult[0].HR2Remark,
           GHResponse: currentEmpResult[0].GHResponse,
           GHRemark: currentEmpResult[0].GHRemark,
-
           ExpenseDetails: {
             TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
             TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
@@ -298,9 +244,7 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             MakeModel: currentEmpResult[0].MakeModel,
             CostofVehicle: currentEmpResult[0].CostOfVehicle,
             NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
-
             AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
-
             DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
               ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
               : '',
@@ -308,11 +252,9 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
               ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
               : '',
             ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
-
           },
           typeOfVehicle: currentEmpResult[0].VehicleType,
           typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
-
           ConditionOfVehicle: currentEmpResult[0].VehicleCondition,
           yearOfManufacture1: currentEmpResult[0].ManufactureYear,
         });
@@ -320,17 +262,13 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       return currentEmpResult;
     });
   };
-
   public getAllPrevPersonalAdvanceHistory = async (): Promise<any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
       let employeeDataHisty = results;
-
       var currentEmpResultHistory = employeeDataHisty.filter((item) => {
         return item.PersonalAdvanceVehicleId.Id == +this.state.VMId;
       });
-
       if (currentEmpResultHistory && currentEmpResultHistory.length > 0) {
-
         const vehicleRowsFromDB = currentEmpResultHistory.map((item) => ({
           DatePurposeofWithdrawal: item.WithdrawalDetails || '',
           PAmount: item.WithdrawalAmount || 0,
@@ -339,67 +277,50 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
           expectedLife: item.ExpectedLife || 0,
           Id: item.ID || 0,
           PersonalAdvanceVehicleId: item.PersonalAdvanceVehicleId || 0
-
         }));
-
         this.setState({
           EmployeeInfodb: currentEmpResultHistory,
           vehicleRows: vehicleRowsFromDB,
           AllEmployeeCollObj: [],
         });
       }
-
       return currentEmpResultHistory;
     });
   };
-
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
     }
   }
-
   public handleInputChangeadd = (e) => {
     const { name, value } = e.target;
     const parsed = parseFloat(value);
     !isNaN(parsed) && isFinite(value) ? parsed : value;
     const numericValue = (value)
-
     let updatedExpenseDetails = {
       ...this.state.ExpenseDetails,
       [name.split('.')[1]]: numericValue
     };
-
     if (name == "ExpenseDetails.TotalEmolumentspm") {
       updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
     }
-
     const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
       ? numericValue
       : this.state.ExpenseDetails.TotalEmolumentspm || 0;
-
     const totalDeductions = name == "ExpenseDetails.Totaldeductions"
       ? numericValue
       : this.state.ExpenseDetails.Totaldeductions || 0;
-
     updatedExpenseDetails.FityofNetemoluments = (totalEmoluments - totalDeductions) * 0.5;
-
     this.setState({ ExpenseDetails: updatedExpenseDetails });
-
   };
-
   public BtnRejectRequest = async () => {
     var VehicleRequestItem
     VehicleRequestItem = {
-
       GHResponse: 'Rejected by GroupHead',
-
       Status: 'Rejected',
-
       GHApproverNameId: this.state.Currentuser.Id,
       GHResponseDate: new Date(),
       GHRemark: this.state.ExpenseDetails.GroupHeadRemarks,
-
       IsConfirm: this.state.isConfirmed,
       TotalMarks: this.state.totalMarks,
       IsEmiLessThan50: this.state.isEMILessThan50Percent,
@@ -409,19 +330,13 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       DisciplinaryProceedings: this.state.disciplinaryPending,
       SanctionAmount: this.state.recommendedSanctionAmount,
       SanctionAmountDate: new Date()
-
     };
-
     this.setState({ isSubmitting: true });
-
     const spCrudObj = await useSPCRUD();
-
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
-
       alert('Vehicle Request Rejected Successfully!');
       window.location.href = '#/GroupHeadDashboard'
-
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -429,19 +344,14 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       this.setState({ isSubmitting: false });
     }
   };
-
   public BtnApproveGroupHeadRequest = async () => {
     var VehicleRequestItem
     VehicleRequestItem = {
-
       GHResponse: 'Approved by GroupHead',
-
       Status: 'Approved',
-
       GHApproverNameId: this.state.Currentuser.Id,
       GHResponseDate: new Date(),
       GHRemark: this.state.ExpenseDetails.GroupHeadRemarks,
-
       IsConfirm: this.state.isConfirmed,
       TotalMarks: this.state.totalMarks,
       IsEmiLessThan50: this.state.isEMILessThan50Percent,
@@ -451,19 +361,13 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       DisciplinaryProceedings: this.state.disciplinaryPending,
       SanctionAmount: this.state.recommendedSanctionAmount,
       SanctionAmountDate: new Date(),
-
     };
-
     this.setState({ isSubmitting: true });
-
     const spCrudObj = await useSPCRUD();
-
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
-
       alert('Vehicle Request Submitted Successfully!');
       window.location.href = '#/GroupHeadDashboard'
-
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -471,10 +375,8 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       this.setState({ isSubmitting: false });
     }
   };
-
   async InsertPrevPersonalAdvanceHistory(ListName, RequestNoGenerate, itemArray) {
     const spCrudObj = await useSPCRUD();
-
     for (let i = 0; i < itemArray.length; i++) {
       const objVehicleHistoryitems = {
         PersonalAdvanceVehicleIdId: RequestNoGenerate,
@@ -484,7 +386,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
         OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
         FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
       };
-
       try {
         await spCrudObj.insertData(ListName, objVehicleHistoryitems, this.props);
       } catch (error) {
@@ -492,19 +393,15 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       }
     }
   }
-
   private getYearOptions(): IDropdownOption[] {
     const currentYear = new Date().getFullYear();
     const startYear = 1980;
     const options: IDropdownOption[] = [];
-
     for (let year = currentYear; year >= startYear; year--) {
       options.push({ key: year.toString(), text: year.toString() });
     }
-
     return options;
   }
-
   private handleYearChange = (
     option: IDropdownOption,
     index?: number
@@ -512,7 +409,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
     console.log("Changed to:", option.text);
     this.setState({ yearOfManufacture: option.key.toString() });
   };
-
   private handleYearChange1 = (
     option: IDropdownOption,
     index?: number
@@ -520,53 +416,42 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
     console.log("Changed to:", option.text);
     this.setState({ yearOfManufacture1: option.key.toString() });
   };
-
   private handleConditionOfVehicleChange = (
     option: IDropdownOption,
     index?: number
   ): void => {
     const isSecondHand = option.key.toString() == 'Second Hand';
-
     this.setState(prevState => ({
       ConditionOfVehicle: option.key.toString(),
       ExpectlifeShow: isSecondHand,
       ExpenseDetails: {
         ...prevState.ExpenseDetails,
         CostofVehicle: isSecondHand ? prevState.ExpenseDetails.CostofVehicle || '' : '',
-
         ExpectedlifeofVehicle: isSecondHand ? prevState.ExpenseDetails.ExpectedlifeofVehicle || '' : ''
       }
     }));
   };
-
   private handleTypeOfVehicleChange = (
     option: IDropdownOption,
     index?: number
   ): void => {
-
     this.setState(prevState => ({
       typeOfVehicle: option.key.toString(),
-
     }));
   };
-
   private handleTypeOfVehicleChange1 = (
     option: IDropdownOption,
     index?: number
   ): void => {
-
     this.setState(prevState => ({
       typeOfVehicle1: option.key.toString(),
-
     }));
   };
-
   private addRow = () => {
     this.setState(prevState => ({
       vehicleRows: [
         ...prevState.vehicleRows,
         {
-
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: ''
@@ -574,29 +459,22 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       ]
     }));
   };
-
   private handleRowChange = (index: number, field: string, value: string) => {
     const updatedRows = [...this.state.vehicleRows];
     updatedRows[index][field] = value;
     this.setState({ vehicleRows: updatedRows });
   };
-
   private removeRow = (index: number) => {
     this.setState(prevState => ({
       vehicleRows: prevState.vehicleRows.filter((_, i) => i !== index)
     }));
   };
-
   public render(): React.ReactElement<IVehicleModuleProps> {
     return (
       <div >
-
         <h1>View Form</h1>
-
         <h4> <b> A). Service Particulars</b></h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Employee ID</Label>
@@ -637,11 +515,8 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             </div>
           </div>
         </div>
-
         <h4><b> B). Salary Particulars</b></h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance) </Label>
@@ -667,7 +542,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             <div className="col-sm-2">
               <TextField type='number' disabled
                 value={this.state.ExpenseDetails.Totaldeductions}
-
                 name="ExpenseDetails.Totaldeductions"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -679,7 +553,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             <div className="col-sm-2">
               <TextField type='number' disabled
                 value={this.state.ExpenseDetails.FityofNetemoluments}
-
                 name="ExpenseDetails.FityofNetemoluments"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
             <div className="col-sm-2">
@@ -688,19 +561,13 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             <div className="col-sm-2">
               <TextField type='number' disabled
                 value={this.state.ExpenseDetails.RepaymenttenureinEMI}
-
                 name="ExpenseDetails.RepaymenttenureinEMI"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
-
             </div>
-
           </div>
         </div>
-
         <h4><b>C). Particulars of Vehicle </b></h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Type of Vehicle</Label>
@@ -714,7 +581,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Whether new or second hand </Label>
             </div>
-
             <div className="col-sm-2">
               <Dropdown disabled
                 placeHolder="Select Condition of vehicle"
@@ -723,14 +589,12 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 onChanged={this.handleConditionOfVehicleChange}
               />
             </div>
-
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Make/ Model  </Label>
             </div>
             <div className="col-sm-2">
               <TextField disabled
                 value={this.state.ExpenseDetails.MakeModel}
-
                 name="ExpenseDetails.MakeModel"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -746,18 +610,14 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 onChanged={this.handleYearChange1}
                 options={this.getYearOptions()}
               />
-
             </div>
             <div className="col-sm-2">
                             <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
               <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
                 <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
-
             </div>
-
             <div className="col-sm-2">
               { }
-
               <TextField
                 type="number" disabled
                 name="ExpenseDetails.CostofVehicle"
@@ -771,14 +631,12 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                   }));
                 }}
               />
-
             </div>
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer  </Label>
             </div>
-
             <div className="col-sm-2">
               <TextField
                 multiline
@@ -793,16 +651,12 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                   }));
                 }}
               />
-
             </div>
-
             <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)  </Label>
             </div>
             <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
-
               <TextField
-
                 type='text' disabled
                 name="ExpenseDetails.ExpectedlifeofVehicle"
                 value={this.state.ExpenseDetails.ExpectedlifeofVehicle}
@@ -815,19 +669,12 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                   }));
                 }}
               />
-
             </div>
-
             { }
-
           </div>
-
         </div>
-
         <h4><b>D). Details of Earlier Vehicle Loan availed from Exim Bank (if any) </b> </h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Type of Vehicle taken (two/four wheeler)</Label>
@@ -844,7 +691,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             <div className="col-sm-2">
               <TextField type='number' disabled
                 value={this.state.ExpenseDetails.AmountofLoanavailed}
-
                 name="ExpenseDetails.AmountofLoanavailed"
                 onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>                  </div>
             <div className="col-sm-2">
@@ -853,10 +699,8 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             <div className="col-sm-2">
               <TextField type='date' disabled
                 value={this.state.ExpenseDetails.DateofAvailmentofLoan}
-
                 name="ExpenseDetails.DateofAvailmentofLoan"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
-
             </div>
           </div>
           <div className="row form-group">
@@ -866,25 +710,18 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             <div className="col-sm-2">
               <TextField type='date' disabled
                 value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
-
                 name="ExpenseDetails.Dateoffinalrepaymentofloan"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
-
           </div>
-
         </div>
-
         <h4><b>E). Previous Personal Advance History </b> </h4>
-
         {this.state.vehicleRows.map((row, index) => (
           <div className='card mb-1' key={index}>
             <div className="row form-group">
-
               <div className="col-sm-1">
                 <Label className="control-Label font-weight-bold">Sr No</Label>
                 <label className="control-Label font-weight-bold">{index + 1}</label>
               </div>
-
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>
                 <TextField
@@ -910,13 +747,10 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                   onChanged={(val) => this.handleRowChange(index, 'POutstandingLoanasOnDate', val)}
                 />
               </div>
-
             </div>
-
             <div className="row form-group">
               <div className="col-sm-1">
               </div>
-
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date of Final Repayment </Label>
                 <TextField
@@ -926,14 +760,11 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 />
               </div>
               { }
-
               { }
             </div>
           </div>
         ))}
-
         <hr></hr>
-
       <div className="row form-group">
           <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
             <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
@@ -943,9 +774,7 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
               multiline disabled
               value={this.state.HR1Remark}
             />
-
           </div>
-
           <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
             <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
           </div>
@@ -954,7 +783,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
               multiline disabled
               value={this.state.HR2Remark}
             /> </div>
-
           <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
             <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
           </div>
@@ -963,14 +791,9 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
               multiline disabled
               value={this.state.GHRemark}
             /> </div>
-
         </div>
-
-
-
         <div hidden={!(this.state.Status == 'Approved')}>
           <h2>Recommendation by Group Head</h2>
-
           <table
             style={{
               borderCollapse: 'collapse',
@@ -994,7 +817,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>{this.state.isConfirmed == 'Yes' ? 1 : 0}</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>2. Particulars mentioned in the application are correct</td>
                 <td style={cellStyle}>
@@ -1006,7 +828,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>{this.state.applicationCorrect == 'Yes' ? 1 : 0}</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>3. Cost of the Vehicle (Auto Populated)</td>
                 <td style={cellStyle}>
@@ -1014,7 +835,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>-</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>4. Eligible Loan Amount (upto 10 Lakh)</td>
                 <td style={cellStyle}>
@@ -1027,7 +847,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>-</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>5. Disciplinary Proceedings Pending</td>
                 <td style={cellStyle}>
@@ -1039,7 +858,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>{this.state.disciplinaryPending == 'No' ? 1 : 0}</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>6a. Net Monthly Salary (Auto Populated)</td>
                 <td style={cellStyle}>
@@ -1047,7 +865,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>-</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>6b. 50% of Net Salary (Calculated)</td>
                 <td style={cellStyle}>
@@ -1055,7 +872,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>-</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>6c. Vehicle Loan EMI</td>
                 <td style={cellStyle}>
@@ -1068,7 +884,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>-</td>
               </tr>
-
               <tr>
                 <td style={cellStyle}>6d. Is EMI &lt; 50% of Salary?</td>
                 <td style={cellStyle}>
@@ -1076,7 +891,6 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 </td>
                 <td style={cellStyle}>{this.state.isEMILessThan50Percent == 'Yes' ? 1 : 0}</td>
               </tr>
-
               <tr>
                 <td style={{ ...cellStyle, fontWeight: 'bold' }}>Total Marks</td>
                 <td style={cellStyle}></td>
@@ -1084,11 +898,9 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
               </tr>
             </tbody>
           </table>
-
           <div className="row form-group" >
             <div className="col-sm-6" hidden={!(this.state.totalMarks == 4)}>
               <Label className="control-Label font-weight-bold">Recommended Sanction Amount	</Label>
-
               <input
                 type="number" disabled
                 value={this.state.recommendedSanctionAmount}
@@ -1096,14 +908,12 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 onChange={this.handleChange}
               />
             </div>
-
           </div>
         </div>
         <div className='text-center'>
           <a href={'#/HR2Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
         </div>
       </div>
-
     );
   }
 }

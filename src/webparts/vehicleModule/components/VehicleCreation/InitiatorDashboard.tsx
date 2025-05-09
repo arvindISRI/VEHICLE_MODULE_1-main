@@ -13,16 +13,13 @@ import { Link, useHistory } from 'react-router-dom';
 import useSPCRUD, { ISPCRUD } from '../../../services/bal/spcrud';
 import SPCRUD from '../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../services/bal/PersonalAdvanceVehicleMaster';
-
 import { IEmployeeMaster } from '../../../services/interface/IEmployeeMaster';
-
 import { keys } from '@microsoft/sp-lodash-subset';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { SPComponentLoader } from '@microsoft/sp-loader';
-
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Items, sp } from 'sp-pnp-js';
 import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers';
@@ -36,21 +33,15 @@ import { IVehicleModuleProps } from '../IVehicleModuleProps';
 import { SPFxAdalClient } from '@pnp/common';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-
-
-
 export default class InitiatorDashboard extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
     this.state = {
       UserDashboard: [],
       activeTab: 'Pending', // <- Default tab on load
-
       userApprovedDashboard: [],
       userRejectedDashboard: []
     };
-
-
   }
   async componentDidMount() {
     // await this.checkUserInGroups(["HR1_Group", "HR2_Group"]);
@@ -60,8 +51,6 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
     await this.UserApprovedDashboards();
     await this.UserRejectedDashboards();
     await this.UserPendingDashboard();
-
-
   }
   public setActiveTab = (tabName: string) => {
     this.setState({ activeTab: tabName });
@@ -73,8 +62,6 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
       return cuser;
     });
   }
-
-
   public async checkUserInGroups(groups: any) {
     try {
       const spCrudObj = await useSPCRUD();
@@ -130,14 +117,10 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
       return false;
     }
   }
-
-
-
   public UserPendingDashboard = async () => {
     return await PersonalAdvanceVehicleMasterOps().getUserDashboard(this.props).then(UserPending => {
       this.setState({ UserDashboard: UserPending });
       console.log(UserPending);
-
       return UserPending;
       console.log(UserPending);
     });
@@ -154,7 +137,6 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
       return UserRejected;
     });
   };
-
   public openPage(pageName, elmnt, color) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -168,15 +150,10 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
     document.getElementById(pageName).style.display = "block";
     elmnt.style.backgroundColor = color;
   }
-
-
-
   public render(): React.ReactElement<IVehicleModuleProps> {
     const { selectedOption } = this.state;
     const value = selectedOption;
     // const valueq = selectedOptionCHBx ;  
-
-
     return (
       <div className='widget-card'>
         <div className='widget-card-head'>
@@ -197,18 +174,15 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                   <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
                   <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
                   <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
-
                 </div>
                 <div className='col-md-10'>
                   <div className={styles.panelbody}>
                     {this.state.activeTab === 'Pending' && (
-
                       <div id="Pending" className="tabcontent active table-responsive">
                         <h3>Pending</h3>
                         <table className="table ">
                           <tr>
                             <th>Action</th>
-
                             <th>VM ID</th>
                             <th>EmployeeID</th>
                             <th>EmployeeName</th>
@@ -223,9 +197,7 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                                     <a href={'#/ViewVehicle/' + items.ID}>
                                       <Icon iconName='View' style={{ cursor: 'pointer' }}
                                         title='View' />
-
                                     </a>
-
                                     {
                                       items.Status === "Draft" &&
                                       // <Link to={'/EditVehicle/' + items.ID}>
@@ -234,13 +206,8 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                                       <a href={'#/EditVehicle/' + items.ID}>
                                         <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                       </a>
-
-
-
                                     }
-
                                   </td>
-
                                   <td>{items.Title}</td>
                                   <td>{items.EmployeeCode}</td>
                                   <td>{items.EmployeeName}</td>
@@ -252,7 +219,6 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                               : ""
                           }
                         </table>
-
                       </div>
                     )}
                     {this.state.activeTab === 'Approved' && (
@@ -261,7 +227,6 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                         <table className="table ">
                           <tr>
                             <th>Action</th>
-
                             <th>VM ID</th>
                             <th>EmployeeID</th>
                             <th>EmployeeName</th>
@@ -276,9 +241,7 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                                     <a href={'#/ViewVehicle/' + items.ID}>
                                       <Icon iconName='View' style={{ cursor: 'pointer' }}
                                         title='View' />
-
                                     </a>
-
                                     {/* {
                                     items.Status === "Draft" &&
                                     // <Link to={'/EditVehicle/' + items.ID}>
@@ -287,13 +250,8 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                                     <a href={'#/EditVehicle/' + items.ID}>
                                       <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
-
-
-
                                   } */}
-
                                   </td>
-
                                   <td>{items.Title}</td>
                                   <td>{items.EmployeeCode}</td>
                                   <td>{items.EmployeeName}</td>
@@ -313,7 +271,6 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                         <table className="table ">
                           <tr>
                             <th>Action</th>
-
                             <th>VM ID</th>
                             <th>EmployeeID</th>
                             <th>EmployeeName</th>
@@ -328,9 +285,7 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                                     <a href={'#/ViewVehicle/' + items.ID}>
                                       <Icon iconName='View' style={{ cursor: 'pointer' }}
                                         title='View' />
-
                                     </a>
-
                                     {/* {
                                     items.Status === "Draft" &&
                                     // <Link to={'/EditVehicle/' + items.ID}>
@@ -339,13 +294,8 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                                     <a href={'#/EditVehicle/' + items.ID}>
                                       <Icon iconName='Edit' title='Edit' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                     </a>
-
-
-
                                   } */}
-
                                   </td>
-
                                   <td>{items.Title}</td>
                                   <td>{items.EmployeeCode}</td>
                                   <td>{items.EmployeeName}</td>
@@ -364,13 +314,8 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
               </div>
             </PivotItem>
           </Pivot>
-
         </div>
       </div>
-
-
     );
   }
-
-
 }

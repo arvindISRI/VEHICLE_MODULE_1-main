@@ -4,7 +4,6 @@ import { IVehicleModuleProps } from './IVehicleModuleProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { IList, Web } from "@pnp/sp/presets/all";
 import { BrowserRouter as Router, Switch, Route, Link, HashRouter, match, useParams, Redirect } from 'react-router-dom';
-
 import { sp } from '@pnp/sp';
 import '@pnp/sp/lists';
 import '@pnp/sp/items';
@@ -26,7 +25,6 @@ require('../assets/style.css');
 require('../../../../node_modules/bootstrap/dist/css/bootstrap.min.css');
 export default class VehicleModule extends React.Component<IVehicleModuleProps, {}> {
   public render(): React.ReactElement<IVehicleModuleProps> {
-
     const userPhotoUrl = '/_layouts/15/userphoto.aspx?size=L&username=' + this.props.currentSPContext.pageContext.legacyPageContext.userEmail;
     return (
       <div>
@@ -67,14 +65,11 @@ export default class VehicleModule extends React.Component<IVehicleModuleProps, 
                   <HashRouter>
                     <Switch>
                       { }
-
                       <Route path="/" exact={true} render={() => <InitiatorDashboard  {...this.props} />} />
                       <Route path="/InitiatorDashboard" exact={true} render={() => <InitiatorDashboard  {...this.props} />} />
-
                       <Route path="/HR2Dashboard" exact={true} render={() => <HR2Dashboard  {...this.props} />} />
                       <Route path="/HR1Dashboard" exact={true} render={() => <HR1Dashboard  {...this.props} />} />
                       <Route path="/GroupHeadDashboard" exact={true} render={() => <GroupHeadDashboard  {...this.props} />} />
-
                       <Route path="/AddVehicle" exact={true} render={() => <AddVehicle  {...this.props} />} />
                       { }
                       <Route path="/EditVehicle/:VMId" render={() => <EditVehicle {...this.props} />} />
@@ -82,13 +77,10 @@ export default class VehicleModule extends React.Component<IVehicleModuleProps, 
                       <Route path="/HR1ViewVehicle/:VMId" render={() => <HR1ViewVehicle {...this.props} />} />
                       <Route path="/HR2ViewVehicle/:VMId" render={() => <HR2ViewVehicle {...this.props} />} />
                       <Route path="/GHViewVehicle/:VMId" render={() => <GHViewVehicle {...this.props} />} />
-
                       <Route path="/GroupHeadApproveVehicle/:VMId" render={() => <GroupHeadVehicle {...this.props} />} />
                       <Route path="/HR1ApproveVehicle/:VMId" render={() => <HR1ApproveVehicle {...this.props} />} />
                       <Route path="/HR2ApproveVehicle/:VMId" render={() => <HR2ApproverVehicle {...this.props} />} />
-
                       { }
-
                     </Switch>
                   </HashRouter>
                 </div>

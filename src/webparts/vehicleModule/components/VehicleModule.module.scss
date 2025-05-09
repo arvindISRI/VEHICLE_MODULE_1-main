@@ -9,14 +9,12 @@ $ms-color-white: #fff;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
     overflow: hidden;
   }
- 
   .row {
     @include ms-Grid-row;
     @include ms-fontColor-white;
     background-color: $ms-color-white;
     padding: 20px;
   }
- 
   .column {
     @include ms-Grid-col;
     @include ms-lg10;
@@ -24,33 +22,27 @@ $ms-color-white: #fff;
     @include ms-xlPush2;
     @include ms-lgPush1;
   }
- 
   .title {
     @include ms-font-xl;
     @include ms-fontColor-white;
   }
- 
   .subTitle {
     @include ms-font-l;
     @include ms-fontColor-white;
   }
- 
   .description {
     @include ms-font-l;
     @include ms-fontColor-white;
   }
- 
   .button {
     // Our button
     text-decoration: none;
     height: 32px;
- 
     // Primary Button
     min-width: 80px;
     background-color: $ms-color-themePrimary;
     border-color: $ms-color-themePrimary;
     color: $ms-color-white;
- 
     // Basic Button
     outline: transparent;
     position: relative;
@@ -63,7 +55,6 @@ $ms-color-white: #fff;
     cursor: pointer;
     display: inline-block;
     padding: 0 16px;
- 
     .label {
       font-weight: $ms-font-weight-semibold;
       font-size: $ms-font-size-m;
@@ -75,300 +66,240 @@ $ms-color-white: #fff;
     }
   }
 }
-
-
-
 :global{
-
   .ms-CommandBar{
     display:block !important;
     height:auto !important;
-    
     }
-    
   .CanvasSection.CanvasSection-col {
     &.CanvasSection-xl12 {
       .OneColumnSection-1 {
         @include ms-Grid-col;
         @include ms-xl1;
       }
- 
       .OneColumnSection-2 {
         @include ms-Grid-col;
         @include ms-xl2;
       }
- 
       .OneColumnSection-3 {
         @include ms-Grid-col;
         @include ms-xl3;
       }
- 
       .OneColumnSection-4 {
         @include ms-Grid-col;
         @include ms-xl4;
       }
- 
       .OneColumnSection-5 {
         @include ms-Grid-col;
         @include ms-xl5;
       }
- 
       .OneColumnSection-6 {
         @include ms-Grid-col;
         @include ms-xl6;
       }
- 
       .OneColumnSection-7 {
         @include ms-Grid-col;
         @include ms-xl7;
       }
- 
       .OneColumnSection-8 {
         @include ms-Grid-col;
         @include ms-xl8;
       }
- 
       .OneColumnSection-9 {
         @include ms-Grid-col;
         @include ms-xl9;
       }
- 
       .OneColumnSection-10 {
         @include ms-Grid-col;
         @include ms-xl10;
       }
- 
       .OneColumnSection-11 {
         @include ms-Grid-col;
         @include ms-xl11;
       }
- 
       .OneColumnSection-12 {
         @include ms-Grid-col;
         @include ms-xl12;
       }
     }
- 
     &.CanvasSection-xl6 {
       .TwoColumnsSection-1 {
         @include ms-Grid-col;
         @include ms-xl1;
       }
- 
       .TwoColumnsSection-2 {
         @include ms-Grid-col;
         @include ms-xl2;
       }
- 
       .TwoColumnsSection-3 {
         @include ms-Grid-col;
         @include ms-xl3;
       }
- 
       .TwoColumnsSection-4 {
         @include ms-Grid-col;
         @include ms-xl4;
       }
- 
       .TwoColumnsSection-5 {
         @include ms-Grid-col;
         @include ms-xl5;
       }
- 
       .TwoColumnsSection-6 {
         @include ms-Grid-col;
         @include ms-xl6;
       }
- 
       .TwoColumnsSection-7 {
         @include ms-Grid-col;
         @include ms-xl7;
       }
- 
       .TwoColumnsSection-8 {
         @include ms-Grid-col;
         @include ms-xl8;
       }
- 
       .TwoColumnsSection-9 {
         @include ms-Grid-col;
         @include ms-xl9;
       }
- 
       .TwoColumnsSection-10 {
         @include ms-Grid-col;
         @include ms-xl10;
       }
- 
       .TwoColumnsSection-11 {
         @include ms-Grid-col;
         @include ms-xl11;
       }
- 
       .TwoColumnsSection-12 {
         @include ms-Grid-col;
         @include ms-xl12;
       }
     }
- 
     &.CanvasSection-xl4 {
- 
       .OneThird-1,
       .ThreeColumnsSection-1 {
         @include ms-Grid-col;
         @include ms-xl1;
       }
- 
       .OneThird-2,
       .ThreeColumnsSection-2 {
         @include ms-Grid-col;
         @include ms-xl2;
       }
- 
       .OneThird-3,
       .ThreeColumnsSection-3 {
         @include ms-Grid-col;
         @include ms-xl3;
       }
- 
       .OneThird-4,
       .ThreeColumnsSection-4 {
         @include ms-Grid-col;
         @include ms-xl4;
       }
- 
       .OneThird-5,
       .ThreeColumnsSection-5 {
         @include ms-Grid-col;
         @include ms-xl5;
       }
- 
       .OneThird-6,
       .ThreeColumnsSection-6 {
         @include ms-Grid-col;
         @include ms-xl6;
       }
- 
       .OneThird-7,
       .ThreeColumnsSection-7 {
         @include ms-Grid-col;
         @include ms-xl7;
       }
- 
       .OneThird-8,
       .ThreeColumnsSection-8 {
         @include ms-Grid-col;
         @include ms-xl8;
       }
- 
       .OneThird-9,
       .ThreeColumnsSection-9 {
         @include ms-Grid-col;
         @include ms-xl9;
       }
- 
       .OneThird-10,
       .ThreeColumnsSection-10 {
         @include ms-Grid-col;
         @include ms-xl10;
       }
- 
       .OneThird-11,
       .ThreeColumnsSection-11 {
         @include ms-Grid-col;
         @include ms-xl11;
       }
- 
       .OneThird-12,
       .ThreeColumnsSection-12 {
         @include ms-Grid-col;
         @include ms-xl12;
       }
     }
- 
     &.CanvasSection-xl8 {
       .TwoThirds-1 {
         @include ms-Grid-col;
         @include ms-xl1;
       }
- 
       .TwoThirds-2 {
         @include ms-Grid-col;
         @include ms-xl2;
       }
- 
       .TwoThirds-3 {
         @include ms-Grid-col;
         @include ms-xl3;
       }
- 
       .TwoThirds-4 {
         @include ms-Grid-col;
         @include ms-xl4;
       }
- 
       .TwoThirds-5 {
         @include ms-Grid-col;
         @include ms-xl5;
       }
- 
       .TwoThirds-6 {
         @include ms-Grid-col;
         @include ms-xl6;
       }
- 
       .TwoThirds-7 {
         @include ms-Grid-col;
         @include ms-xl7;
       }
- 
       .TwoThirds-8 {
         @include ms-Grid-col;
         @include ms-xl8;
       }
- 
       .TwoThirds-9 {
         @include ms-Grid-col;
         @include ms-xl9;
       }
- 
       .TwoThirds-10 {
         @include ms-Grid-col;
         @include ms-xl10;
       }
- 
       .TwoThirds-11 {
         @include ms-Grid-col;
         @include ms-xl11;
       }
- 
       .TwoThirds-12 {
         @include ms-Grid-col;
         @include ms-xl12;
       }
     }
   }
- 
   #workbenchPageContent {
     max-width: 100% !important;
   }
- 
   #sp-appBar {
     display: none;
   }
- 
   #spLeftNav {
     display: none;
   }
- 
   #spSiteHeader {
     display: none;
   }
- 
   #spCommandBar {
     display: none;
   }
- 
   #CommentsWrapper {
     display: none;
   }
@@ -397,41 +328,33 @@ $ms-color-white: #fff;
   .commentsWrapper_16ffed33{
     display: none !important;
   }
- 
   div[data-automation-id="pageHeader"] {
     display: none !important;
   }
- 
   div[data-automation-id="CanvasZone"] {
     padding: 0px 0px !important;
     max-width: 100% !important;
     max-height: 100% !important;
   }
- 
   div[data-automation-id="CanvasSection"] {
     padding-left: 0px !important;
     padding-right: 0px !important;
     max-height: 100% !important;
   }
- 
   div[data-automation-id="CanvasControl"] {
     padding: 0px !important;
     margin: 0px !important;
     max-height: 100% !important;
   }
- 
   div[data-automation-id="CanvasZone"]>div {
     max-width: 100% !important;
     max-height: 100% !important;
   }
- 
   .ms-Dialog-main {
     max-width: 100%;
     width: 81%;
   }
- 
   /*Spinner*/
- 
   #divLoading {
     position: absolute;
     top: 0;
@@ -444,27 +367,22 @@ $ms-color-white: #fff;
     background: #0a53a0ff;
     z-index: 1000001;
   }
- 
   @keyframes rotate360 {
     from {
       transform: rotate(0deg);
     }
- 
     to {
       transform: rotate(360deg);
     }
   }
- 
   @-webkit-keyframes rotate360 {
     from {
       -webkit-transform: rotate(0deg);
     }
- 
     to {
       -webkit-transform: rotate(360deg);
     }   
   }
-     
   .spinner {
     display: inline-block;
     border-radius: 100%;
@@ -483,28 +401,23 @@ $ms-color-white: #fff;
     //animation-delay: 1s;
     animation-iteration-count: infinite;
     animation-play-state: alternate;
- 
     -webkit-animation-duration: 1s;
     -webkit-animation-timing-function: linear;
     //-webkit-animation-delay: 1s;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-play-state: alternate;
- 
     border-width: 42px;
     width: 40px;
     height: 40px;
- 
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     margin: auto;
- 
     :local {
       animation-name: rotate360;
     }
   }
- 
   /*End Spinner*/
   // .profile-header {
   //   -webkit-box-flex: 1;
@@ -524,28 +437,23 @@ $ms-color-white: #fff;
   //   padding: 0 4px;
   //   min-height: 45px;
   // }
- 
   .customDivSeprator{
     border-bottom: 1px solid $ms-color-white;
   }
- 
   .ms-siteicon-a {
     display: inline-block;
     max-width: 180px;
     max-height: 64px;
   }
- 
   .ms-siteicon-img {
     display: block;
     max-width: 180px;
     max-height: 64px;
   }
- 
   .profile-header {
     background-color: $ms-color-neutralDark;
     display: none; // changes by arvind for hide note module design
   }
- 
   .profile-header-top {
     padding: 15px 15px;
     display: flex;
@@ -556,11 +464,9 @@ $ms-color-white: #fff;
     -ms-flex-align: center;
     align-items: center;
   }
- 
   .profile-header-top-left {
         width: 20%;
   }
- 
   .profile-header-top-right {
     display: flex;
     -webkit-box-pack: start;
@@ -575,11 +481,9 @@ $ms-color-white: #fff;
     -ms-flex-direction: row-reverse;
     flex-direction: row-reverse;
   }
- 
   .profile-header-top-right-user {
     display: flex;
   }
- 
   .profile-header-top-right-user-details {
     display: flex;
     -webkit-box-pack: center;
@@ -588,7 +492,6 @@ $ms-color-white: #fff;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-   
     ul {
       list-style: none;
       margin: 0px;
@@ -599,14 +502,12 @@ $ms-color-white: #fff;
       }
     }
   }
- 
   .profile-header-top-right-user-image {
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
     margin-right: 12px;
- 
     img {
       width: 42px;
       margin: 0px 5px;
@@ -615,21 +516,17 @@ $ms-color-white: #fff;
       height: 42px;
     }
   }
- 
   .emp-mas-app-dash-tab {
     .ms-Pivot-link:hover {
       background-color: $ms-color-neutralLight !important;
       // box-sizing: border-box;
       // border-bottom: 2px solid $ms-color-themePrimary;
     }
- 
     .ms-Pivot-link.is-selected {
       color: $ms-color-themePrimary !important;
       // color: $ms-color-themePrimary !important;
     }
   }
- 
- 
   .emp-mas-top-nav {
     background-color: $ms-color-neutralDark !important;
     margin: 0px;
@@ -715,7 +612,6 @@ $ms-color-white: #fff;
       }
     }
   }
- 
   .widget-card {
     -webkit-box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
@@ -727,7 +623,6 @@ $ms-color-white: #fff;
       margin-top: -3px;
     }
   }
- 
   .widget-card-head {
     padding: 0px 0px 0px 10px;
     display: -webkit-box;
@@ -738,7 +633,6 @@ $ms-color-white: #fff;
     align-items: center;
     border-bottom: 2px solid $ms-color-themePrimary;
   }
- 
   .widget-card-head-icon {
       margin-right: 10px;
       width: 2%;
@@ -747,7 +641,6 @@ $ms-color-white: #fff;
       text-shadow: 0 0 1px $ms-color-neutralTertiaryAlt, 0 0 1px $ms-color-neutralTertiaryAlt;
       display: flex;
   }
- 
   .widget-card-head-title {
     font-size: 16px;
     margin-top: 7px;
@@ -756,7 +649,6 @@ $ms-color-white: #fff;
     width: 48%;
     font-weight: 700 !important;
   }
- 
   .widget-card-head-btn{
     width: 80%;
     display: flex;
@@ -764,11 +656,9 @@ $ms-color-white: #fff;
     width: 50%;
     padding-right: 5px;
   }
- 
   .widget-card-body {
     margin-bottom: 15px;
   }
- 
   footer {
     background: $ms-color-neutralDark;
     display: -webkit-box;
@@ -778,7 +668,6 @@ $ms-color-white: #fff;
     -ms-flex-align: center;
     align-items: center;
     padding: 12px 20px;
- 
     .left {
       -webkit-box-flex: 0.5;
       -ms-flex-positive: 0.5;
@@ -787,14 +676,12 @@ $ms-color-white: #fff;
       display: -ms-flexbox;
       display: flex;
       align-items: center;
- 
       img {
         vertical-align: middle;
         border-style: none;
         border: none;
         -webkit-tap-highlight-color: transparent;
       }
- 
       a {
         color: #fff;
         margin: 0px 0px 0px 20px;
@@ -804,13 +691,11 @@ $ms-color-white: #fff;
         display: inline-block;
         text-decoration: none;
       }
- 
       a:hover {
         color: #fff;
         text-decoration: underline;
       }    
     }
- 
     .right {
       -webkit-box-flex: 0.5;
       -ms-flex-positive: 0.5;
@@ -822,7 +707,6 @@ $ms-color-white: #fff;
       -webkit-box-direction: normal;
       -ms-flex-direction: column;
       flex-direction: column;
- 
       .copyright {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -830,7 +714,6 @@ $ms-color-white: #fff;
         -webkit-box-pack: end;
         -ms-flex-pack: end;
         justify-content: flex-end;
- 
         p {
           font-weight: normal;
           font-size: 15px;
@@ -855,7 +738,6 @@ $ms-color-white: #fff;
       }
     }
   }
- 
   .profile-left-nav {
     div {
       div {
@@ -865,7 +747,6 @@ $ms-color-white: #fff;
       }
     }
   }
- 
   .profile-edit-icon {
     color: $ms-color-themePrimary;
     padding-right: 10px;
@@ -890,8 +771,6 @@ $ms-color-white: #fff;
   padding-top: 24px !important;
 }
 }
-
-
 .requiredSpan{
   color: red;
   font-weight: 600;
@@ -910,7 +789,6 @@ $ms-color-white: #fff;
 .pb-15{
   padding-bottom: 15px;
 }
-
 .loadercontainer {
   width: 100%;
   height: 100%;
@@ -923,9 +801,7 @@ $ms-color-white: #fff;
   // background: rgb(255 255 255 / 83%);
   background: rgba(0, 0, 0, 0.834);
   z-index: 9999;
-  
 }
-
 .spinner {
   width: 50px;
   height: 50px;
@@ -934,7 +810,6 @@ $ms-color-white: #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-
 .btndefault{
   background-color: #fff;
   color: #f6821f;
@@ -945,7 +820,6 @@ $ms-color-white: #fff;
   background-color: rgb(243, 242, 241);
     color: rgb(32, 31, 30);
 }
-
 .btnprimary{
   background-color: #f6821f;
   border: 1px solid #f6821f;
@@ -955,9 +829,6 @@ $ms-color-white: #fff;
   background-color: #f6821f;
   border: 1px solid #f6821f;
 }
-
-
-
 .tabnav button{  
   display: block;
   margin: 10px 0;

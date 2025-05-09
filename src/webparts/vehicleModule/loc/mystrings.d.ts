@@ -3,7 +3,6 @@ declare interface IVehicleModuleWebPartStrings {
   BasicGroupName: string;
   DescriptionFieldLabel: string;
 }
-
 declare module 'VehicleModuleWebPartStrings' {
   const strings: IVehicleModuleWebPartStrings;
   export = strings;

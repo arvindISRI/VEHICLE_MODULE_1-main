@@ -2,7 +2,6 @@ import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import styles from '../../VehicleModule.module.scss'
 import * as moment from 'moment'
-
 import UseUtilities, { IUtilities } from '../../../../services/bal/utilities';
 import Utilities from '../../../../services/bal/utilities';
 import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
@@ -13,20 +12,16 @@ import { Link, useHistory } from 'react-router-dom';
 import useSPCRUD, { ISPCRUD } from '../../../../services/bal/spcrud';
 import SPCRUD from '../../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../../services/bal/PersonalAdvanceVehicleMaster';
-
 import { IEmployeeMaster } from '../../../../services/interface/IEmployeeMaster';
-
 import { keys } from '@microsoft/sp-lodash-subset';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { SPComponentLoader } from '@microsoft/sp-loader';
-
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Items, sp } from 'sp-pnp-js';
 import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers';
-
 import Select from 'react-select-plus';
 import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
@@ -35,7 +30,6 @@ import { IVehicleModuleProps } from '../../IVehicleModuleProps';
 import { SPFxAdalClient } from '@pnp/common';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-
 export default class HR2Dashboard extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
@@ -44,22 +38,15 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       HR2ApprovedDashboard: [],
       HR2RejectedDashboard: [],
       activeTab: 'Pending' 
-
     };
-
   }
   async componentDidMount() {
-
     await this.checkUserInGroupsForHR2Tab(["HR2_Group"]);
-
     await this.getCurrentHR2();
     await this.HR2PendingDashboard();
-
     await this.HR2ApprovedDashboards();
     await this.HR2RejectedDashboards();
-
   }
-
   public getCurrentHR2 = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -67,7 +54,6 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       return cuser;
     });
   }
-
   public async checkUserInGroups(groups: any) {
     try {
       const spCrudObj = await useSPCRUD();
@@ -123,12 +109,10 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       return false;
     }
   }
-
   public HR2PendingDashboard = async () => {
     return await PersonalAdvanceVehicleMasterOps().getHR2Dashboard(this.props).then(HR2Pending => {
       this.setState({ HR2Dashboard: HR2Pending });
       console.log(HR2Pending);
-
       return HR2Pending;
       console.log(HR2Pending);
     });
@@ -145,15 +129,12 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
       return HR2Rejected;
     });
   };
-
   public setActiveTab = (tabName: string) => {
     this.setState({ activeTab: tabName });
   };
-
   public render(): React.ReactElement<IVehicleModuleProps> {
     const { selectedOption } = this.state;
     const value = selectedOption;
-
     return (
       <div className='widget-card' hidden={!this.state.ShowHR2Tab}>
         <div className='widget-card-head'>
@@ -194,20 +175,14 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                                     <a href={'#/HR2ViewVehicle/' + items.ID}>
                                       <Icon iconName='View' style={{ cursor: 'pointer' }}
                                         title='View' />
-
                                     </a>
-
                                     {
                                       items.Status == "Pending" &&
-
                                       <a href={'#/HR2ApproveVehicle/' + items.ID}>
                                         <Icon iconName='CheckMark' title='Approve' style={{ marginLeft: '8px', cursor: 'pointer' }} />
                                       </a>
-
                                     }
-
                                   </td>
-
                                   <td>{items.Title}</td>
                                   <td>{items.EmployeeCode}</td>
                                   <td>{items.EmployeeName}</td>
@@ -219,11 +194,9 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                               : ""
                           }
                         </table>
-
                       </div>
                     )}
                     {this.state.activeTab == 'Approved' && (
-
                       <div id="Approved" className="tabcontent">
                         <h3>Approved</h3>
                         <table className="table ">
@@ -243,13 +216,9 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                                     <a href={'#/HR2ViewVehicle/' + items.ID}>
                                       <Icon iconName='View' style={{ cursor: 'pointer' }}
                                         title='View' />
-
                                     </a>
-
                                     {}
-
                                   </td>
-
                                   <td>{items.Title}</td>
                                   <td>{items.EmployeeCode}</td>
                                   <td>{items.EmployeeName}</td>
@@ -263,9 +232,7 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                         </table>
                       </div>
                     )}
-
                     {this.state.activeTab == 'Rejected' && (
-
                       <div id="Rejected" className="tabcontent">
                         <h3>Rejected</h3>
                         <table className="table ">
@@ -285,13 +252,9 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
                                     <a href={'#/HR2ViewVehicle/' + items.ID}>
                                       <Icon iconName='View' style={{ cursor: 'pointer' }}
                                         title='View' />
-
                                     </a>
-
                                     {}
-
                                   </td>
-
                                   <td>{items.Title}</td>
                                   <td>{items.EmployeeCode}</td>
                                   <td>{items.EmployeeName}</td>
@@ -310,17 +273,13 @@ export default class HR2Dashboard extends React.Component<IVehicleModuleProps, a
               </div>
             </PivotItem>
           </Pivot>
-
         </div>
       </div>
-
     );
   }
-
   public editDraftItem = async (Items) => {
     console.log(Items);
     const ApproverViewReqItems = Items;
-
   }
   viewItem(items: any): void {
     throw new Error('Method not implemented.');

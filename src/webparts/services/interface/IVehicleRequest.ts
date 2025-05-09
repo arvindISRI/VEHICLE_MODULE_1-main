@@ -38,7 +38,6 @@ export interface IVehicleRequest {
     DateofLoanAvailed: any,
     DateOfConfirmation:any,
     SanctionAmountDate:any,
-
     HR1Response	:any,	
     HR1Remark:any,
     HR2Response:any,
@@ -53,5 +52,4 @@ export interface IVehicleRequest {
     ApplicationCorrect: any,
     DisciplinaryProceedings:any,
     SanctionAmount		: any,
-
 }

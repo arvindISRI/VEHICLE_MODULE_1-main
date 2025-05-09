@@ -3,32 +3,21 @@ import SPCRUDOPS from '../dal/spcrudops';
 import { IEmployeeMaster } from "../interface/IEmployeeMaster";
 import { IPrevPersonalAdvanceHistory } from '../interface/IPrevPersonalAdvanceHistory';
 import { IVehicleRequest } from "../interface/IVehicleRequest";
-
 export interface PersonalAdvanceVehicleMasterOps {
     getAllPersonalAdvanceVehicle(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getAllPrevPersonalAdvanceHistory(props: IVehicleModuleProps): Promise<IPrevPersonalAdvanceHistory>;
-
-
-
     getUserDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getUserApprovedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getUserRejectedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
-
-
     getHR1Dashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getHR1ApprovedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getHR1RejectedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
-
     getHR2Dashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getHR2ApprovedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getHR2RejectedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
-
-
     getGroupHeadDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getGroupHeadApprovedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
     getGroupHeadRejectedDashboard(props: IVehicleModuleProps): Promise<IVehicleRequest>;
-
-
     getAllEmployeeMaster(props: IVehicleModuleProps): Promise<IEmployeeMaster>;
     getEmployeeMaster(props: IVehicleModuleProps): Promise<IEmployeeMaster>;
     getEmployeeMasterId(strFilter: string, sorting: any, props: IVehicleModuleProps): Promise<IEmployeeMaster[]>;
@@ -123,9 +112,6 @@ export default function EmployeeOps() {
             return null;
         }
     };
-
-
-
     // const getAllPersonalAdvanceVehicle = async (props: IVehicleModuleProps): Promise<IVehicleRequest | null> => {
     //         try {
     //             const results = await (await spCrudOps).getDataAnotherSiteCollection(
@@ -158,7 +144,6 @@ export default function EmployeeOps() {
     //             return null;
     //         }
     //     };
-
     const getAllPersonalAdvanceVehicle = async (props: IVehicleModuleProps): Promise<IPrevPersonalAdvanceHistory | any> => {
         // const emplinfo2 = await getEmployeeMaster(props);
         // let status = "Rejected";
@@ -175,7 +160,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -184,16 +168,12 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
                         Created: item.Created,
                         Title: item.Title,
@@ -223,10 +203,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -238,8 +216,6 @@ export default function EmployeeOps() {
                 return brr;
             });
     };
-
-
     const getAllPrevPersonalAdvanceHistory = async (props: IVehicleModuleProps): Promise<IPrevPersonalAdvanceHistory[]> => {
         // const emplinfo2 = await getEmployeeMaster(props);
         // let status = "Rejected";
@@ -263,22 +239,17 @@ export default function EmployeeOps() {
                         FinalRepaymentDate: item.FinalRepaymentDate,
                         PersonalAdvanceVehicleId: item.PersonalAdvanceVehicleId,
                         ExpectedLife: item.ExpectedLife
-
                     });
                 });
                 return brr;
             });
     };
-
     // initiator Dashboard
-
-
     const getUserDashboard = async (props: IVehicleModuleProps): Promise<IVehicleRequest | any> => {
         const emplinfo = await getEmployeeMaster(props);
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         let status = "Pending";
         let status1 = "Draft";
-
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name"
             , "AttachmentFiles,Author"
@@ -292,7 +263,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                         DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -301,17 +271,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -340,10 +306,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -371,7 +335,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -380,17 +343,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -419,10 +378,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -450,7 +407,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -459,17 +415,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -498,10 +450,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -513,18 +463,13 @@ export default function EmployeeOps() {
                 return brr;
             });
     };
-
-
     // hr 1 dashboard
-
     const getHR1Dashboard = async (props: IVehicleModuleProps): Promise<IVehicleRequest | any> => {
         const emplinfo = await getEmployeeMaster(props);
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         let HR1Status = "Pending with HR1";
         let FinalStatus = "Pending";
-
         // let status1 = "Draft";
-
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
@@ -536,7 +481,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -545,17 +489,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -584,10 +524,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -615,7 +553,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -624,17 +561,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -663,10 +596,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -693,7 +624,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -702,17 +632,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -741,10 +667,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -756,17 +680,13 @@ export default function EmployeeOps() {
                 return brr;
             });
     };
-
-
     // hr 2 dashboard
-
     const getHR2Dashboard = async (props: IVehicleModuleProps): Promise<IVehicleRequest | any> => {
         const emplinfo = await getEmployeeMaster(props);
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         let HR2Status = "Pending with HR2";
         let HR1Status = "Approved by HR1";
         let FinalStatus = "Pending";
-
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
@@ -779,7 +699,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -788,17 +707,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -827,10 +742,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -848,8 +761,6 @@ export default function EmployeeOps() {
         let FinalStatus = "Approved";
         let Rejected = "Rejected";
        // let GHstatus = "Pending with Group Head";
-
-
         // let status = "Approved by HR1";
         // let FinalStatus = "Approved"
         // let Rejected = "Rejected"
@@ -858,8 +769,6 @@ export default function EmployeeOps() {
         //     , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
         //     , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
         //     , `HR1Response eq '${status}' and (Status eq '${FinalStatus}' or Status ne '${Rejected}')`
-
-
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
@@ -871,7 +780,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -880,17 +788,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -919,10 +823,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -950,7 +852,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -959,17 +860,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -998,10 +895,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -1013,19 +908,14 @@ export default function EmployeeOps() {
                 return brr;
             });
     };
-
-
     // group head dashboard
-
     const getGroupHeadDashboard = async (props: IVehicleModuleProps): Promise<IVehicleRequest | any> => {
         const emplinfo = await getEmployeeMaster(props);
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         let HR2Status = "Approved by HR2";
         let HR1Status = "Approved by HR1";
         let GHStatus = "Pending with Group Head";
-
         let FinalStatus = "Pending";
-
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
@@ -1065,10 +955,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -1076,7 +964,6 @@ export default function EmployeeOps() {
                         AmountofLoanAvailed: item.AmountofLoanAvailed,
                         DateofLoanAvailed: item.DateofLoanAvailed,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -1085,17 +972,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                     });
                 });
                 return brr;
@@ -1117,7 +1000,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -1126,17 +1008,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -1165,10 +1043,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -1196,7 +1072,6 @@ export default function EmployeeOps() {
                     brr.push({
                         ID: item.Id,
                          DateOfConfirmation: item.DateOfConfirmation,
-
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
                         IsEmiLessThan50: item.IsEmiLessThan50,
@@ -1205,17 +1080,13 @@ export default function EmployeeOps() {
                         ApplicationCorrect: item.ApplicationCorrect,
                         DisciplinaryProceedings:item.DisciplinaryProceedings,
                         SanctionAmount		: item.SanctionAmount,
-
-
                         HR1Response: item.HR1Response || '',
                         HR1Remark: item.HR1Remark || '',
                         HR2Response: item.HR2Response || '',
                         HR2Remark: item.HR2Remark || '',
                         GHResponse: item.GHResponse || '',
                         GHRemark: item.GHRemark || '',
-
                         SanctionAmountDate: item.SanctionAmountDate || null,
-
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -1244,10 +1115,8 @@ export default function EmployeeOps() {
                         PrevLoanDate: item.PrevLoanDate,
                         PrevLoanRepaymentDate: item.PrevLoanRepaymentDate,
                         ConfirmedDate: item.ConfirmedDate,
-                       
                         EmiRepaymentAmount: item.EmiRepaymentAmount,
                         VehicleLoanCost: item.VehicleLoanCost,
-                       
                         WithdrawalDetails: item.WithdrawalDetails,
                         WithdrawalAmount: item.WithdrawalAmount,
                         OutstandingLoan: item.OutstandingLoan,
@@ -1259,7 +1128,6 @@ export default function EmployeeOps() {
                 return brr;
             });
     };
-
     return {
         getAllPersonalAdvanceVehicle,
         getAllPrevPersonalAdvanceHistory,
@@ -1267,21 +1135,14 @@ export default function EmployeeOps() {
         getUserDashboard,
         getUserApprovedDashboard,
         getUserRejectedDashboard,
-
         getHR1Dashboard,
         getHR1ApprovedDashboard,
         getHR1RejectedDashboard,
-
         getHR2Dashboard,
         getHR2ApprovedDashboard,
         getHR2RejectedDashboard,
-
-
         getGroupHeadDashboard,
         getGroupHeadApprovedDashboard,
         getGroupHeadRejectedDashboard,
-
-
-
     };
 }

@@ -8,5 +8,4 @@ export interface IPrevPersonalAdvanceHistory {
     FinalRepaymentDate		:any,
     PersonalAdvanceVehicleId	:any,	
     ExpectedLife	:any
-
 }

@@ -36,7 +36,6 @@ export default async function SPCRUDOPS(): Promise<ISPCRUDOPS> {
     const getDataAnotherSiteCollection = async (listName: string, columnsToRetrieve: string, columnsToExpand: string, filters: string, orderby: {column: string, isAscending: boolean}, props: IVehicleModuleProps) => {
         // let web = Web("https://sharepointwebssse.eximbankindia.in/");
          let web = Web(ENV_CONFIG.rootSiteUrl);
-
        // let web = Web("https://sharepointweb.eximbankindia.in/"); for prod
         const items: any[] = await web.lists.getByTitle(listName).items.select(columnsToRetrieve).expand(columnsToExpand).filter(filters).orderBy(orderby.column, orderby.isAscending).getAll();
         return items;

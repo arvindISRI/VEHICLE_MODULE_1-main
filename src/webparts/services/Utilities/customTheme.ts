@@ -1,5 +1,4 @@
 import { createTheme, ITheme, loadTheme } from 'office-ui-fabric-react/lib/Styling'
-
 const customPartialTheme = {
     palette: {
         'themePrimary': '#faa21a',
@@ -30,11 +29,8 @@ const customPartialTheme = {
         'bodyText': '#001e46',
         'disabledBackground': '#f4f4f4',
         'disabledText': '#c8c8c8'
-       
     }
 };
-
-
 const customTheme: ITheme = createTheme(customPartialTheme);
 loadTheme(customTheme);
 let link: HTMLLinkElement = document.querySelector("link[id~='favicon']");

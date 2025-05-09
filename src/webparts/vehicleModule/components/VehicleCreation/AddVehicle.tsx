@@ -3,7 +3,6 @@ import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/People
 import styles from '../VehicleModule.module.scss'
 import * as moment from 'moment'
 import swal from 'sweetalert';
-
 import UseUtilities, { IUtilities } from '../../../services/bal/utilities';
 import Utilities from '../../../services/bal/utilities';
 import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
@@ -14,7 +13,6 @@ import { Link, useHistory } from 'react-router-dom';
 import useSPCRUD, { ISPCRUD } from '../../../services/bal/spcrud';
 import SPCRUD from '../../../services/bal/spcrud';
 import { IEmployeeMaster } from '../../../services/interface/IEmployeeMaster';
-
 import { keys } from '@microsoft/sp-lodash-subset';
 import { Icon, DefaultButton, Dialog, DialogFooter, DialogType, Dropdown, IDropdownOption, PrimaryButton, IDropdown, } from 'office-ui-fabric-react';
 import { Pivot, PivotItem, IPivotItemProps, PivotLinkSize, PivotLinkFormat } from 'office-ui-fabric-react/lib/Pivot';
@@ -24,7 +22,6 @@ import { SPComponentLoader } from '@microsoft/sp-loader';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Items, sp } from 'sp-pnp-js';
 import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers';
-
 import Select from 'react-select-plus';
 import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
@@ -48,23 +45,18 @@ const validate = yup.object().shape({
     then: yup.string().required('Sanction Type is required'),
     otherwise: yup.string()
   }),
-
 });
-
 export interface ISelectState {
   selectedOption?: string;
 }
-
 const vehicleOptions: IDropdownOption[] = [
   { key: 'Two Wheeler', text: 'Two Wheeler' },
   { key: 'Four Wheeler', text: 'Four Wheeler' }
 ];
-
 const ConditionofvehicleOptions: IDropdownOption[] = [
   { key: 'New', text: 'New' },
   { key: 'Second Hand', text: 'Second Hand' }
 ];
-
 const onbehalfoption: IDropdownOption[] = [
   { key: 'Yes', text: 'Yes' },
   { key: 'No', text: 'No' }
@@ -73,84 +65,62 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
   constructor(props: any) {
     super(props);
     this.state = {
-
       AllEmployeeCollObj: [],
       yearOfManufacture: '',
       yearOfManufacture1: '',
-
       isSubmitting: false,
       isSave: false,
       selectedOption: '',
-
       filteredData: [],
       showhideEmployeeNameLab: false,
-
       Currentuser: "",
-
       allDashboardData2: [],
-
       filteredDashboard: [],
-
       EmployeeName: "",
-
       searchValue: "",
       filteredEmployees: [],
-
       EmployeeID: '',
       EmployeeIDId: '',
       DesignationId: '',
       CompanyEmail: '',
-
       file: null,
       reqID: '',
       isClearable: true,
       isSearchable: true,
-
       filteredOptions: [],
-
       selectedId: null,
       isDropdownOpen: false,
-
       vehicleOptions: [],
-
       vehicleRows: [
         {
-
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
-
           DatePurposeofWithdrawal: '',
         }
       ],
-
       ExpenseDetails: {
         TotalEmolumentspm: 0,
         TwentyFiveofthetotalemoluments: 0,
         Totaldeductions: 0,
         FityofNetemoluments: 0,
         ExpectedlifeofVehicle: ''
-
       },
       ConditionOfVehicle: '',
       ExpectlifeShow: false,
       typeOfVehicle1: '',
       typeOfVehicle: '',
-
     };
-
   }
   async componentDidMount() {
     await this.getCurrentUser();
     await this.getEmployee();
   }
-
   componentDidUpdate(prevProps, prevState) {
     if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
       this.setState({ selectedOption: null });
     }
   }
-
   public getCurrentUser = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -158,7 +128,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       return cuser;
     });
   }
-
   public getEmployee = async (): Promise<IEmployeeMaster> => {
     return await EmployeeOps().getEmployeeMaster(this.props).then(async (results) => {
       let employeeData = results;
@@ -174,9 +143,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         EmployeeIDId: employeeData.Id,
         DependentType: "",
         ActualClaimAmountLable: "",
-
         CompanyEmail: employeeData.CompanyEmail,
-
         EmployeeID: employeeData.EmployeeId,
         DesignationId: employeeData.DesignationId,
         DesignationTitle: employeeData.DesignationTitle,
@@ -184,57 +151,43 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         Scale: employeeData.Scale,
         Age: parseInt(employeeData.Age),
         EmpType: employeeData.EmpType,
-
       });
       return employeeData;
     });
   };
-
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
     }
   }
-
   public handleInputChangeadd = (e) => {
     const { name, value } = e.target;
     const parsed = parseFloat(value);
     !isNaN(parsed) && isFinite(value) ? parsed : value;
     const numericValue = (value)
-
     let updatedExpenseDetails = {
       ...this.state.ExpenseDetails,
       [name.split('.')[1]]: numericValue
     };
-
     if (name == "ExpenseDetails.TotalEmolumentspm") {
       updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
     }
-
     const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
       ? numericValue
       : this.state.ExpenseDetails.TotalEmolumentspm || 0;
-
     const totalDeductions = name == "ExpenseDetails.Totaldeductions"
       ? numericValue
       : this.state.ExpenseDetails.Totaldeductions || 0;
-
     updatedExpenseDetails.FityofNetemoluments = (totalEmoluments - totalDeductions) * 0.5;
-
     this.setState({ ExpenseDetails: updatedExpenseDetails });
-
   };
-
   public BtnSubmitRequest = async (SubmittionType) => {
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
-
     const showAlert = (message) => {
       swal("Validation Error", message, "warning");
       return false;
     };
-
     const isEmpty = (val) => val == '' || val == null || val == undefined || val == 0;
-
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
     if (isEmpty(ExpenseDetails.RepaymenttenureinEMI)) return showAlert('Please Fill Repayment tenure in EMI');
@@ -246,9 +199,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     if (isEmpty(ExpenseDetails.CostofVehicle)) return showAlert('Please Fill Cost of Vehicle');
     if (isEmpty(ExpenseDetails.NameandAddressoftheSeller)) return showAlert('Please Fill Name and Address of the Seller / Dealer');
     if (ExpectlifeShow && isEmpty(ExpenseDetails.ExpectedlifeofVehicle)) return showAlert('Please Fill Expected life of Vehicle');
-
     let VehicleRequestItem = null;
-
     if (SubmittionType == 'Submitted') {
       VehicleRequestItem = {
         EmployeeCode: this.state.EmployeeID,
@@ -282,31 +233,23 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         PrevLoanDate: ExpenseDetails.DateofAvailmentofLoan ? new Date(ExpenseDetails.DateofAvailmentofLoan) : null
       };
     }
-
     this.setState({ isSubmitting: true });
-
     const spCrudObj = await useSPCRUD();
-
     try {
       const req = await spCrudObj.insertData("PersonalAdvanceVehicle", VehicleRequestItem, this.props);
       this.setState({ reqID: req.data.ID });
-
       const RequestNoGenerate = {
         Title: 'VM000' + req.data.ID
       };
-
       await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-
       if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-
         swal("Success", "Vehicle Request Submitted Successfully!", "success").then(() => {
           window.location.href = '#/InitiatorDashboard';
         });
       } else {
         swal("Notice", "Vehicle Request Submitted Failed.", "info");
       }
-
     } catch (error) {
       console.error("Submission error:", error);
       swal("Notice", "Vehicle Request Submitted Failed.", "info");
@@ -314,7 +257,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       this.setState({ isSubmitting: false });
     }
   };
-
   public BtnSaveAsDraft = async (SubmittionType) => {
     var VehicleRequestItem
     if (SubmittionType == 'Draft') {
@@ -347,21 +289,15 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         PrevLoanDate: this.state.ExpenseDetails.DateofAvailmentofLoan ? new Date(this.state.ExpenseDetails.DateofAvailmentofLoan) : null
       };
     }
-
     this.setState({ isSave: true });
-
     const spCrudObj = await useSPCRUD();
-
     try {
       const req = await spCrudObj.insertData("PersonalAdvanceVehicle", VehicleRequestItem, this.props);
       this.setState({ reqID: req.data.ID });
-
       const RequestNoGenerate = {
         Title: 'VM000' + req.data.ID
       };
-
       await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-
       if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
         swal("Success", "Vehicle Request Updated Successfully!", "success").then(() => {
@@ -377,20 +313,16 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       this.setState({ isSave: false });
     }
   };
-
   async InsertPrevPersonalAdvanceHistory(ListName, RequestNoGenerate, itemArray) {
     const spCrudObj = await useSPCRUD();
-
     for (let i = 0; i < itemArray.length; i++) {
       const objVehicleHistoryitems = {
         PersonalAdvanceVehicleIdId: RequestNoGenerate,
         WithdrawalDetails: itemArray[i].DatePurposeofWithdrawal || '',
         WithdrawalAmount: itemArray[i].PAmount ? +itemArray[i].PAmount : 0,
-
         OutstandingLoan: itemArray[i].POutstandingLoanasOnDate ? +itemArray[i].POutstandingLoanasOnDate : 0,
         FinalRepaymentDate: itemArray[i].PDatePurposeofWithdrawal ? new Date(itemArray[i].PDatePurposeofWithdrawal) : null
       };
-
       try {
         await spCrudObj.insertData(ListName, objVehicleHistoryitems, this.props);
       } catch (error) {
@@ -398,19 +330,15 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       }
     }
   }
-
   private getYearOptions(): IDropdownOption[] {
     const currentYear = new Date().getFullYear();
     const startYear = 1980;
     const options: IDropdownOption[] = [];
-
     for (let year = currentYear; year >= startYear; year--) {
       options.push({ key: year.toString(), text: year.toString() });
     }
-
     return options;
   }
-
   private handleYearChange = (
     option: IDropdownOption,
     index?: number
@@ -418,7 +346,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     console.log("Changed to:", option.text);
     this.setState({ yearOfManufacture: option.key.toString() });
   };
-
   private handleYearChange1 = (
     option: IDropdownOption,
     index?: number
@@ -426,85 +353,66 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     console.log("Changed to:", option.text);
     this.setState({ yearOfManufacture1: option.key.toString() });
   };
-
   private handleConditionOfVehicleChange = (
     option: IDropdownOption,
     index?: number
   ): void => {
     const isSecondHand = option.key.toString() == 'Second Hand';
-
     this.setState(prevState => ({
       ConditionOfVehicle: option.key.toString(),
       ExpectlifeShow: isSecondHand,
       ExpenseDetails: {
         ...prevState.ExpenseDetails,
         CostofVehicle: isSecondHand ? prevState.ExpenseDetails.CostofVehicle || '' : '',
-
         ExpectedlifeofVehicle: isSecondHand ? prevState.ExpenseDetails.ExpectedlifeofVehicle || '' : ''
       }
     }));
   };
-
   private handleTypeOfVehicleChange = (
     option: IDropdownOption,
     index?: number
   ): void => {
-
     this.setState(prevState => ({
       typeOfVehicle: option.key.toString(),
-
     }));
   };
-
   private handleTypeOfVehicleChange1 = (
     option: IDropdownOption,
     index?: number
   ): void => {
-
     this.setState(prevState => ({
       typeOfVehicle1: option.key.toString(),
-
     }));
   };
-
   private addRow = () => {
     this.setState(prevState => ({
       vehicleRows: [
         ...prevState.vehicleRows,
         {
-
           POutstandingLoanasOnDate: 0,
           PAmount: 0,
           PDatePurposeofWithdrawal: null,
-
           DatePurposeofWithdrawal: '',
         }
       ]
     }));
   };
-
   private handleRowChange = (index: number, field: string, value: string) => {
     const updatedRows = [...this.state.vehicleRows];
     updatedRows[index][field] = value;
     this.setState({ vehicleRows: updatedRows });
   };
-
   private removeRow = (index: number) => {
     this.setState(prevState => ({
       vehicleRows: prevState.vehicleRows.filter((_, i) => i !== index)
     }));
   };
-
   public render(): React.ReactElement<IVehicleModuleProps> {
     return (
       <div  >
-
         <h1>Add Form</h1>
-
         <h4> <b> A). Service Particulars</b></h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Employee ID</Label>
@@ -545,15 +453,11 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
           </div>
         </div>
-
         <h4><b> B). Salary Particulars</b></h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance)<span style={{color:'red'}}>*</span> </Label>
-              
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -562,8 +466,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">25% of the total emoluments   <span style={{color:'red'}}>*</span></Label>
-            
-
             </div>
             <div className="col-sm-2">
               <TextField type='number' disabled
@@ -573,8 +475,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance <span style={{color:'red'}}>*</span></Label>
-              
-
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -585,38 +485,27 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">50% of Net emoluments p.m. </Label>
-
             </div>
             <div className="col-sm-2">
               <TextField type='number' disabled
                 value={this.state.ExpenseDetails.FityofNetemoluments}
-
                 name="ExpenseDetails.FityofNetemoluments"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120)  <span style={{color:'red'}}>*</span> </Label>
-             
-
             </div>
             <div className="col-sm-2">
               <TextField type='number'
                 name="ExpenseDetails.RepaymenttenureinEMI"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
-
             </div>
-
           </div>
         </div>
-
         <h4><b>C). Particulars of Vehicle </b></h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Type of Vehicle <span style={{color:'red'}}>*</span></Label>
-              
-
             </div>
             <div className="col-sm-2">
               <Dropdown placeHolder="Select vehicle type" options={vehicleOptions}
@@ -626,10 +515,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Whether new or second hand <span style={{color:'red'}}>*</span> </Label>
-              
-
             </div>
-
             <div className="col-sm-2">
               <Dropdown
                 placeHolder="Select Condition of vehicle"
@@ -638,11 +524,8 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 onChanged={this.handleConditionOfVehicleChange}
               />
             </div>
-
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Make/ Model  <span style={{color:'red'}}>*</span> </Label>
-             
-
             </div>
             <div className="col-sm-2">
               <TextField
@@ -653,8 +536,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Year of Manufacture  <span style={{color:'red'}}>*</span> </Label>
-              
-
             </div>
             <div className="col-sm-2">
               <Dropdown
@@ -663,19 +544,14 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 onChanged={this.handleYearChange1}
                 options={this.getYearOptions()}
               />
-
             </div>
             <div className="col-sm-2">
                             <Label className="control-Label font-weight-bold">Cost of Vehicle <span style={{color:'red'}}>*</span>  </Label>
-
               <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
                 <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
-
             </div>
-
             <div className="col-sm-2">
               { }
-
               <TextField
                 type="number"
                 name="ExpenseDetails.CostofVehicle"
@@ -689,14 +565,12 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                   }));
                 }}
               />
-
             </div>
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer <span style={{color:'red'}}>*</span>  </Label>
             </div>
-
             <div className="col-sm-2">
               <TextField
                 multiline
@@ -711,16 +585,12 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                   }));
                 }}
               />
-
             </div>
-
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{color:'red'}}>*</span>   </Label>
             </div>
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow}>
-
               <TextField
-
                 type='text'
                 name="ExpenseDetails.ExpectedlifeofVehicle"
                 value={this.state.ExpenseDetails.ExpectedlifeofVehicle}
@@ -733,19 +603,12 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                   }));
                 }}
               />
-
             </div>
-
             { }
-
           </div>
-
         </div>
-
         <h4><b>D). Details of Earlier Vehicle Loan availed from Exim Bank (if any) </b> </h4>
-
         <div className='card'>
-
           <div className="row form-group">
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Type of Vehicle taken (two/four wheeler)</Label>
@@ -779,22 +642,16 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               <TextField type='date'
                 name="ExpenseDetails.Dateoffinalrepaymentofloan"
                 onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>  </div>
-
           </div>
-
         </div>
-
         <h4><b>E). Previous Personal Advance History </b> </h4>
-
         {this.state.vehicleRows.map((row, index) => (
           <div className='card mb-1' key={index}>
             <div className="row form-group">
-
               <div className="col-sm-1">
                 <Label className="control-Label font-weight-bold">Sr No</Label>
                 <label className="control-Label font-weight-bold">{index + 1}</label>
               </div>
-
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>
                 <TextField
@@ -820,13 +677,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                   onChanged={(val) => this.handleRowChange(index, 'POutstandingLoanasOnDate', val)}
                 />
               </div>
-
             </div>
-
             <div className="row form-group">
               <div className="col-sm-1">
               </div>
-
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date of Final Repayment </Label>
                 <TextField
@@ -836,7 +690,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 />
               </div>
               { }
-
               <div className="col-sm-4 d-flex align-items-center mt-4">
                 <IconButton
                   iconProps={{ iconName: 'Add' }}
@@ -854,7 +707,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
           </div>
         ))}
-
         <div className='text-center'>
           <PrimaryButton
             onClick={() => this.BtnSubmitRequest('Submitted')}
@@ -862,7 +714,6 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           >
             {this.state.isSubmitting ? <Spinner size={SpinnerSize.small} /> : "Submit"}
           </PrimaryButton>
-
           <PrimaryButton
             onClick={() => this.BtnSaveAsDraft('Draft')}
             disabled={this.state.isSave}
@@ -870,9 +721,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             {this.state.isSave ? <Spinner size={SpinnerSize.small} /> : "Save As Draft"}
           </PrimaryButton>
           <a href={'#/InitiatorDashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
-
         </div>
-
       </div>
     );
   }

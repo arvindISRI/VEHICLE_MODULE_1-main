@@ -56,6 +56,5 @@ export interface IEmployeeMaster{
     employee2:any,
     employee1:any,
     Age:any,
-    
     Limit:any
 }
