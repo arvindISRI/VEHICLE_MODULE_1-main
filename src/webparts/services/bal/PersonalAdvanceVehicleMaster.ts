@@ -847,12 +847,24 @@ export default function EmployeeOps() {
         let status = "Approved by HR2";
         let FinalStatus = "Approved";
         let Rejected = "Rejected";
-        let GHstatus = "Pending with Group Head"
+       // let GHstatus = "Pending with Group Head";
+
+
+        // let status = "Approved by HR1";
+        // let FinalStatus = "Approved"
+        // let Rejected = "Rejected"
+        // const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
+        // return await (await spCrudOps).getData("PersonalAdvanceVehicle"
+        //     , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
+        //     , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
+        //     , `HR1Response eq '${status}' and (Status eq '${FinalStatus}' or Status ne '${Rejected}')`
+
+
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
-            , `HR1Response eq '${status}'and GHResponse eq '${GHstatus}' or (Status eq '${FinalStatus}' or Status ne '${Rejected}')`
+            , `HR2Response eq '${status}'and (Status eq '${FinalStatus}' or Status ne '${Rejected}')`
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
