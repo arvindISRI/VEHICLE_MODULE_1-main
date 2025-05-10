@@ -66,7 +66,7 @@ const onbehalfoption: IDropdownOption[] = [
   { key: 'Yes', text: 'Yes' },
   { key: 'No', text: 'No' }
 ];
-export default class HR1ViewVehicle extends React.Component<IVehicleModuleProps, any> {
+export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -141,7 +141,11 @@ export default class HR1ViewVehicle extends React.Component<IVehicleModuleProps,
   async componentDidMount() {
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
-    let VMId = hashUrlSplit[2];
+    let activeTab = hashUrlSplit[2];
+    console.log(activeTab);
+    let VMId = hashUrlSplit[3];
+    localStorage.setItem('activeTab', activeTab);
+
     this.setState({ VMId: VMId });
     this.calculateEMICheck();
     this.calculateTotalMarks();
@@ -911,7 +915,7 @@ export default class HR1ViewVehicle extends React.Component<IVehicleModuleProps,
           </div>
         </div>
         <div className='text-center'>
-          <a href={'#/HR1Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
+          <a href={'#/HR2Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
         </div>
       </div>
     );

@@ -28,6 +28,11 @@ export default class Navigation extends React.Component<IVehicleModuleProps, ITo
     }
     public onNavLinkClick(ev?: React.MouseEvent<HTMLElement>, link?: INavLink): void {
         if (link && link.key) {
+         
+            localStorage.removeItem('activeTab');
+
+            localStorage.setItem('activeTab', 'Pending');
+    
             //console.log('Clicked PivotItem:', item['props']['itemKey']);
             this.setState({ selectedLink: link.key });
         }        

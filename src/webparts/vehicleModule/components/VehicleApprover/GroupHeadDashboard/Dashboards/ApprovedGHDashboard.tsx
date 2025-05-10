@@ -48,9 +48,6 @@ export default class ApprovedGHDashboard extends React.Component<IVehicleModuleP
     RejectedHR1Dashboardfiltered:[],
     PedingFilter:[],
     RejectedFilter:[],
-
-
-
       currentPage: 1,
       itemsPerPage: 5,
       searchTerm: ''
@@ -62,14 +59,8 @@ export default class ApprovedGHDashboard extends React.Component<IVehicleModuleP
     await this.HR1PendingDashboard();
     await this.HR1ApprovedDashboards();
     await this.HR1RejectedDashboards();
-
-
   }
-
 // pagination and common filter search--
- 
-
-
 PendinghandleSearch = (e) => {
   const term = e.target.value.toLowerCase();
   const PendingHR1Dashboardfiltered = this.state.HR1Dashboard.filter(item =>
@@ -91,17 +82,14 @@ PendinghandlePageChange = (direction) => {
 PendingpageCount = () => {
   return Math.ceil(this.state.PedingFilter.length / this.state.itemsPerPage);
 }
-
-
-
-
   ApprovedhandleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     const ApprovedHR1Dashboardfiltered = this.state.HR1ApprovedDashboard.filter(item =>
       item.EmployeeCode.toLowerCase().includes(term) ||
       item.EmployeeName.toLowerCase().includes(term) ||
       item.Title.toLowerCase().includes(term) ||
-      item.Status.toLowerCase().includes(term)
+      item.Status.toLowerCase().includes(term) ||
+      item.Age.toLowerCase().includes(term)
     );
     this.setState({ searchTerm: term, ApprovedFilter: ApprovedHR1Dashboardfiltered, currentPage: 1 });
   }
@@ -116,20 +104,14 @@ PendingpageCount = () => {
   ApprovedpageCount = () => {
     return Math.ceil(this.state.ApprovedFilter.length / this.state.itemsPerPage);
   }
-
-
-
-  
-
-
-  
   RejectedhandleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     const RejectedHR1Dashboardfiltered = this.state.HR1RejectedDashboard.filter(item =>
       item.EmployeeCode.toLowerCase().includes(term) ||
       item.EmployeeName.toLowerCase().includes(term) ||
       item.Title.toLowerCase().includes(term) ||
-      item.Status.toLowerCase().includes(term)
+      item.Status.toLowerCase().includes(term) ||
+      item.Age.toLowerCase().includes(term)
     );
     this.setState({ searchTerm: term, RejectedFilter: RejectedHR1Dashboardfiltered, currentPage: 1 });
   }
@@ -144,13 +126,6 @@ PendingpageCount = () => {
   RejectedpageCount = () => {
     return Math.ceil(this.state.RejectedFilter.length / this.state.itemsPerPage);
   }
-
-
-
-
-
-
-
   // 
   public getCurrentHR1 = async () => {
     const spCrudObj = await useSPCRUD();
@@ -223,7 +198,6 @@ PendingpageCount = () => {
       console.log(HR1Pending);
       const PendingHR1Dashboardfiltered = this.state.HR1Dashboard;
       this.setState({ PedingFilter: PendingHR1Dashboardfiltered, currentPage: 1 });
-  
       return HR1Pending;
       console.log(HR1Pending);
     });
@@ -231,13 +205,10 @@ PendingpageCount = () => {
   public HR1ApprovedDashboards = async () => {
     return await PersonalAdvanceVehicleMasterOps().getHR1ApprovedDashboard(this.props).then(HR1Approved => {
       this.setState({ HR1ApprovedDashboard: HR1Approved });
-
       // const HR1Dashboardfiltered = this.state.HR1ApprovedDashboard;
       // this.setState({ ApprovedFilter: HR1Dashboardfiltered, currentPage: 1 });
-    
       const ApprovedHR1Dashboardfiltered = this.state.HR1ApprovedDashboard;
       this.setState({ ApprovedFilter: ApprovedHR1Dashboardfiltered, currentPage: 1 });
-
       return HR1Approved;
     });
   };
@@ -246,7 +217,6 @@ PendingpageCount = () => {
       this.setState({ HR1RejectedDashboard: HR1Rejected });
       const RejectedHR1Dashboardfiltered = this.state.HR1RejectedDashboard;
       this.setState({ RejectedFilter: RejectedHR1Dashboardfiltered, currentPage: 1 });
-
       return HR1Rejected;
     });
   };
@@ -254,8 +224,6 @@ PendingpageCount = () => {
     const { selectedOption } = this.state;
     const value = selectedOption;
     const { PedingFilter,ApprovedFilter,RejectedFilter, currentPage, itemsPerPage, searchTerm } = this.state;
-    
-
     // Pagination logic
     const startIndex = (currentPage - 1) * itemsPerPage;
     const PendingcurrentItems = this.state.PedingFilter.slice(startIndex, startIndex + itemsPerPage);
@@ -264,7 +232,6 @@ PendingpageCount = () => {
     // ApprovedFilter
     // PendingfilteredData
     // RejectedfilteredData
-
     return (
       <div className='widget-card' hidden={!this.state.ShowHR1Tab}>
         <div className='widget-card-head'>
@@ -288,7 +255,6 @@ PendingpageCount = () => {
                     {this.state.activeTab == 'Pending' && (
                       <div id="Pending" className="tabcontent active table-responsive">
                         <h3>Pending</h3>
-
                         <input
                           type="text"
                           placeholder="Search..."
@@ -335,22 +301,17 @@ PendingpageCount = () => {
                             )}
                           </tbody>
                         </table>
-
                         {/* Pagination Controls */}
                         <div style={{ marginTop: '10px' }}>
                           <button onClick={() => this.PendinghandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
                           <span style={{ margin: '0 10px' }}>Page {currentPage} of {this.PendingpageCount()}</span>
                           <button onClick={() => this.PendinghandlePageChange('next')} disabled={currentPage === this.PendingpageCount()}>Next</button>
                         </div>
-
                       </div>
                     )}
-
-                    
                     {this.state.activeTab == 'Approved' && (
                       <div id="Approved" className="tabcontent">
                         <h3>Approved</h3>
-                        
                         <input
                           type="text"
                           placeholder="Search..."
@@ -397,7 +358,6 @@ PendingpageCount = () => {
                             )}
                           </tbody>
                         </table>
-
                         {/* Pagination Controls */}
                         <div style={{ marginTop: '10px' }}>
                           <button onClick={() => this.ApprovedhandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
@@ -409,7 +369,6 @@ PendingpageCount = () => {
                     {this.state.activeTab == 'Rejected' && (
                       <div id="Rejected" className="tabcontent">
                         <h3>Rejected</h3>
-                        
                         <input
                           type="text"
                           placeholder="Search..."
@@ -456,7 +415,6 @@ PendingpageCount = () => {
                             )}
                           </tbody>
                         </table>
-
                         {/* Pagination Controls */}
                         <div style={{ marginTop: '10px' }}>
                           <button onClick={() => this.RejectedhandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>

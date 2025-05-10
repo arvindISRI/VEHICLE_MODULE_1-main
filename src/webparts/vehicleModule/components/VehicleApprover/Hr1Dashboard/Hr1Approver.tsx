@@ -122,7 +122,9 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
   async componentDidMount() {
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
-    let VMId = hashUrlSplit[2];
+   // let VMId = hashUrlSplit[2];
+    let VMId = hashUrlSplit[3];
+
     this.setState({ VMId: VMId });
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
@@ -260,6 +262,10 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
       swal("Success", "Vehicle Request Rejected Successfully!", "success").then(() => {
+        localStorage.removeItem('activeTab');
+
+        localStorage.setItem('activeTab', 'Rejected');
+
         window.location.href = '#/HR1Dashboard';
       });
     } catch (error) {
@@ -285,6 +291,9 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
       swal("Success", "Vehicle Request Approved Successfully!", "success").then(() => {
+        localStorage.removeItem('activeTab');
+
+        localStorage.setItem('activeTab', 'Approved');
         window.location.href = '#/HR1Dashboard';
       });
     } catch (error) {

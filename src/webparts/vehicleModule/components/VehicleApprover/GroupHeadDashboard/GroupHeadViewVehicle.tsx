@@ -8,7 +8,6 @@ import { Formik, FormikProps, ErrorMessage, Field } from 'formik';
 import * as yup from 'yup';
 import { Web } from '@pnp/sp/presets/all';
 import { BaseButton, Button, Checkbox, FontWeights, IconButton, IPersonaProps } from 'office-ui-fabric-react';
-// import { Link, useHistory } from 'react-router-dom';
 import useSPCRUD, { ISPCRUD } from '../../../../services/bal/spcrud';
 import SPCRUD from '../../../../services/bal/spcrud';
 import PersonalAdvanceVehicleMasterOps from '../../../../services/bal/PersonalAdvanceVehicleMaster';
@@ -67,7 +66,7 @@ const onbehalfoption: IDropdownOption[] = [
   { key: 'Yes', text: 'Yes' },
   { key: 'No', text: 'No' }
 ];
-export default class GHViewVehicle extends React.Component<IVehicleModuleProps, any> {
+export default class GroupHeadViewVehicle extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -118,12 +117,11 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
       ExpectlifeShow: false,
       typeOfVehicle1: '',
       typeOfVehicle: '',
-      isConfirmed: '', // assume this is auto-populated
+      isConfirmed: '',
       applicationCorrect: '',
-      // costOfVehicle: 750000, // example auto-populated value
       eligibleLoanAmount: '',
       disciplinaryPending: '',
-      netMonthlySalary: '', // example auto-populated value
+      netMonthlySalary: '',
       FityofNetemoluments: '',
       emiTenure: '',
       vehicleLoanCost: '',
@@ -141,17 +139,19 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
     };
   }
   async componentDidMount() {
-    // document.getElementById('divLoading').style.display = 'block';
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
-    let VMId = hashUrlSplit[2];
+    let activeTab = hashUrlSplit[2];
+    console.log(activeTab);
+    let VMId = hashUrlSplit[3];
+    localStorage.setItem('activeTab', activeTab);
+
     this.setState({ VMId: VMId });
     this.calculateEMICheck();
     this.calculateTotalMarks();
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
     await this.getCurrentUser();
-    // await this.getEmployee();
   }
   componentDidUpdate(prevProps, prevState) {
     if (
@@ -198,51 +198,6 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
       (isEMILessThan50Percent == 'Yes' ? 1 : 0);
     this.setState({ totalMarks: total });
   };
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (
-  //     prevState.netMonthlySalary !== this.state.netMonthlySalary ||
-  //     prevState.vehicleLoanCost !== this.state.vehicleLoanCost
-  //   ) {
-  //     this.calculateHalfNetSalary();
-  //     this.evaluateEMIEligibility();
-  //   }
-  //   if (
-  //     prevState.marks !== this.state.marks
-  //   ) {
-  //     this.calculateTotalMarks();
-  //   }
-  // }
-  // calculateHalfNetSalary = () => {
-  //   const halfSalary = this.state.netMonthlySalary * 0.5;
-  //   this.setState({ FityofNetemoluments: halfSalary });
-  // };
-  // evaluateEMIEligibility = () => {
-  //   const { vehicleLoanCost, FityofNetemoluments } = this.state;
-  //   const isEligible = parseFloat(vehicleLoanCost || 0) < FityofNetemoluments;
-  //   this.setState({
-  //     isEMILessThan50Percent: isEligible ? 'Yes' : 'No'
-  //   });
-  // };
-  // calculateTotalMarks = () => {
-  //   const { marks } = this.state;
-  //   this.setState({ totalMarks: marks }); // add other marks logic if needed
-  // };
-  // calculateTotalMarks = () => {
-  //   const {
-  //     isConfirmed,
-  //     disciplinaryProceedings,
-  //     netMonthlySalary,
-  //     vehicleLoanEMI,
-  //     applicationCorrect
-  //   } = this.state;
-  //   let total = 0;
-  //   if (isConfirmed == 'Yes') total += 1;
-  //   if (disciplinaryProceedings == 'No') total += 1;
-  //   if (applicationCorrect == 'Yes') total += 1;
-  //   const fiftyPercentOfSalary = parseFloat(netMonthlySalary) * 0.5;
-  //   if (parseFloat(vehicleLoanEMI) < fiftyPercentOfSalary) total += 1;
-  //   this.setState({ totalMarks: total });
-  // };
   public getCurrentUser = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -263,8 +218,6 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
           EmployeeName: currentEmpResult[0].EmployeeName,
           Created: currentEmpResult[0].Created,
           DateOfConfirmation: currentEmpResult[0].DateOfConfirmation,
-          // Created
-          // DateOfConfirmation
           isConfirmed: currentEmpResult[0].Created > currentEmpResult[0].DateOfConfirmation ? 'Yes' : 'No',
           DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
           CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
@@ -296,8 +249,6 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
             CostofVehicle: currentEmpResult[0].CostOfVehicle,
             NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
             AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
-            // Dateoffinalrepaymentofloan:currentEmpResult[0].PrevLoanDate?new Date(currentEmpResult[0].PrevLoanDate):null ,
-            // DateofAvailmentofLoan:currentEmpResult[0].PrevLoanRepaymentDate?new Date(currentEmpResult[0].PrevLoanRepaymentDate):null,
             DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
               ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
               : '',
@@ -315,45 +266,6 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
       return currentEmpResult;
     });
   };
-  // public getAllPrevPersonalAdvanceHistory = async (): Promise<IPrevPersonalAdvanceHistory |any> => {
-  //   return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
-  //     let employeeDataHisty = results;
-  //     var currentEmpResultHistory = employeeDataHisty.filter((item) => {
-  //       return item.PersonalAdvanceVehicleId.Id== +this.state.VMId;
-  //   })
-  //   if(currentEmpResultHistory && currentEmpResultHistory.length>0){
-  //     this.setState({
-  //       EmployeeInfodb: currentEmpResultHistory,
-  //       AllEmployeeCollObj: [],
-  //     });
-  //   }
-  //    return currentEmpResultHistory;
-  //   });
-  // };
-  // public getEmployee = async (): Promise<IEmployeeMaster> => {
-  //   return await PersonalAdvanceVehicleMasterOps().getEmployeeMaster(this.props).then(async (results) => {
-  //     let employeeData = results;
-  //     this.setState({
-  //       EmployeeInfodb: employeeData,
-  //       AllEmployeeCollObj: [],
-  //       EmployeeName: employeeData.EmployeeName,
-  //       DateOfJoining: employeeData.DateOfJoining ? new Date(employeeData.DateOfJoining) : null,
-  //       CurrentOfficeLocation: employeeData.CurrentOfficeLocation,
-  //       EmployeeIDId: employeeData.Id,
-  //       DependentType: "",
-  //       ActualClaimAmountLable: "",
-  //       CompanyEmail: employeeData.CompanyEmail,
-  //       EmployeeID: employeeData.EmployeeId,
-  //       DesignationId: employeeData.DesignationId,
-  //       DesignationTitle: employeeData.DesignationTitle,
-  //       DateofBirth: employeeData.DateofBirth,
-  //       Scale: employeeData.Scale,
-  //       Age: parseInt(employeeData.Age),
-  //       EmpType: employeeData.EmpType,
-  //     });
-  //     return employeeData;
-  //   });
-  // };
   public getAllPrevPersonalAdvanceHistory = async (): Promise<any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPrevPersonalAdvanceHistory(this.props).then(async (results) => {
       let employeeDataHisty = results;
@@ -365,7 +277,7 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
           DatePurposeofWithdrawal: item.WithdrawalDetails || '',
           PAmount: item.WithdrawalAmount || 0,
           POutstandingLoanasOnDate: item.OutstandingLoan || 0,
-          PDatePurposeofWithdrawal: item.FinalRepaymentDate ? new Date(item.FinalRepaymentDate).toISOString().split('T')[0] : '',// item.FinalRepaymentDate || '',
+          PDatePurposeofWithdrawal: item.FinalRepaymentDate ? new Date(item.FinalRepaymentDate).toISOString().split('T')[0] : '',
           expectedLife: item.ExpectedLife || 0,
           Id: item.ID || 0,
           PersonalAdvanceVehicleId: item.PersonalAdvanceVehicleId || 0
@@ -409,8 +321,6 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
     var VehicleRequestItem
     VehicleRequestItem = {
       GHResponse: 'Rejected by GroupHead',
-      // GroupHeadResponse:'Pending with GroupHead',
-      // GHResponse:'Pending with Group Head',
       Status: 'Rejected',
       GHApproverNameId: this.state.Currentuser.Id,
       GHResponseDate: new Date(),
@@ -429,21 +339,8 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
     const spCrudObj = await useSPCRUD();
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
-      // this.setState({ reqID: req.data.ID });
       alert('Vehicle Request Rejected Successfully!');
       window.location.href = '#/GroupHeadDashboard'
-      // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      // alert('Vehicle Request Submitted Successfully!');
-      // const RequestNoGenerate = {
-      //   Title: 'VM000' + req.data.ID
-      // };
-      //  await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-      // if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
-      //   await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      //   alert('Vehicle Request Submitted Successfully!');
-      // } else {
-      //   alert('Vehicle Request Submitted without attachments.');
-      // }
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -455,18 +352,10 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
     var VehicleRequestItem
     VehicleRequestItem = {
       GHResponse: 'Approved by GroupHead',
-      // GroupHeadResponse:'Pending with GroupHead',
-      // GHResponse:'Pending with Group Head',
       Status: 'Approved',
       GHApproverNameId: this.state.Currentuser.Id,
       GHResponseDate: new Date(),
       GHRemark: this.state.ExpenseDetails.GroupHeadRemarks,
-      // this.state.isEMILessThan50Percent
-      // this.state.VehicleLoanEMI
-      // this.state.disciplinaryPending
-      // this.state.eligibleLoanAmount
-      // this.state.applicationCorrect
-      // this.state.isConfirmed
       IsConfirm: this.state.isConfirmed,
       TotalMarks: this.state.totalMarks,
       IsEmiLessThan50: this.state.isEMILessThan50Percent,
@@ -481,20 +370,8 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
     const spCrudObj = await useSPCRUD();
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
-      // this.setState({ reqID: req.data.ID });
-      // await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
       alert('Vehicle Request Submitted Successfully!');
       window.location.href = '#/GroupHeadDashboard'
-      // const RequestNoGenerate = {
-      //   Title: 'VM000' + req.data.ID
-      // };
-      //  await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
-      // if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
-      //   await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
-      //   alert('Vehicle Request Submitted Successfully!');
-      // } else {
-      //   alert('Vehicle Request Submitted without attachments.');
-      // }
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error submitting the vehicle request.");
@@ -591,18 +468,6 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
     updatedRows[index][field] = value;
     this.setState({ vehicleRows: updatedRows });
   };
-  // handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   if (name == 'disciplinaryPending') {
-  //     const marks = value == 'No' ? 1 : 0;
-  //     this.setState({ [name]: value, marks });
-  //   } else if (name == 'eligibleLoanAmount') {
-  //     const cappedValue = Math.min(parseFloat(value || 0), 1000000);
-  //     this.setState({ [name]: cappedValue });
-  //   } else {
-  //     this.setState({ [name]: value });
-  //   }
-  // };
   private removeRow = (index: number) => {
     this.setState(prevState => ({
       vehicleRows: prevState.vehicleRows.filter((_, i) => i !== index)
@@ -898,59 +763,39 @@ export default class GHViewVehicle extends React.Component<IVehicleModuleProps, 
                   onChanged={(val) => this.handleRowChange(index, 'PDatePurposeofWithdrawal', val)}
                 />
               </div>
-              {/* <div className="col-sm-3">
-                <Label className="control-Label font-weight-bold">Expected Life</Label>
-                <TextField
-                  type="number" disabled
-                  value={row.expectedLife}
-                  onChanged={(val) => this.handleRowChange(index, 'expectedLife', val)}
-                />
-              </div> */}
-              {/* <div className="col-sm-4 d-flex align-items-center mt-4">
-                <IconButton
-                  iconProps={{ iconName: 'Add' }}
-                  title="Add Row"
-                  onClick={this.addRow}
-                />
-                {this.state.vehicleRows.length > 1 && (
-                  <IconButton
-                    iconProps={{ iconName: 'Delete' }}
-                    title="Remove Row"
-                    onClick={() => this.removeRow(index)}
-                  />
-                )}
-              </div> */}
+              { }
+              { }
             </div>
           </div>
         ))}
         <hr></hr>
-      <div className="row form-group">
-               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
-                 <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
-                 <TextField
-                   multiline disabled
-                   value={this.state.HR1Remark}
-                 />
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
-                 <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
-                 <TextField
-                   multiline disabled
-                   value={this.state.HR2Remark}
-                 /> </div>
-               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-                 <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-                 <TextField
-                   multiline disabled
-                   value={this.state.GHRemark}
-                 /> </div>
-             </div>
+        <div className="row form-group">
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR1Remark}
+            />
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR2Remark}
+            /> </div>
+          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+            <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+            <TextField
+              multiline disabled
+              value={this.state.GHRemark}
+            /> </div>
+        </div>
         <div hidden={!(this.state.Status == 'Approved')}>
           <h2>Recommendation by Group Head</h2>
           <table

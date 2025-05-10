@@ -122,6 +122,11 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
     this.setState({ VMId: VMId });
+
+    localStorage.removeItem('activeTab');
+
+    localStorage.setItem('activeTab', 'Pending');
+    
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
     await this.getCurrentUser();
@@ -569,7 +574,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         <div className='card'>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance)<span style={{color:'red'}}>*</span>  </Label>
+              <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance)<span style={{ color: 'red' }}>*</span>  </Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -587,7 +592,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance<span style={{color:'red'}}>*</span>  </Label>
+              <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance<span style={{ color: 'red' }}>*</span>  </Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -606,7 +611,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
                 name="ExpenseDetails.FityofNetemoluments"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120) <span style={{color:'red'}}>*</span>  </Label>
+              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120) <span style={{ color: 'red' }}>*</span>  </Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -620,7 +625,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         <div className='card'>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Type of Vehicle<span style={{color:'red'}}>*</span> </Label>
+              <Label className="control-Label font-weight-bold">Type of Vehicle<span style={{ color: 'red' }}>*</span> </Label>
             </div>
             <div className="col-sm-2">
               <Dropdown placeHolder="Select vehicle type" options={vehicleOptions}
@@ -629,7 +634,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
               />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Whether new or second hand <span style={{color:'red'}}>*</span> </Label>
+              <Label className="control-Label font-weight-bold">Whether new or second hand <span style={{ color: 'red' }}>*</span> </Label>
             </div>
             <div className="col-sm-2">
               <Dropdown
@@ -640,7 +645,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
               />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Make/ Model <span style={{color:'red'}}>*</span>  </Label>
+              <Label className="control-Label font-weight-bold">Make/ Model <span style={{ color: 'red' }}>*</span>  </Label>
             </div>
             <div className="col-sm-2">
               <TextField
@@ -651,7 +656,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Year of Manufacture<span style={{color:'red'}}>*</span>   </Label>
+              <Label className="control-Label font-weight-bold">Year of Manufacture<span style={{ color: 'red' }}>*</span>   </Label>
             </div>
             <div className="col-sm-2">
               <Dropdown
@@ -662,9 +667,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
               />
             </div>
             <div className="col-sm-2">
-                            <Label className="control-Label font-weight-bold">Cost of Vehicle<span style={{color:'red'}}>*</span>    </Label>
-              <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
-                <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
+              <Label className="control-Label font-weight-bold">Cost of Vehicle<span style={{ color: 'red' }}>*</span>    </Label>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'New')} > (as per enclosed invoice) </span>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
             </div>
             <div className="col-sm-2">
               { }
@@ -685,7 +690,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer<span style={{color:'red'}}>*</span>   </Label>
+              <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer<span style={{ color: 'red' }}>*</span>   </Label>
             </div>
             <div className="col-sm-2">
               <TextField
@@ -703,7 +708,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
               />
             </div>
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow && !this.state.ExpenseDetails.ExpectedlifeofVehicle}>
-              <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{color:'red'}}>*</span>   </Label>
+              <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{ color: 'red' }}>*</span>   </Label>
             </div>
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow && !this.state.ExpenseDetails.ExpectedlifeofVehicle}>
               <TextField

@@ -113,6 +113,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     };
   }
   async componentDidMount() {
+    localStorage.removeItem('activeTab');
+
+    localStorage.setItem('activeTab', 'Pending');
+    
     await this.getCurrentUser();
     await this.getEmployee();
   }
@@ -457,7 +461,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         <div className='card'>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance)<span style={{color:'red'}}>*</span> </Label>
+              <Label className="control-Label font-weight-bold">Total Emoluments p.m. (Salary and allowance)<span style={{ color: 'red' }}>*</span> </Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -465,7 +469,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">25% of the total emoluments   <span style={{color:'red'}}>*</span></Label>
+              <Label className="control-Label font-weight-bold">25% of the total emoluments   <span style={{ color: 'red' }}>*</span></Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number' disabled
@@ -474,7 +478,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance <span style={{color:'red'}}>*</span></Label>
+              <Label className="control-Label font-weight-bold">Total deductions p.m. viz. Festival Advance, Personal Advance <span style={{ color: 'red' }}>*</span></Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -492,7 +496,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 name="ExpenseDetails.FityofNetemoluments"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120)  <span style={{color:'red'}}>*</span> </Label>
+              <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120)  <span style={{ color: 'red' }}>*</span> </Label>
             </div>
             <div className="col-sm-2">
               <TextField type='number'
@@ -505,7 +509,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         <div className='card'>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Type of Vehicle <span style={{color:'red'}}>*</span></Label>
+              <Label className="control-Label font-weight-bold">Type of Vehicle <span style={{ color: 'red' }}>*</span></Label>
             </div>
             <div className="col-sm-2">
               <Dropdown placeHolder="Select vehicle type" options={vehicleOptions}
@@ -514,7 +518,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Whether new or second hand <span style={{color:'red'}}>*</span> </Label>
+              <Label className="control-Label font-weight-bold">Whether new or second hand <span style={{ color: 'red' }}>*</span> </Label>
             </div>
             <div className="col-sm-2">
               <Dropdown
@@ -525,7 +529,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               />
             </div>
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Make/ Model  <span style={{color:'red'}}>*</span> </Label>
+              <Label className="control-Label font-weight-bold">Make/ Model  <span style={{ color: 'red' }}>*</span> </Label>
             </div>
             <div className="col-sm-2">
               <TextField
@@ -535,7 +539,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Year of Manufacture  <span style={{color:'red'}}>*</span> </Label>
+              <Label className="control-Label font-weight-bold">Year of Manufacture  <span style={{ color: 'red' }}>*</span> </Label>
             </div>
             <div className="col-sm-2">
               <Dropdown
@@ -546,9 +550,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               />
             </div>
             <div className="col-sm-2">
-                            <Label className="control-Label font-weight-bold">Cost of Vehicle <span style={{color:'red'}}>*</span>  </Label>
-              <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
-                <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
+              <Label className="control-Label font-weight-bold">Cost of Vehicle <span style={{ color: 'red' }}>*</span>  </Label>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'New')} > (as per enclosed invoice) </span>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
             </div>
             <div className="col-sm-2">
               { }
@@ -569,7 +573,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer <span style={{color:'red'}}>*</span>  </Label>
+              <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer <span style={{ color: 'red' }}>*</span>  </Label>
             </div>
             <div className="col-sm-2">
               <TextField
@@ -587,7 +591,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               />
             </div>
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow}>
-              <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{color:'red'}}>*</span>   </Label>
+              <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{ color: 'red' }}>*</span>   </Label>
             </div>
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow}>
               <TextField

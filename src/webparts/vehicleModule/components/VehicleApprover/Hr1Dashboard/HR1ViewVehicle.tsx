@@ -66,7 +66,7 @@ const onbehalfoption: IDropdownOption[] = [
   { key: 'Yes', text: 'Yes' },
   { key: 'No', text: 'No' }
 ];
-export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps, any> {
+export default class HR1ViewVehicle extends React.Component<IVehicleModuleProps, any> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -141,7 +141,11 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
   async componentDidMount() {
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
-    let VMId = hashUrlSplit[2];
+    let activeTab = hashUrlSplit[2];
+    console.log(activeTab);
+    let VMId = hashUrlSplit[3];
+    localStorage.setItem('activeTab', activeTab);
+
     this.setState({ VMId: VMId });
     this.calculateEMICheck();
     this.calculateTotalMarks();
@@ -612,9 +616,9 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
               />
             </div>
             <div className="col-sm-2">
-                            <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
-              <span style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='New')} > (as per enclosed invoice) </span>
-                <span  style={{color:'red'}} hidden={!(this.state.ConditionOfVehicle=='Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
+              <Label className="control-Label font-weight-bold">Cost of Vehicle   </Label>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'New')} > (as per enclosed invoice) </span>
+              <span style={{ color: 'red' }} hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>  (as per enclosed valuation report from a Govt. approved value.) </span>
             </div>
             <div className="col-sm-2">
               { }
@@ -765,20 +769,20 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
           </div>
         ))}
         <hr></hr>
-      <div className="row form-group">
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+        <div className="row form-group">
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
             <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
           </div>
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
             <TextField
               multiline disabled
               value={this.state.HR1Remark}
             />
           </div>
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
             <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
           </div>
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
             <TextField
               multiline disabled
               value={this.state.HR2Remark}
@@ -911,7 +915,7 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
           </div>
         </div>
         <div className='text-center'>
-          <a href={'#/HR2Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
+          <a href={'#/HR1Dashboard'}><PrimaryButton >{"Exit"} </PrimaryButton></a>
         </div>
       </div>
     );

@@ -120,10 +120,19 @@ export default class HR2ApproveVehicle extends React.Component<IVehicleModulePro
     };
   }
   async componentDidMount() {
+    // let hashUrl = window.location.hash;
+    // let hashUrlSplit = hashUrl.split('/');
+    // let VMId = hashUrlSplit[2];
+    // this.setState({ VMId: VMId });
+
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
-    let VMId = hashUrlSplit[2];
+    let VMId = hashUrlSplit[3];
+
+
     this.setState({ VMId: VMId });
+
+
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
     await this.getCurrentUser();
@@ -259,6 +268,10 @@ export default class HR2ApproveVehicle extends React.Component<IVehicleModulePro
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
       swal("Success", "Vehicle Request Rejected Successfully!", "success").then(() => {
+
+        localStorage.removeItem('activeTab');
+
+        localStorage.setItem('activeTab', 'Rejected');
         window.location.href = '#/HR2Dashboard';
       });
     } catch (error) {
@@ -283,6 +296,10 @@ export default class HR2ApproveVehicle extends React.Component<IVehicleModulePro
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
       swal("Success", "Vehicle Request Approved Successfully!", "success").then(() => {
+        localStorage.removeItem('activeTab');
+
+        localStorage.setItem('activeTab', 'Approved');
+
         window.location.href = '#/HR2Dashboard';
       });
     } catch (error) {
@@ -680,33 +697,33 @@ export default class HR2ApproveVehicle extends React.Component<IVehicleModulePro
           </div>
         ))}
         <hr></hr>
-     <div className="row form-group">
-              <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
-                <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-              </div>
-              <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
-                <TextField
-                  multiline disabled
-                  value={this.state.HR1Remark}
-                />
-              </div>
-              <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
-                <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-              </div>
-              <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
-                <TextField
-                  multiline disabled
-                  value={this.state.HR2Remark}
-                /> </div>
-              <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-                <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-              </div>
-              <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-                <TextField
-                  multiline disabled
-                  value={this.state.GHRemark}
-                /> </div>
-            </div>
+        <div className="row form-group">
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR1Remark}
+            />
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+            <TextField
+              multiline disabled
+              value={this.state.HR2Remark}
+            /> </div>
+          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+            <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+          </div>
+          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
+            <TextField
+              multiline disabled
+              value={this.state.GHRemark}
+            /> </div>
+        </div>
         <div className="row form-group">
           <div className="col-sm-6">
             <Label className="control-Label font-weight-bold">Remarks</Label>
