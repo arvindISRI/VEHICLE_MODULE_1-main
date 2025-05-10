@@ -40,14 +40,14 @@ export default class Hr1Dashboard extends React.Component<IVehicleModuleProps, a
       ShowHR1Tab: false,
       activeTab: 'Pending',
       // filteredData: [],            // Filtered data after search
-       ApprovedFilter:[],
-    PendingfilteredData:[],
-    RejectedfilteredData:[],
-    PendingHR1Dashboardfiltered:[],
-    ApprovedHR1Dashboardfiltered:[],
-    RejectedHR1Dashboardfiltered:[],
-    PedingFilter:[],
-    RejectedFilter:[],
+      ApprovedFilter: [],
+      PendingfilteredData: [],
+      RejectedfilteredData: [],
+      PendingHR1Dashboardfiltered: [],
+      ApprovedHR1Dashboardfiltered: [],
+      RejectedHR1Dashboardfiltered: [],
+      PedingFilter: [],
+      RejectedFilter: [],
 
 
 
@@ -66,31 +66,31 @@ export default class Hr1Dashboard extends React.Component<IVehicleModuleProps, a
 
   }
 
-// pagination and common filter search--
- 
+  // pagination and common filter search--
 
 
-PendinghandleSearch = (e) => {
-  const term = e.target.value.toLowerCase();
-  const PendingHR1Dashboardfiltered = this.state.HR1Dashboard.filter(item =>
-    item.EmployeeCode.toLowerCase().includes(term) ||
-    item.EmployeeName.toLowerCase().includes(term) ||
-    item.Title.toLowerCase().includes(term) ||
-    item.Status.toLowerCase().includes(term)
-  );
-  this.setState({ searchTerm: term, PedingFilter: PendingHR1Dashboardfiltered, currentPage: 1 });
-}
-PendinghandlePageChange = (direction) => {
-  const { currentPage } = this.state;
-  if (direction === 'prev' && currentPage > 1) {
-    this.setState({ currentPage: currentPage - 1 });
-  } else if (direction === 'next' && currentPage < this.PendingpageCount()) {
-    this.setState({ currentPage: currentPage + 1 });
+
+  PendinghandleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    const PendingHR1Dashboardfiltered = this.state.HR1Dashboard.filter(item =>
+      item.EmployeeCode.toLowerCase().includes(term) ||
+      item.EmployeeName.toLowerCase().includes(term) ||
+      item.Title.toLowerCase().includes(term) ||
+      item.Status.toLowerCase().includes(term)
+    );
+    this.setState({ searchTerm: term, PedingFilter: PendingHR1Dashboardfiltered, currentPage: 1 });
   }
-}
-PendingpageCount = () => {
-  return Math.ceil(this.state.PedingFilter.length / this.state.itemsPerPage);
-}
+  PendinghandlePageChange = (direction) => {
+    const { currentPage } = this.state;
+    if (direction === 'prev' && currentPage > 1) {
+      this.setState({ currentPage: currentPage - 1 });
+    } else if (direction === 'next' && currentPage < this.PendingpageCount()) {
+      this.setState({ currentPage: currentPage + 1 });
+    }
+  }
+  PendingpageCount = () => {
+    return Math.ceil(this.state.PedingFilter.length / this.state.itemsPerPage);
+  }
 
 
 
@@ -118,11 +118,19 @@ PendingpageCount = () => {
   }
 
 
+  PendinghandlePageClick(pageNum: number) {
+    this.setState({ currentPage: pageNum });
+  }
+  ApprovedhandlePageClick(pageNum: number) {
+    this.setState({ currentPage: pageNum });
+  }
+  RejectedhandlePageClick(pageNum: number) {
+    this.setState({ currentPage: pageNum });
+  }
 
-  
 
 
-  
+
   RejectedhandleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     const RejectedHR1Dashboardfiltered = this.state.HR1RejectedDashboard.filter(item =>
@@ -223,7 +231,7 @@ PendingpageCount = () => {
       console.log(HR1Pending);
       const PendingHR1Dashboardfiltered = this.state.HR1Dashboard;
       this.setState({ PedingFilter: PendingHR1Dashboardfiltered, currentPage: 1 });
-  
+
       return HR1Pending;
       console.log(HR1Pending);
     });
@@ -234,7 +242,7 @@ PendingpageCount = () => {
 
       // const HR1Dashboardfiltered = this.state.HR1ApprovedDashboard;
       // this.setState({ ApprovedFilter: HR1Dashboardfiltered, currentPage: 1 });
-    
+
       const ApprovedHR1Dashboardfiltered = this.state.HR1ApprovedDashboard;
       this.setState({ ApprovedFilter: ApprovedHR1Dashboardfiltered, currentPage: 1 });
 
@@ -253,8 +261,8 @@ PendingpageCount = () => {
   public render(): React.ReactElement<IVehicleModuleProps> {
     const { selectedOption } = this.state;
     const value = selectedOption;
-    const { PedingFilter,ApprovedFilter,RejectedFilter, currentPage, itemsPerPage, searchTerm } = this.state;
-    
+    const { PedingFilter, ApprovedFilter, RejectedFilter, currentPage, itemsPerPage, searchTerm } = this.state;
+
 
     // Pagination logic
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -328,29 +336,103 @@ PendingpageCount = () => {
                               </tr>
                             )) : (
                               <tr>
-  <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
-    No Data Available
-  </td>
-</tr>
+                                <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
+                                  No Data Available
+                                </td>
+                              </tr>
                             )}
                           </tbody>
                         </table>
 
                         {/* Pagination Controls */}
-                        <div style={{ marginTop: '10px' }}>
+                        {/* <div style={{ marginTop: '10px' }}>
                           <button onClick={() => this.PendinghandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
                           <span style={{ margin: '0 10px' }}>Page {currentPage} of {this.PendingpageCount()}</span>
                           <button onClick={() => this.PendinghandlePageChange('next')} disabled={currentPage === this.PendingpageCount()}>Next</button>
-                        </div>
+                        </div> */}
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '20px' }}>
+  <button
+    onClick={() => this.PendinghandlePageChange('prev')}
+    disabled={this.state.currentPage === 1}
+    style={{ padding: '6px 12px', margin: '0 4px', cursor: this.state.currentPage === 1 ? 'not-allowed' : 'pointer' }}
+  >
+    Prev
+  </button>
+
+  {(() => {
+    const totalPages = this.PendingpageCount();
+    const currentPage = this.state.currentPage;
+    const pageLimit = 5;
+    const currentGroup = Math.floor((currentPage - 1) / pageLimit);
+    const startPage = currentGroup * pageLimit + 1;
+    const endPage = Math.min(startPage + pageLimit - 1, totalPages);
+
+    const pages = [];
+    if (startPage > 1) {
+      pages.push(
+        <button
+          key="prev-ellipsis"
+          onClick={() => this.PendinghandlePageClick(startPage - 1)}
+          style={{ padding: '6px 12px', margin: '0 4px', border: 'none', background: 'none', cursor: 'pointer' }}
+        >
+          ...
+        </button>
+      );
+    }
+
+    for (let pageNum = startPage; pageNum <= endPage; pageNum++) {
+      pages.push(
+        <button
+          key={pageNum}
+          onClick={() => this.PendinghandlePageClick(pageNum)}
+          style={{
+            padding: '6px 12px',
+            margin: '0 4px',
+            backgroundColor: currentPage === pageNum ? '#007bff' : '#f0f0f0',
+            color: currentPage === pageNum ? '#fff' : '#000',
+            border: '1px solid #ccc',
+            cursor: 'pointer',
+            borderRadius: '4px'
+          }}
+        >
+          {pageNum}
+        </button>
+      );
+    }
+
+    if (endPage < totalPages) {
+      pages.push(
+        <button
+          key="next-ellipsis"
+          onClick={() => this.PendinghandlePageClick(endPage + 1)}
+          style={{ padding: '6px 12px', margin: '0 4px', border: 'none', background: 'none', cursor: 'pointer' }}
+        >
+          ...
+        </button>
+      );
+    }
+
+    return pages;
+  })()}
+
+  <button
+    onClick={() => this.PendinghandlePageChange('next')}
+    disabled={this.state.currentPage === this.PendingpageCount()}
+    style={{ padding: '6px 12px', margin: '0 4px', cursor: this.state.currentPage === this.PendingpageCount() ? 'not-allowed' : 'pointer' }}
+  >
+    Next
+  </button>
+</div>
+
 
                       </div>
                     )}
 
-                    
+
                     {this.state.activeTab == 'Approved' && (
                       <div id="Approved" className="tabcontent">
                         <h3>Approved</h3>
-                        
+
                         <input
                           type="text"
                           placeholder="Search..."
@@ -358,7 +440,7 @@ PendingpageCount = () => {
                           onChange={this.ApprovedhandleSearch}
                           style={{ marginBottom: '10px', padding: '5px' }}
                         />
-    <table className="table">
+                        <table className="table">
                           <thead>
                             <tr>
                               <th>Action</th>
@@ -390,26 +472,100 @@ PendingpageCount = () => {
                               </tr>
                             )) : (
                               <tr>
-  <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
-    No Data Available
-  </td>
-</tr>
+                                <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
+                                  No Data Available
+                                </td>
+                              </tr>
                             )}
                           </tbody>
                         </table>
 
                         {/* Pagination Controls */}
-                        <div style={{ marginTop: '10px' }}>
+                        {/* <div style={{ marginTop: '10px' }}>
                           <button onClick={() => this.ApprovedhandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
                           <span style={{ margin: '0 10px' }}>Page {currentPage} of {this.ApprovedpageCount()}</span>
                           <button onClick={() => this.ApprovedhandlePageChange('next')} disabled={currentPage === this.ApprovedpageCount()}>Next</button>
-                        </div>
+                        </div> */}
+                     <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '20px' }}>
+  <button
+    onClick={() => this.ApprovedhandlePageChange('prev')}
+    disabled={this.state.currentPage === 1}
+    style={{ padding: '6px 12px', margin: '0 4px', cursor: this.state.currentPage === 1 ? 'not-allowed' : 'pointer' }}
+  >
+    Prev
+  </button>
+
+  {(() => {
+    const totalPages = this.ApprovedpageCount();
+    const currentPage = this.state.currentPage;
+    const pageLimit = 5;
+    const currentGroup = Math.floor((currentPage - 1) / pageLimit);
+    const startPage = currentGroup * pageLimit + 1;
+    const endPage = Math.min(startPage + pageLimit - 1, totalPages);
+
+    const pages = [];
+    if (startPage > 1) {
+      pages.push(
+        <button
+          key="prev-ellipsis"
+          onClick={() => this.ApprovedhandlePageClick(startPage - 1)}
+          style={{ padding: '6px 12px', margin: '0 4px', border: 'none', background: 'none', cursor: 'pointer' }}
+        >
+          ...
+        </button>
+      );
+    }
+
+    for (let pageNum = startPage; pageNum <= endPage; pageNum++) {
+      pages.push(
+        <button
+          key={pageNum}
+          onClick={() => this.ApprovedhandlePageClick(pageNum)}
+          style={{
+            padding: '6px 12px',
+            margin: '0 4px',
+            backgroundColor: currentPage === pageNum ? '#007bff' : '#f0f0f0',
+            color: currentPage === pageNum ? '#fff' : '#000',
+            border: '1px solid #ccc',
+            cursor: 'pointer',
+            borderRadius: '4px'
+          }}
+        >
+          {pageNum}
+        </button>
+      );
+    }
+
+    if (endPage < totalPages) {
+      pages.push(
+        <button
+          key="next-ellipsis"
+          onClick={() => this.ApprovedhandlePageClick(endPage + 1)}
+          style={{ padding: '6px 12px', margin: '0 4px', border: 'none', background: 'none', cursor: 'pointer' }}
+        >
+          ...
+        </button>
+      );
+    }
+
+    return pages;
+  })()}
+
+  <button
+    onClick={() => this.ApprovedhandlePageChange('next')}
+    disabled={this.state.currentPage === this.ApprovedpageCount()}
+    style={{ padding: '6px 12px', margin: '0 4px', cursor: this.state.currentPage === this.ApprovedpageCount() ? 'not-allowed' : 'pointer' }}
+  >
+    Next
+  </button>
+</div>
+
                       </div>
                     )}
                     {this.state.activeTab == 'Rejected' && (
                       <div id="Rejected" className="tabcontent">
                         <h3>Rejected</h3>
-                        
+
                         <input
                           type="text"
                           placeholder="Search..."
@@ -449,20 +605,90 @@ PendingpageCount = () => {
                               </tr>
                             )) : (
                               <tr>
-  <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
-    No Data Available
-  </td>
-</tr>
+                                <td colSpan={6} style={{ textAlign: 'center', padding: '20px', fontStyle: 'italic', color: '#888' }}>
+                                  No Data Available
+                                </td>
+                              </tr>
                             )}
                           </tbody>
                         </table>
 
-                        {/* Pagination Controls */}
-                        <div style={{ marginTop: '10px' }}>
-                          <button onClick={() => this.RejectedhandlePageChange('prev')} disabled={currentPage === 1}>Prev</button>
-                          <span style={{ margin: '0 10px' }}>Page {currentPage} of {this.RejectedpageCount()}</span>
-                          <button onClick={() => this.RejectedhandlePageChange('next')} disabled={currentPage === this.RejectedpageCount()}>Next</button>
-                        </div>
+                        
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '20px' }}>
+  <button
+    onClick={() => this.RejectedhandlePageChange('prev')}
+    disabled={this.state.currentPage === 1}
+    style={{ padding: '6px 12px', margin: '0 4px', cursor: this.state.currentPage === 1 ? 'not-allowed' : 'pointer' }}
+  >
+    Prev
+  </button>
+
+  {(() => {
+    const totalPages = this.RejectedpageCount();
+    const currentPage = this.state.currentPage;
+    const pageLimit = 5;
+    const currentGroup = Math.floor((currentPage - 1) / pageLimit);
+    const startPage = currentGroup * pageLimit + 1;
+    const endPage = Math.min(startPage + pageLimit - 1, totalPages);
+
+    const pages = [];
+    if (startPage > 1) {
+      pages.push(
+        <button
+          key="prev-ellipsis"
+          onClick={() => this.RejectedhandlePageClick(startPage - 1)}
+          style={{ padding: '6px 12px', margin: '0 4px', border: 'none', background: 'none', cursor: 'pointer' }}
+        >
+          ...
+        </button>
+      );
+    }
+
+    for (let pageNum = startPage; pageNum <= endPage; pageNum++) {
+      pages.push(
+        <button
+          key={pageNum}
+          onClick={() => this.RejectedhandlePageClick(pageNum)}
+          style={{
+            padding: '6px 12px',
+            margin: '0 4px',
+            backgroundColor: currentPage === pageNum ? '#007bff' : '#f0f0f0',
+            color: currentPage === pageNum ? '#fff' : '#000',
+            border: '1px solid #ccc',
+            cursor: 'pointer',
+            borderRadius: '4px'
+          }}
+        >
+          {pageNum}
+        </button>
+      );
+    }
+
+    if (endPage < totalPages) {
+      pages.push(
+        <button
+          key="next-ellipsis"
+          onClick={() => this.RejectedhandlePageClick(endPage + 1)}
+          style={{ padding: '6px 12px', margin: '0 4px', border: 'none', background: 'none', cursor: 'pointer' }}
+        >
+          ...
+        </button>
+      );
+    }
+
+    return pages;
+  })()}
+
+  <button
+    onClick={() => this.RejectedhandlePageChange('next')}
+    disabled={this.state.currentPage === this.RejectedpageCount()}
+    style={{ padding: '6px 12px', margin: '0 4px', cursor: this.state.currentPage === this.RejectedpageCount() ? 'not-allowed' : 'pointer' }}
+  >
+    Next
+  </button>
+</div>
+
+
                       </div>
                     )}
                   </div>
