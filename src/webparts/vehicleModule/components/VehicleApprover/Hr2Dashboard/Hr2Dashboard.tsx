@@ -156,6 +156,9 @@ console.log(activeTab1);
     });
   }
   public setActiveTab = (tabName: string) => {
+    localStorage.removeItem('activeTab');
+
+    localStorage.setItem('activeTab',tabName);
     this.setState({ activeTab: tabName });
   };
   public async checkUserInGroups(groups: any) {

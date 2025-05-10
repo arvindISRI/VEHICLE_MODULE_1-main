@@ -149,6 +149,10 @@ export default class Hr1Dashboard extends React.Component<IVehicleModuleProps, a
     });
   }
   public setActiveTab = (tabName: string) => {
+    localStorage.removeItem('activeTab');
+
+    localStorage.setItem('activeTab',tabName);
+
     this.setState({ activeTab: tabName });
   };
   public async checkUserInGroups(groups: any) {

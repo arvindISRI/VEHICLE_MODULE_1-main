@@ -148,6 +148,9 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
     });
   }
   public setActiveTab = (tabName: string) => {
+    localStorage.removeItem('activeTab');
+
+    localStorage.setItem('activeTab',tabName);
     this.setState({ activeTab: tabName });
   };
   public async checkUserInGroups(groups: any) {
