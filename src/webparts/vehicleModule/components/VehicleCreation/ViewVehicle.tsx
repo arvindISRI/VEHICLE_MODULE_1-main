@@ -564,7 +564,8 @@ export default class ViewVehicle extends React.Component<IVehicleModuleProps, an
             </div>
             <div className="col-sm-2">
               <TextField type='number' disabled
-                value={this.state.ExpenseDetails.RepaymenttenureinEMI}
+                  value={this.state.ExpenseDetails.RepaymenttenureinEMI}
+                 placeholder={"Enter Month"}
                 name="ExpenseDetails.RepaymenttenureinEMI"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>

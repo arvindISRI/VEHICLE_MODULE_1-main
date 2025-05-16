@@ -26,8 +26,11 @@ import Select from 'react-select-plus';
 import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { ENV_CONFIG } from '../../../../Enviroment/envConfig';
+import PersonalAdvanceVehicleMasterOps from '../../../services/bal/PersonalAdvanceVehicleMaster';
+
 import { IVehicleModuleProps } from '../IVehicleModuleProps';
 import EmployeeOps from '../../../services/bal/PersonalAdvanceVehicleMaster';
+import { IVehicleRequest } from '../../../services/interface/IVehicleRequest';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 const initialValues = {
@@ -69,6 +72,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       yearOfManufacture: '',
       yearOfManufacture1: '',
       isSubmitting: false,
+      AlreadyAnPendingRequest:false,
       isSave: false,
       selectedOption: '',
       filteredData: [],
@@ -113,12 +117,14 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     };
   }
   async componentDidMount() {
+    await this.getEmployee();
+
     localStorage.removeItem('activeTab');
 
     localStorage.setItem('activeTab', 'Pending');
-    
     await this.getCurrentUser();
-    await this.getEmployee();
+    await this.getAllPersonalAdvanceVehicle();
+
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
@@ -159,6 +165,18 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       return employeeData;
     });
   };
+
+    public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
+      return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
+        let employeeData = results;
+        var currentEmpResult = employeeData.filter((item) => {
+          return ((item.EmployeeCode ==this.state.EmployeeID) && (item.Status=='Pending' ));
+        })
+        if (currentEmpResult && currentEmpResult.length > 0) {
+          this.setState({AlreadyAnPendingRequest:true});
+        }
+      });
+    };
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
@@ -186,6 +204,13 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     this.setState({ ExpenseDetails: updatedExpenseDetails });
   };
   public BtnSubmitRequest = async (SubmittionType) => {
+
+    if(this.state.AlreadyAnPendingRequest==true){
+      swal("Notice", "Your Vehicle Request already in Pending.", "info");
+      //alert('hii');
+      return false
+
+    }
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
     const showAlert = (message) => {
       swal("Validation Error", message, "warning");
@@ -500,6 +525,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
             <div className="col-sm-2">
               <TextField type='number'
+              placeholder={"Enter Month"}
                 name="ExpenseDetails.RepaymenttenureinEMI"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>

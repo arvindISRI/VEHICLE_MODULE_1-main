@@ -256,7 +256,7 @@ export default function EmployeeOps() {
             // , `EmployeeID eq '${emplinfo.Title}' and Status eq '${status}'`
             // , `Status eq '${status}' and Author/Name eq '${currentUser.LoginName}'`
             // , `Author/Name eq '${currentUser.LoginName}' and EmployeeID eq '${emplinfo.Title}'`
-            , `Status eq '${status}' or Status eq '${status1}'  and EmployeeCode eq '${emplinfo.Title}'`
+            , `(Status eq '${status}' or Status eq '${status1}') and  EmployeeCode eq '${emplinfo.Title}'`
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {

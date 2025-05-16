@@ -259,7 +259,7 @@ console.log(activeTab1);
           </span>
           <h2 className='widget-card-head-title'>User Dashboard</h2>
           <span className='widget-card-head-btn'>
-            <PrimaryButton data-automation-id='btn-update-profile' iconProps={{ iconName: 'EditContact' }}
+            <PrimaryButton data-automation-id='btn-update-profile' iconProps={{ iconName: 'Add' }}
               text='Add Vehicle' onClick={() => { window.location.href = '#/AddVehicle' }} />
           </span>        </div>
         <div className='widget-card-body'>

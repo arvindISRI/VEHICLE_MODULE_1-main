@@ -70,6 +70,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       yearOfManufacture: '',
       yearOfManufacture1: '',
       isSubmitting: false,
+      AlreadyAnPendingRequest:false,
+
       isSave: false,
       selectedOption: '',
       filteredData: [],
@@ -118,6 +120,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     };
   }
   async componentDidMount() {
+    
     let hashUrl = window.location.hash;
     let hashUrlSplit = hashUrl.split('/');
     let VMId = hashUrlSplit[2];
@@ -143,12 +146,23 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       return cuser;
     });
   }
+
   public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
     return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       let employeeData = results;
+
+      var AlreadyPendingcurrentEmpResult = employeeData.filter((item) => {
+        ((item.EmployeeCode ==this.state.EmployeeID) && (item.Status=='Pending' ));
+     })
+     if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
+       this.setState({AlreadyAnPendingRequest:true});
+     }
       var currentEmpResult = employeeData.filter((item) => {
-        return item.ID == +this.state.VMId;
+        return item.ID == +this.state.VMId ;
       })
+
+    
+
       if (currentEmpResult && currentEmpResult.length > 0) {
         this.setState({
           EmployeeInfodb: currentEmpResult,
@@ -296,7 +310,54 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       this.setState({ isSave: false });
     }
   };
+  // public BtnSubmitRequest = async (SubmittionType) => {
+  //   var AlreadyPendingcurrentEmpResult=[];
+  //  var EmployeeCode= +this.state.EmployeeCode;
+  //      await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
+  //       let employeeData = results;
+  
+  //        AlreadyPendingcurrentEmpResult = employeeData.filter((item:any) => {
+  //         (+item.EmployeeCode ==EmployeeCode && item.Status=='Pending' );
+  //      })
+  //      if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
+  //       swal("Notice", "Your Vehicle Request already in Pending.", "info");
+  //       //alert('hii');
+  //       return false
+  
+  //        this.setState({AlreadyAnPendingRequest:true});
+  //      }
+  //     })
   public BtnSubmitRequest = async (SubmittionType) => {
+    let AlreadyPendingcurrentEmpResult = [];
+    const EmployeeCode = +this.state.EmployeeCode;
+  
+    await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
+      const employeeData = results;
+  
+      console.log("Checking against EmployeeCode:", EmployeeCode);
+      console.log("Employee vehicle data:", employeeData);
+  
+      AlreadyPendingcurrentEmpResult = employeeData.filter((item: any) => {
+        console.log("Item:", item.EmployeeCode, item.Status);
+        return +item.EmployeeCode === +EmployeeCode && item.Status === 'Pending';
+      });
+  
+      if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
+        this.setState({ AlreadyAnPendingRequest: true });
+        swal("Notice", "Your Vehicle Request is already in Pending.", "info");
+        return;
+      }
+    });
+    
+  
+
+    // if(this.state.AlreadyAnPendingRequest==true){
+    //   swal("Notice", "Your Vehicle Request already in Pending.", "info");
+    //   //alert('hii');
+    //   return false
+
+    // }
+    return false;
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
     const showAlert = (message) => {
       swal("Validation Error", message, "warning");
@@ -614,8 +675,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
               <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120) <span style={{ color: 'red' }}>*</span>  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField type='number'
-                value={this.state.ExpenseDetails.RepaymenttenureinEMI}
+              <TextField type='number' 
+                  value={this.state.ExpenseDetails.RepaymenttenureinEMI}
+                 placeholder={"Enter Month"}
                 name="ExpenseDetails.RepaymenttenureinEMI"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
