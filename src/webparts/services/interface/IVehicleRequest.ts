@@ -8,6 +8,7 @@ export interface IVehicleRequest {
     EmployeeType: any,
     Designation: any,
     Age: any,
+    TotalLoanAmount:any,
     EmployeeCode: any,
     DateOfJoining: any,
     ResidenceAddress: any,

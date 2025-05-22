@@ -29,6 +29,7 @@ import { ENV_CONFIG } from '../../../../../Enviroment/envConfig';
 import { IVehicleModuleProps } from '../../IVehicleModuleProps';
 import { IVehicleRequest } from '../../../../services/interface/IVehicleRequest';
 import { IPrevPersonalAdvanceHistory } from '../../../../services/interface/IPrevPersonalAdvanceHistory';
+import NoteTemplateDocsDocumentOps from '../../../../services/bal/NoteTemplateDocs';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 const initialValues = {
@@ -37,6 +38,11 @@ const initialValues = {
   FinancialYearId: "",
   Subject: "",
 }
+const cellStyle = {
+  border: '1px solid black',
+  padding: '8px',
+  textAlign: 'left',
+};
 const validate = yup.object().shape({
   SanctionNote: yup.string().required('Note Type is required'),
   FinancialYear: yup.string().required('Financial Year is required'),
@@ -67,6 +73,8 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     super(props);
     this.state = {
       AllEmployeeCollObj: [],
+      NoteTempDocsColl: [],
+
       yearOfManufacture: '',
       yearOfManufacture1: '',
       isSubmitting: false,
@@ -129,12 +137,74 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
     await this.getCurrentUser();
+    this.calculateEMICheck();
+    this.calculateTotalMarks();
+    const requestNo = VMId;
+    await this.getNoteTemplateDocs(requestNo)
   }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
+  //     this.setState({ selectedOption: null });
+  //   }
+  // }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
       this.setState({ selectedOption: null });
     }
+    if (
+      prevState.VehicleLoanEMI !== this.state.VehicleLoanEMI ||
+      prevState.ExpenseDetails.FityofNetemoluments !== this.state.ExpenseDetails.FityofNetemoluments
+    ) {
+      this.calculateEMICheck();
+    }
+    if (
+      prevState.isConfirmed !== this.state.isConfirmed ||
+      prevState.applicationCorrect !== this.state.applicationCorrect ||
+      prevState.disciplinaryPending !== this.state.disciplinaryPending ||
+      prevState.isEMILessThan50Percent !== this.state.isEMILessThan50Percent
+    ) {
+      this.calculateTotalMarks();
+    }
   }
+   public getNoteTemplateDocs = async (NoteId) => {
+        let web = Web(this.props.currentSPContext.pageContext.web.absoluteUrl);
+        await NoteTemplateDocsDocumentOps().getNoteTemplateDocsDocument(NoteId, this.props).then(async (brPlanDocresults) => {
+          this.setState({ NoteTempDocsColl: brPlanDocresults });
+        }, error => {
+          console.log(error);
+        });
+      }
+  // handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   if (name.startsWith('ExpenseDetails.')) {
+  //     const key = name.split('.')[1];
+  //     this.setState((prevState) => ({
+  //       ExpenseDetails: {
+  //         ...prevState.ExpenseDetails,
+  //         [key]: value,
+  //       },
+  //     }));
+  //   } else {
+  //     this.setState({ [name]: value });
+  //   }
+  // };
+  calculateEMICheck = () => {
+    const emi = parseFloat(this.state.VehicleLoanEMI || 0);
+    const fiftyPercentSalary = parseFloat(this.state.ExpenseDetails.FityofNetemoluments || 0);
+    const isEMILess = emi < fiftyPercentSalary;
+    this.setState({ isEMILessThan50Percent: isEMILess ? 'Yes' : 'No' });
+  };
+  calculateTotalMarks = () => {
+    const { isConfirmed, applicationCorrect, disciplinaryPending, isEMILessThan50Percent } = this.state;
+    const total =
+      (isConfirmed == 'Yes' ? 1 : 0) +
+      (applicationCorrect == 'Yes' ? 1 : 0) +
+      (disciplinaryPending == 'No' ? 1 : 0) +
+      (isEMILessThan50Percent == 'Yes' ? 1 : 0);
+    this.setState({ totalMarks: total });
+  };
+
   public getCurrentUser = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -149,43 +219,114 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
         return item.ID == +this.state.VMId;
       })
       if (currentEmpResult && currentEmpResult.length > 0) {
+        // this.setState({
+        //   EmployeeInfodb: currentEmpResult,
+        //   AllEmployeeCollObj: [],
+        //   EmployeeName: currentEmpResult[0].EmployeeName,
+        //   Created: currentEmpResult[0].Created,
+        //   DateOfConfirmation: currentEmpResult[0].DateOfConfirmation,
+        //   isConfirmed: currentEmpResult[0].Created > currentEmpResult[0].DateOfConfirmation ? 'Yes' : 'No',
+        //   DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
+        //   CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
+        //   EmployeeCode: '' + currentEmpResult[0].EmployeeCode,
+        //   DesignationTitle: currentEmpResult[0].Designation,
+        //   VehicleLoanEMI: +currentEmpResult[0].VehicleLoanEMI,
+        //   Age: (currentEmpResult[0].Age),
+        //   ExpenseDetails: {
+        //      TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+        //     TotalLoanAmount: +currentEmpResult[0].TotalLoanAmount,
+        //     TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
+        //     Totaldeductions: +currentEmpResult[0].TotalDeductions,
+        //     FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
+        //     netMonthlySalary: +(currentEmpResult[0].NetEmoluments50) * 2,
+        //     RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
+        //     MakeModel: currentEmpResult[0].MakeModel,
+        //     CostofVehicle: currentEmpResult[0].CostOfVehicle,
+        //                NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
+        //     AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
+        //     Dateoffinalrepaymentofloan : currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
+        //     DateofAvailmentofLoan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
+        //     ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || '',
+
+        //     // AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
+        //     // DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
+        //     //   ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
+        //     //   : '',
+        //     // Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
+        //     //   ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
+        //     //   : '',
+        //     // ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
+        //   },
+        //   typeOfVehicle: currentEmpResult[0].VehicleType,
+          
+        //   typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
+        //   ConditionOfVehicle: currentEmpResult[0].VehicleCondition,
+        //   yearOfManufacture1: currentEmpResult[0].ManufactureYear,
+        //   HR1Response: currentEmpResult[0].HR1Response,
+        //   HR1Remark: currentEmpResult[0].HR1Remark,
+        //   HR2Response: currentEmpResult[0].HR2Response,
+        //   HR2Remark: currentEmpResult[0].HR2Remark,
+        //   GHResponse: currentEmpResult[0].GHResponse,
+        //   GHRemark: currentEmpResult[0].GHRemark,
+        // });
         this.setState({
           EmployeeInfodb: currentEmpResult,
           AllEmployeeCollObj: [],
           EmployeeName: currentEmpResult[0].EmployeeName,
+          Title: currentEmpResult[0].Title,
+
+          
+          Created: currentEmpResult[0].Created,
+          DateOfConfirmation: currentEmpResult[0].DateOfConfirmation,
+          isConfirmed: currentEmpResult[0].Created > currentEmpResult[0].DateOfConfirmation ? 'Yes' : 'No',
           DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
           CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
           EmployeeCode: '' + currentEmpResult[0].EmployeeCode,
           DesignationTitle: currentEmpResult[0].Designation,
           Age: (currentEmpResult[0].Age),
-          ExpenseDetails: {
-            TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
-            TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
-            Totaldeductions: +currentEmpResult[0].TotalDeductions,
-            FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
-            RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
-            MakeModel: currentEmpResult[0].MakeModel,
-            CostofVehicle: currentEmpResult[0].CostOfVehicle,
-            NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
-            AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
-            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
-              ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
-              : '',
-            Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
-              ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
-              : '',
-            ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
-          },
-          typeOfVehicle: currentEmpResult[0].VehicleType,
-          typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
-          ConditionOfVehicle: currentEmpResult[0].VehicleCondition,
-          yearOfManufacture1: currentEmpResult[0].ManufactureYear,
+          Status: currentEmpResult[0].Status,
+          totalMarks: currentEmpResult[0].TotalMarks,
+          isEMILessThan50Percent: currentEmpResult[0].IsEmiLessThan50,
+          VehicleLoanEMI: currentEmpResult[0].VehicleLoanEMI || 0,
+          eligibleLoanAmount: currentEmpResult[0].EligibleLoanAmount,
+          applicationCorrect: currentEmpResult[0].ApplicationCorrect,
+          disciplinaryPending: currentEmpResult[0].DisciplinaryProceedings,
+          recommendedSanctionAmount: currentEmpResult[0].SanctionAmount,
           HR1Response: currentEmpResult[0].HR1Response,
           HR1Remark: currentEmpResult[0].HR1Remark,
           HR2Response: currentEmpResult[0].HR2Response,
           HR2Remark: currentEmpResult[0].HR2Remark,
           GHResponse: currentEmpResult[0].GHResponse,
           GHRemark: currentEmpResult[0].GHRemark,
+          ExpenseDetails: {
+             TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+            TotalLoanAmount: +currentEmpResult[0].TotalLoanAmount,
+            TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
+            Totaldeductions: +currentEmpResult[0].TotalDeductions,
+            FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
+            netMonthlySalary: +(currentEmpResult[0].NetEmoluments50) * 2,
+            RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
+            MakeModel: currentEmpResult[0].MakeModel,
+            CostofVehicle: currentEmpResult[0].CostOfVehicle,
+                       NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
+            AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
+            Dateoffinalrepaymentofloan : currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
+            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
+            ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || '',
+
+            // AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
+            // DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
+            //   ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
+            //   : '',
+            // Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
+            //   ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
+            //   : '',
+            // ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
+          },
+          typeOfVehicle: currentEmpResult[0].VehicleType,
+          typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
+          ConditionOfVehicle: currentEmpResult[0].VehicleCondition,
+          yearOfManufacture1: currentEmpResult[0].ManufactureYear,
         });
       }
       return currentEmpResult;
@@ -250,8 +391,8 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     var VehicleRequestItem
     VehicleRequestItem = {
       HR1Response: 'Rejected by HR1',
-      HR2Response: 'Pending with HR2',
-      GHResponse: 'Pending with Group Head',
+      // HR2Response: 'Pending with HR2',
+      // GHResponse: 'Pending with Group Head',
       Status: 'Rejected',
       HR1ApproverNameId: this.state.Currentuser.Id,
       HR1ResponseDate: new Date(),
@@ -280,7 +421,7 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     VehicleRequestItem = {
       HR1Response: 'Approved by HR1',
       HR2Response: 'Pending with HR2',
-      GHResponse: 'Pending with Group Head',
+      GHResponse: 'Approved by Group Head',
       Status: 'Pending',
       HR1ApproverNameId: this.state.Currentuser.Id,
       HR1ResponseDate: new Date(),
@@ -387,6 +528,23 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       ]
     }));
   };
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name.startsWith('ExpenseDetails.')) {
+      const key = name.split('.')[1];
+      this.setState((prevState) => ({
+        ExpenseDetails: {
+          ...prevState.ExpenseDetails,
+          [key]: value,
+        },
+      }));
+    } else {
+      if (this.state.totalMarks != 4) {
+        this.setState({ recommendedSanctionAmount: 0 });
+      }
+      this.setState({ [name]: value });
+    }
+  };
   private handleRowChange = (index: number, field: string, value: string) => {
     const updatedRows = [...this.state.vehicleRows];
     updatedRows[index][field] = value;
@@ -398,51 +556,66 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
     }));
   };
   public render(): React.ReactElement<IVehicleModuleProps> {
+    const { existingFiles, NoteTempDocsColl } = this.state;
+
     return (
       <div >
         <h1>Approver Form</h1>
         <h4> <b> A). Service Particulars</b></h4>
-        <div className='card'>
-          <div className="row form-group">
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Employee ID</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label">{this.state.EmployeeCode}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Employee Name</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.EmployeeName}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Age</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.Age}</Label>
-            </div>
-          </div>
-          <div className="row form-group">
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Date of joining</Label>
-            </div>
-            <div className="col-sm-2">
-              {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Residence Address  </Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.CurrentOfficeLocation}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Designation</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.DesignationTitle}</Label>
-            </div>
-          </div>
-        </div>
+         <div className='card'>
+               <div className="row form-group">
+               <div className="col-sm-2">
+                   <Label className="control-Label font-weight-bold">VM Request ID</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label">{this.state.Title}</Label>
+                 </div>
+     
+                 <div className="col-sm-2">
+                   <Label className="control-Label font-weight-bold">Employee ID</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label">{this.state.EmployeeCode}</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label font-weight-bold">Employee Name</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label ">{this.state.EmployeeName}</Label>
+                 </div>
+               
+               </div>
+            
+               <div className="row form-group">
+                 <div className="col-sm-2">
+                   <Label className="control-Label font-weight-bold">Date of joining</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label font-weight-bold">Residence Address  </Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label ">{this.state.CurrentOfficeLocation}</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label font-weight-bold">Designation</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label ">{this.state.DesignationTitle}</Label>
+                 </div>
+               </div>
+     
+               <div className="row form-group">
+               <div className="col-sm-2">
+                   <Label className="control-Label font-weight-bold">Age</Label>
+                 </div>
+                 <div className="col-sm-2">
+                   <Label className="control-Label ">{this.state.Age}</Label>
+                 </div>
+               </div>
+               
+             </div>
         <h4><b> B). Salary Particulars</b></h4>
         <div className='card'>
           <div className="row form-group">
@@ -561,6 +734,29 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
                 }}
               />
             </div>
+               <div className="col-sm-2">
+                                      <Label className="control-Label font-weight-bold">
+                                        Cost of Vehicle Attachments 
+                                      </Label>
+                                    </div>
+                        
+                                    <div className="col-sm-2">
+                        
+                                      {NoteTempDocsColl.map((item) => (
+                                        <div key={item.Id} style={{ marginTop: '5px', alignItems: 'center' }}>
+                                          <a
+                                            href={item.ServerRelativeUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ marginRight: '10px', textDecoration: 'none' }}
+                                          >
+                                            {item.FileLeafRef}
+                                          </a>
+                        
+                                          
+                                        </div>
+                                      ))}
+                                    </div>
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
@@ -694,33 +890,160 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
           </div>
         ))}
         <hr></hr>
-      <div className="row form-group">
-               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
-                 <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1' )}>
-                 <TextField
-                   multiline disabled
-                   value={this.state.HR1Remark}
-                 />
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
-                 <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2' )}>
-                 <TextField
-                   multiline disabled
-                   value={this.state.HR2Remark}
-                 /> </div>
-               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-                 <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-               </div>
-               <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-                 <TextField
-                   multiline disabled
-                   value={this.state.GHRemark}
-                 /> </div>
-             </div>
+         <div className="row form-group">
+            <div className="col-sm-2" hidden={!(this.state.GHResponse == 'Approved by Group Head') && !(this.state.GHResponse == 'Rejected by Group Head')}>
+                         <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+                       </div>
+                       <div className="col-sm-2" hidden={!(this.state.GHResponse == 'Approved by Group Head') && !(this.state.GHResponse == 'Rejected by Group Head')}>
+                         <TextField
+                           multiline disabled
+                           value={this.state.GHRemark}
+                         /> </div>
+                         
+                       <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+                         <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+                       </div>
+                       <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+                         <TextField
+                           multiline disabled
+                           value={this.state.HR1Remark}
+                         />
+                       </div>
+                       <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+                         <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+                       </div>
+                       <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+                         <TextField
+                           multiline disabled
+                           value={this.state.HR2Remark}
+                         /> </div>
+                      
+                     </div>
+            <div hidden={!(this.state.Status != 'Draft')}>
+              <h2>Recommendation by Group Head</h2>
+              <table
+                style={{
+                  borderCollapse: 'collapse',
+                  width: '100%',
+                  border: '1px solid black',
+                  margin: '20px 0',
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th style={cellStyle}>Particulars</th>
+                    <th style={cellStyle}>Input</th>
+                    <th style={cellStyle}>Marks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={cellStyle}>1. Whether Confirmed (Auto Populated)</td>
+                    <td style={cellStyle}>
+                      <input type="text" name="isConfirmed" value={this.state.isConfirmed} readOnly />
+                    </td>
+                    <td style={cellStyle}>{this.state.isConfirmed == 'Yes' ? 1 : 0}</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>2. Particulars mentioned in the application are correct</td>
+                    <td style={cellStyle}>
+                      <select name="applicationCorrect" disabled value={this.state.applicationCorrect} onChange={this.handleChange} required>
+                        <option value="">--Select--</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                      </select>
+                    </td>
+                    <td style={cellStyle}>{this.state.applicationCorrect == 'Yes' ? 1 : 0}</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>3. Cost of the Vehicle (Auto Populated)</td>
+                    <td style={cellStyle}>
+                      <input type="number" disabled value={this.state.ExpenseDetails.CostofVehicle || ''} />
+                    </td>
+                    <td style={cellStyle}>-</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>4. Eligible Loan Amount (upto 10 Lakh)</td>
+                    <td style={cellStyle}>
+                      <input
+                        type="number" disabled
+                        name="eligibleLoanAmount"
+                        value={this.state.eligibleLoanAmount}
+                        onChange={this.handleChange}
+                      />
+                    </td>
+                    <td style={cellStyle}>-</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>5. Disciplinary Proceedings Pending</td>
+                    <td style={cellStyle}>
+                      <select name="disciplinaryPending" disabled value={this.state.disciplinaryPending} onChange={this.handleChange}>
+                        <option value="">--Select--</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                      </select>
+                    </td>
+                    <td style={cellStyle}>{this.state.disciplinaryPending == 'No' ? 1 : 0}</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>6. Total Loan Amount  (Auto Populated)</td>
+                    <td style={cellStyle}>
+                      <input type="number" disabled value={this.state.ExpenseDetails.TotalLoanAmount || ''} />
+                    </td>
+                    <td style={cellStyle}>-</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>6a. Net Monthly Salary (Auto Populated)</td>
+                    <td style={cellStyle}>
+                      <input type="text" disabled name="netMonthlySalary" value={this.state.ExpenseDetails.netMonthlySalary} readOnly />
+                    </td>
+                    <td style={cellStyle}>-</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>6b. 50% of Net Salary (Calculated)</td>
+                    <td style={cellStyle}>
+                      <input type="text" disabled value={this.state.ExpenseDetails.FityofNetemoluments} readOnly />
+                    </td>
+                    <td style={cellStyle}>-</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>6c. Vehicle Loan EMI</td>
+                    <td style={cellStyle}>
+                      <input
+                        type="number" disabled
+                        name="VehicleLoanEMI"
+                        value={this.state.VehicleLoanEMI}
+                        onChange={this.handleChange}
+                      />
+                    </td>
+                    <td style={cellStyle}>-</td>
+                  </tr>
+                  <tr>
+                    <td style={cellStyle}>6d. Is EMI &lt; 50% of Salary?</td>
+                    <td style={cellStyle}>
+                      <input type="text" disabled value={this.state.isEMILessThan50Percent} readOnly />
+                    </td>
+                    <td style={cellStyle}>{this.state.isEMILessThan50Percent == 'Yes' ? 1 : 0}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ ...cellStyle, fontWeight: 'bold' }}>Total Marks</td>
+                    <td style={cellStyle}></td>
+                    <td style={{ ...cellStyle, fontWeight: 'bold' }}>{this.state.totalMarks}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div className="row form-group" >
+                <div className="col-sm-6" hidden={!(this.state.totalMarks == 4)}>
+                  <Label className="control-Label font-weight-bold">Recommended Sanction Amount	</Label>
+                  <input
+                    type="number" disabled
+                    value={this.state.recommendedSanctionAmount}
+                    name="recommendedSanctionAmount"
+                    onChange={this.handleChange}
+                  />
+                </div>
+              </div>
+            </div>
         <div className="row form-group">
           <div className="col-sm-6">
             <Label className="control-Label font-weight-bold">Remarks</Label>

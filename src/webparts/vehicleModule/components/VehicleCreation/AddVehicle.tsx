@@ -68,11 +68,13 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
   constructor(props: any) {
     super(props);
     this.state = {
+      selectedFiles: [],
+
       AllEmployeeCollObj: [],
       yearOfManufacture: '',
       yearOfManufacture1: '',
       isSubmitting: false,
-      AlreadyAnPendingRequest:false,
+      AlreadyAnPendingRequest: false,
       isSave: false,
       selectedOption: '',
       filteredData: [],
@@ -103,12 +105,18 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           DatePurposeofWithdrawal: '',
         }
       ],
+
       ExpenseDetails: {
         TotalEmolumentspm: 0,
         TwentyFiveofthetotalemoluments: 0,
         Totaldeductions: 0,
+        TotalLoanAmount: 0,
         FityofNetemoluments: 0,
-        ExpectedlifeofVehicle: ''
+        ExpectedlifeofVehicle: '',
+        Dateoffinalrepaymentofloan: '',
+        DateofAvailmentofLoan: '',
+
+
       },
       ConditionOfVehicle: '',
       ExpectlifeShow: false,
@@ -129,8 +137,17 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
   componentDidUpdate(prevProps, prevState) {
     if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
       this.setState({ selectedOption: null });
+      if (prevState.ExpenseDetails !== this.state.ExpenseDetails) {
+        console.log("ExpenseDetails updated:", this.state.ExpenseDetails);
+      }
+
     }
   }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.ExpenseDetails !== this.state.ExpenseDetails) {
+  //     console.log("ExpenseDetails updated:", this.state.ExpenseDetails);
+  //   }
+  // }
   public getCurrentUser = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -166,46 +183,125 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     });
   };
 
-    public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
-      return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
-        let employeeData = results;
-        var currentEmpResult = employeeData.filter((item) => {
-          return ((item.EmployeeCode ==this.state.EmployeeID) && (item.Status=='Pending' ));
-        })
-        if (currentEmpResult && currentEmpResult.length > 0) {
-          this.setState({AlreadyAnPendingRequest:true});
-        }
-      });
-    };
+  public getAllPersonalAdvanceVehicle = async (): Promise<IVehicleRequest | any> => {
+    return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
+      let employeeData = results;
+      var currentEmpResult = employeeData.filter((item) => {
+        return ((item.EmployeeCode == this.state.EmployeeID) && (item.Status == 'Pending'));
+      })
+      if (currentEmpResult && currentEmpResult.length > 0) {
+        this.setState({ AlreadyAnPendingRequest: true });
+      }
+    });
+  };
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
     }
   }
-  public handleInputChangeadd = (e) => {
+
+  handleInputChangeadd = (e) => {
     const { name, value } = e.target;
-    const parsed = parseFloat(value);
-    !isNaN(parsed) && isFinite(value) ? parsed : value;
-    const numericValue = (value)
-    let updatedExpenseDetails = {
+    const field = name.split('.')[1];
+
+    const updatedExpenseDetails = {
       ...this.state.ExpenseDetails,
-      [name.split('.')[1]]: numericValue
+      [field]: value
     };
-    if (name == "ExpenseDetails.TotalEmolumentspm") {
-      updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
+
+    // Numeric fields
+    const totalEmoluments = field === "TotalEmolumentspm"
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.TotalEmolumentspm) || 0;
+
+    let totalDeductions = field === "Totaldeductions" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.Totaldeductions) || 0;
+
+      let totaLoanAmount = field === "TotalLoanAmount" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.TotalLoanAmount) || 0;
+      
+      let costofVehicle = field === "CostofVehicle" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.CostofVehicle) || 0;
+
+      let repaymenttenureinEMI = field === "RepaymenttenureinEMI" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.RepaymenttenureinEMI) || 0;
+
+      // ExpenseDetails.RepaymenttenureinEMI
+      if (field === "RepaymenttenureinEMI" && repaymenttenureinEMI > 120) {
+        repaymenttenureinEMI = 120;
+        updatedExpenseDetails.RepaymenttenureinEMI = repaymenttenureinEMI.toString();
+      }
+ // Cap deductions
+ if (field === "CostofVehicle" && costofVehicle > 1000000) {
+  costofVehicle = 1000000;
+  updatedExpenseDetails.CostofVehicle = costofVehicle.toString();
+}
+
+    // Cap deductions
+    if (field === "Totaldeductions" && totalDeductions > totalEmoluments) {
+      totalDeductions = totalEmoluments;
+      updatedExpenseDetails.Totaldeductions = totalEmoluments.toString();
     }
-    const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
-      ? numericValue
-      : this.state.ExpenseDetails.TotalEmolumentspm || 0;
-    const totalDeductions = name == "ExpenseDetails.Totaldeductions"
-      ? numericValue
-      : this.state.ExpenseDetails.Totaldeductions || 0;
-    updatedExpenseDetails.FityofNetemoluments = (totalEmoluments - totalDeductions) * 0.5;
+
+    // Calculate emolument percentages
+    if (field === "TotalEmolumentspm") {
+      updatedExpenseDetails.TwentyFiveofthetotalemoluments = (totalEmoluments * 0.25).toFixed(2);
+    }
+
+    updatedExpenseDetails.FityofNetemoluments = ((totalEmoluments - totalDeductions) * 0.5).toFixed(2);
+
+    // Date validation: Final repayment date must be >= availment date
+    const availmentDateStr = field === "DateofAvailmentofLoan" ? value : this.state.ExpenseDetails.DateofAvailmentofLoan;
+    const finalRepaymentDateStr = field === "Dateoffinalrepaymentofloan" ? value : this.state.ExpenseDetails.Dateoffinalrepaymentofloan;
+
+    if (availmentDateStr && finalRepaymentDateStr) {
+      const availmentDate = new Date(availmentDateStr);
+      const finalRepaymentDate = new Date(finalRepaymentDateStr);
+
+      if (finalRepaymentDate < availmentDate) {
+        // Auto-correct to match availment date
+        updatedExpenseDetails.Dateoffinalrepaymentofloan = availmentDateStr;
+      }
+    }
+
     this.setState({ ExpenseDetails: updatedExpenseDetails });
+  };
+
+  private onFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files: File[] = [];
+    if (e.target.files) {
+      for (let i = 0; i < e.target.files.length; i++) {
+        files.push(e.target.files.item(i)!);
+      }
+    }
+    this.setState({ selectedFiles: files });
   };
   public BtnSubmitRequest = async (SubmittionType) => {
 
-    if(this.state.AlreadyAnPendingRequest==true){
+    var count = 0;
+    if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
+      for (var v = 0; v < this.state.vehicleRows.length; v++) {
+        if ((+this.state.vehicleRows[v].POutstandingLoanasOnDate) > (+this.state.vehicleRows[v].PAmount)) {
+
+          count++
+          // PAmount<=POutstandingLoanasOnDate
+
+        }
+      }
+      if (count > 0) {
+        swal("Notice", "Outstanding Loan as on date should be less that Amount", "info");
+        //alert('hii');
+        return false
+
+      }
+    }
+
+
+    if (this.state.AlreadyAnPendingRequest == true) {
       swal("Notice", "Your Vehicle Request already in Pending.", "info");
       //alert('hii');
       return false
@@ -218,6 +314,11 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     };
     const isEmpty = (val) => val == '' || val == null || val == undefined || val == 0;
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
+    if (isEmpty(ExpenseDetails.TotalLoanAmount)) return showAlert('Please Fill Total Loan Amount');
+ 
+    if ((ExpenseDetails.TotalLoanAmount>ExpenseDetails.CostofVehicle)) return showAlert('Please Fill Total Loan Amount Less than Cost of Vehicle');
+
+    
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
     if (isEmpty(ExpenseDetails.RepaymenttenureinEMI)) return showAlert('Please Fill Repayment tenure in EMI');
     if (ExpenseDetails.RepaymenttenureinEMI > 120) return showAlert('Repayment tenure in EMI should be less than 120');
@@ -229,12 +330,19 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     if (isEmpty(ExpenseDetails.NameandAddressoftheSeller)) return showAlert('Please Fill Name and Address of the Seller / Dealer');
     if (ExpectlifeShow && isEmpty(ExpenseDetails.ExpectedlifeofVehicle)) return showAlert('Please Fill Expected life of Vehicle');
     let VehicleRequestItem = null;
+
+
     if (SubmittionType == 'Submitted') {
+var rate=5.5;
+var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.state.ExpenseDetails.RepaymenttenureinEMI*(1/1200))))/(this.state.ExpenseDetails.RepaymenttenureinEMI)).toFixed(2);
+     
       VehicleRequestItem = {
         EmployeeCode: this.state.EmployeeID,
         EmployeeName: this.state.EmployeeName,
         Age: '' + this.state.Age,
         Status: "Pending",
+        VehicleLoanEMI:+VehicleLoanEMI || 0,
+
         HR1Response: 'Pending with HR1',
         HR2Response: 'Pending with HR2',
         GHResponse: 'Pending with Group Head',
@@ -250,6 +358,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         NetEmoluments50: +ExpenseDetails.FityofNetemoluments,
         EmiTenure: +ExpenseDetails.RepaymenttenureinEMI || 0,
         CostOfVehicle: +ExpenseDetails.CostofVehicle || 0,
+        TotalLoanAmount: +ExpenseDetails.TotalLoanAmount || 0,
         VehicleType: typeOfVehicle,
         ManufactureYear: yearOfManufacture1 || "",
         VehicleCondition: ConditionOfVehicle,
@@ -271,6 +380,23 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         Title: 'VM000' + req.data.ID
       };
       await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
+
+
+      // 3. Upload and tag files with RequestNo metadata
+      if (this.state.selectedFiles.length > 0) {
+        const libraryFolder = 'VehicleCostAttachments';
+        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+        for (const file of this.state.selectedFiles) {
+          const uploadResult = await folder.files.add(file.name, file, true);
+          // Set RequestNo column on the uploaded file
+          await uploadResult.file.getItem().then(item =>
+            item.update({
+              PersonalAdvanceVehicleIdId: req.data.ID,
+            })
+          );
+        }
+      }
+
       if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
         swal("Success", "Vehicle Request Submitted Successfully!", "success").then(() => {
@@ -287,6 +413,15 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     }
   };
   public BtnSaveAsDraft = async (SubmittionType) => {
+
+  //   if (this.state.ExpenseDetails.TotalLoanAmount>this.state.ExpenseDetails.CostofVehicle){
+  //   return swal("Please Fill Total Loan Amount Less than Cost of Vehicle.", "info");
+  // }
+
+  var rate=5.5;
+  var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.state.ExpenseDetails.RepaymenttenureinEMI*(1/1200))))/(this.state.ExpenseDetails.RepaymenttenureinEMI)).toFixed(2);
+  
+
     var VehicleRequestItem
     if (SubmittionType == 'Draft') {
       VehicleRequestItem = {
@@ -294,12 +429,16 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         EmployeeName: this.state.EmployeeName,
         Age: '' + this.state.Age,
         Status: "Draft",
+        VehicleLoanEMI:+VehicleLoanEMI || 0,
+
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,
         Designation: this.state.DesignationTitle,
         TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
         Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
         TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
+        TotalLoanAmount: +this.state.ExpenseDetails.TotalLoanAmount || 0,
+
         NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
         EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
         CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
@@ -327,6 +466,22 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         Title: 'VM000' + req.data.ID
       };
       await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
+
+
+      // 3. Upload and tag files with RequestNo metadata
+      if (this.state.selectedFiles.length > 0) {
+        const libraryFolder = 'VehicleCostAttachments';
+        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+        for (const file of this.state.selectedFiles) {
+          const uploadResult = await folder.files.add(file.name, file, true);
+          // Set RequestNo column on the uploaded file
+          await uploadResult.file.getItem().then(item =>
+            item.update({
+              PersonalAdvanceVehicleIdId: req.data.ID,
+            })
+          );
+        }
+      }
       if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
         swal("Success", "Vehicle Request Updated Successfully!", "success").then(() => {
@@ -414,6 +569,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     }));
   };
   private addRow = () => {
+
     this.setState(prevState => ({
       vehicleRows: [
         ...prevState.vehicleRows,
@@ -426,6 +582,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       ]
     }));
   };
+
+
+
+
   private handleRowChange = (index: number, field: string, value: string) => {
     const updatedRows = [...this.state.vehicleRows];
     updatedRows[index][field] = value;
@@ -436,6 +596,39 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       vehicleRows: prevState.vehicleRows.filter((_, i) => i !== index)
     }));
   };
+
+  handleExpenseDetailsChange = (field, value) => {
+    const updatedExpenseDetails = {
+      ...this.state.ExpenseDetails,
+      [field]: value
+    };
+
+    // Optional: date validation
+    if (field === "Dateoffinalrepaymentofloan") {
+      const availmentDate = new Date(updatedExpenseDetails.DateofAvailmentofLoan);
+      const repaymentDate = new Date(value);
+      if (repaymentDate < availmentDate) {
+        updatedExpenseDetails.Dateoffinalrepaymentofloan = updatedExpenseDetails.DateofAvailmentofLoan;
+      }
+    }
+
+    // Optional: recalculate values
+    const totalEmoluments = parseFloat(updatedExpenseDetails.TotalEmolumentspm) || 0;
+    const totalDeductions = parseFloat(updatedExpenseDetails.Totaldeductions) || 0;
+
+    updatedExpenseDetails.TwentyFiveofthetotalemoluments = (totalEmoluments * 0.25).toFixed(2);
+    updatedExpenseDetails.FityofNetemoluments = ((totalEmoluments - totalDeductions) * 0.5).toFixed(2);
+
+    if (totalDeductions > totalEmoluments) {
+      updatedExpenseDetails.Totaldeductions = totalEmoluments.toString();
+    }
+
+    this.setState({ ExpenseDetails: updatedExpenseDetails });
+  };
+
+
+
+
   public render(): React.ReactElement<IVehicleModuleProps> {
     return (
       <div  >
@@ -507,6 +700,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
             <div className="col-sm-2">
               <TextField type='number'
+                value={this.state.ExpenseDetails.Totaldeductions}
                 name="ExpenseDetails.Totaldeductions"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -525,7 +719,8 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
             <div className="col-sm-2">
               <TextField type='number'
-              placeholder={"Enter Month"}
+                value={this.state.ExpenseDetails.RepaymenttenureinEMI}
+                placeholder={"Enter Month"}
                 name="ExpenseDetails.RepaymenttenureinEMI"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -582,9 +777,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             </div>
             <div className="col-sm-2">
               { }
-              <TextField
+              {/* <TextField
                 type="number"
                 name="ExpenseDetails.CostofVehicle"
+                max={'1000000'}
                 value={this.state.ExpenseDetails.CostofVehicle || ''}
                 onChanged={(value: string) => {
                   this.setState(prevState => ({
@@ -594,7 +790,33 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                     }
                   }));
                 }}
-              />
+              /> */}
+              <input
+  type="number"
+  name="ExpenseDetails.CostofVehicle"
+  value={this.state.ExpenseDetails.CostofVehicle || ''}
+  onChange={(e) => {
+    const inputValue = e.target.value;
+    const numericValue = Number(inputValue);
+
+    this.setState((prevState) => ({
+      ExpenseDetails: {
+        ...prevState.ExpenseDetails,
+        CostofVehicle: numericValue > 1000000 ? 1000000 : numericValue
+      }
+    }));
+  }}
+/>
+
+            </div>
+             <div className="col-sm-2">
+                          <Label className="control-Label font-weight-bold">
+                            Cost of Vehicle Attachments <span style={{ color: 'red' }}>*</span>
+                          </Label>
+                        </div>
+
+            <div className="col-sm-2">
+              <input type="file" multiple onChange={this.onFilesChange} />
             </div>
           </div>
           <div className="row form-group">
@@ -616,6 +838,19 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
                 }}
               />
             </div>
+
+            <div className="col-sm-2">
+              <Label className="control-Label font-weight-bold">Total Loan Amount  </Label>
+            </div>
+            <div className="col-sm-2">
+              <TextField type='number'
+                value={this.state.ExpenseDetails.TotalLoanAmount || ''}
+
+                name="ExpenseDetails.TotalLoanAmount"
+                onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+
+            </div>
+
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{ color: 'red' }}>*</span>   </Label>
             </div>
@@ -655,7 +890,9 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
             <div className="col-sm-2">
               <TextField type='number'
                 name="ExpenseDetails.AmountofLoanavailed"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>                  </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+
+            </div>
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Date of Availment of Loan   </Label>
             </div>
@@ -669,9 +906,20 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
               <Label className="control-Label font-weight-bold">Date of final repayment of loan  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField type='date'
+              {/* <TextField
+                type="date"
                 name="ExpenseDetails.Dateoffinalrepaymentofloan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>  </div>
+                min={this.state.ExpenseDetails.DateofAvailmentofLoan}
+                onChange={(e) => this.handleInputChangeadd(e)}
+              /> */}
+              <input
+                type="date"
+                name="ExpenseDetails.Dateoffinalrepaymentofloan"
+                value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan || ''}
+                min={this.state.ExpenseDetails.DateofAvailmentofLoan || ''}
+                onChange={this.handleInputChangeadd}
+              />
+            </div>
           </div>
         </div>
         <h4><b>E). Previous Personal Advance History </b> </h4>

@@ -88,6 +88,12 @@ export default class Navigation extends React.Component<IVehicleModuleProps, ITo
         iconProps: { iconName: 'ContactInfo' },
         key: 'UserDash'
       },
+      ...(this.state.ShowGHTab ? [{
+        name: 'Group Head Dashboard',
+        url: '#/GroupHeadDashboard',
+        iconProps: { iconName: 'WorkFlow' },
+        key: 'GroupHeadDashboard'
+      }] : []),
       ...(this.state.ShowHR1Tab ? [{
         name: 'HR1 Dashboard',
         url: '#/HR1Dashboard',
@@ -100,12 +106,7 @@ export default class Navigation extends React.Component<IVehicleModuleProps, ITo
         iconProps: { iconName: 'WorkFlow' },
         key: 'HR2Dashboard'
       }] : []),
-      ...(this.state.ShowGHTab ? [{
-        name: 'Group Head Dashboard',
-        url: '#/GroupHeadDashboard',
-        iconProps: { iconName: 'WorkFlow' },
-        key: 'GroupHeadDashboard'
-      }] : [])
+   
     ];
 
     return (

@@ -55,16 +55,17 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
   }
   async componentDidMount() {
 
-    let activeTab1 = localStorage.getItem('activeTab');
+  
 
-    this.setState({activeTab:activeTab1})
-
-console.log(activeTab1);
+// console.log(activeTab1);
     await this.getCurrentUser();
     // await this.checkUserInGroupsForUserTab(["User_Group"]);
     await this.UserPendingDashboard();
     await this.UserApprovedDashboards();
     await this.UserRejectedDashboards();
+      let activeTab1 = localStorage.getItem('activeTab');
+
+    this.setState({activeTab:activeTab1})
   }
   // pagination and common filter search--
   PendinghandleSearch = (e) => {

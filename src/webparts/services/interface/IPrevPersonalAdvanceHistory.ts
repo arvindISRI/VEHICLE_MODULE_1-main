@@ -9,3 +9,4 @@ export interface IPrevPersonalAdvanceHistory {
     PersonalAdvanceVehicleId	:any,	
     ExpectedLife	:any
 }
+

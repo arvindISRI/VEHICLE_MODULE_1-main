@@ -159,6 +159,9 @@ export default function EmployeeOps() {
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
+                        
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -262,6 +265,8 @@ export default function EmployeeOps() {
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                         DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -334,6 +339,8 @@ export default function EmployeeOps() {
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -406,6 +413,8 @@ export default function EmployeeOps() {
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -468,18 +477,21 @@ export default function EmployeeOps() {
         const emplinfo = await getEmployeeMaster(props);
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         let HR1Status = "Pending with HR1";
+        let GHStatus = "Approved by Group Head";
         let FinalStatus = "Pending";
         // let status1 = "Draft";
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
             // , `EmployeeID eq '${emplinfo.Title}' and Status eq '${status}'`
-            , `HR1Response eq '${HR1Status}' and Status eq '${FinalStatus}' and HR2ApproverName/Name ne '${currentUser.LoginName}' and GHApproverName/Name ne '${currentUser.LoginName}'`
+            , `HR1Response eq '${HR1Status}' and GHResponse eq '${GHStatus}'  and Status eq '${FinalStatus}' and HR2ApproverName/Name ne '${currentUser.LoginName}' and GHApproverName/Name ne '${currentUser.LoginName}'`
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -552,6 +564,8 @@ export default function EmployeeOps() {
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -623,6 +637,8 @@ export default function EmployeeOps() {
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -686,18 +702,22 @@ export default function EmployeeOps() {
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         let HR2Status = "Pending with HR2";
         let HR1Status = "Approved by HR1";
+        let GHStatus = "Approved by Group Head";
+
         let FinalStatus = "Pending";
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
             // , `EmployeeID eq '${emplinfo.Title}' and Status eq '${status}'`
             // , `HR2Response eq '${status}'`
-            , `HR2Response eq '${HR2Status}' and HR1Response eq '${HR1Status}' and Status eq '${FinalStatus}' and HR1ApproverName/Name ne  '${currentUser.LoginName}' and GHApproverName/Name ne  '${currentUser.LoginName}' `
+            , `HR2Response eq '${HR2Status}' and GHResponse eq '${GHStatus}'  and HR1Response eq '${HR1Status}' and Status eq '${FinalStatus}' and HR1ApproverName/Name ne  '${currentUser.LoginName}' and GHApproverName/Name ne  '${currentUser.LoginName}' `
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -757,28 +777,19 @@ export default function EmployeeOps() {
     };
     const getHR2ApprovedDashboard = async (props: IVehicleModuleProps): Promise<IVehicleRequest | any> => {
         const emplinfo1 = await getEmployeeMaster(props);
-        let status = "Approved by HR2";
         let FinalStatus = "Approved";
-        let Rejected = "Rejected";
-       // let GHstatus = "Pending with Group Head";
-        // let status = "Approved by HR1";
-        // let FinalStatus = "Approved"
-        // let Rejected = "Rejected"
-        // const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
-        // return await (await spCrudOps).getData("PersonalAdvanceVehicle"
-        //     , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
-        //     , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
-        //     , `HR1Response eq '${status}' and (Status eq '${FinalStatus}' or Status ne '${Rejected}')`
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
-            , `HR2Response eq '${status}'and (Status eq '${FinalStatus}' or Status ne '${Rejected}')`
+            , `Status eq '${FinalStatus}'`
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -843,14 +854,14 @@ export default function EmployeeOps() {
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
-            // , `EmployeeID eq '${emplinfo.Title}' and Status eq '${status}'`
-            // , `Status eq '${status}' and Author/Name eq '${currentUser.LoginName}' and EmployeeID eq '${emplinfo.Title}'`
             , `Status eq '${status}' and EmployeeCode eq '${emplinfo2.Title}'`
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -912,21 +923,19 @@ export default function EmployeeOps() {
     const getGroupHeadDashboard = async (props: IVehicleModuleProps): Promise<IVehicleRequest | any> => {
         const emplinfo = await getEmployeeMaster(props);
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
-        let HR2Status = "Approved by HR2";
-        let HR1Status = "Approved by HR1";
         let GHStatus = "Pending with Group Head";
         let FinalStatus = "Pending";
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
-            // , `EmployeeID eq '${emplinfo.Title}' and Status eq '${status}'`
-            // , `HR2Response eq '${status}'`
-            , `HR2Response eq '${HR2Status}' and GHResponse eq '${GHStatus}'  and HR1Response eq '${HR1Status}' and Status eq '${FinalStatus}' and HR1ApproverName/Name ne  '${currentUser.LoginName}' and HR2ApproverName/Name ne  '${currentUser.LoginName}' `
+            , `GHResponse eq '${GHStatus}' and Status eq '${FinalStatus}' and HR1ApproverName/Name ne  '${currentUser.LoginName}' and HR2ApproverName/Name ne  '${currentUser.LoginName}' `
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                         Created: item.Created,
                         Title: item.Title,
                         EmployeeID: item.EmployeeID,
@@ -986,19 +995,23 @@ export default function EmployeeOps() {
     };
     const getGroupHeadApprovedDashboard = async (props: IVehicleModuleProps): Promise<IVehicleRequest | any> => {
         const emplinfo1 = await getEmployeeMaster(props);
-        let status = "Approved";
+        // let status = "Approved";
+         let status = "Approved by Group Head";
+        let FinalStatus = "Approved"
+        let Rejected = "Rejected"
+
         const currentUser = await (await spCrudOps).currentUser(props); // Fetch the current user
         return await (await spCrudOps).getData("PersonalAdvanceVehicle"
             , "*,Attachments,AttachmentFiles,Author/Name,HR2ApproverName/Name,GHApproverName/Name,HR1ApproverName/Name"
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
-            // , `EmployeeID eq '${emplinfo.Title}' and Status eq '${status}'`
-            // , `Status eq '${status}' and Author/Name eq '${currentUser.LoginName}' and EmployeeID eq '${emplinfo.Title}'`
-            , `Status eq '${status}'`
+            , `GHResponse eq '${status}' and (Status eq '${FinalStatus}' or Status ne '${Rejected}')`
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,
@@ -1065,12 +1078,14 @@ export default function EmployeeOps() {
             , "AttachmentFiles,Author,HR2ApproverName,HR1ApproverName,GHApproverName"
             // , `EmployeeID eq '${emplinfo.Title}' and Status eq '${status}'`
             // , `Status eq '${status}' and Author/Name eq '${currentUser.LoginName}' and EmployeeID eq '${emplinfo.Title}'`
-            , `Status eq '${status}' and EmployeeCode eq '${emplinfo2.Title}'`
+            , `Status eq '${status}' and  HR2ApproverName/Name ne '${currentUser.LoginName}' and  HR1ApproverName/Name ne '${currentUser.LoginName}' `
             , { column: 'Id', isAscending: false }, props).then(UserPending => {
                 let brr: Array<IVehicleRequest> = new Array<IVehicleRequest>();
                 UserPending.sort((a, b) => b.Id - a.Id).map(item => {
                     brr.push({
                         ID: item.Id,
+                        TotalLoanAmount: item.TotalLoanAmount,
+
                          DateOfConfirmation: item.DateOfConfirmation,
                         IsConfirm	:item.IsConfirm,
                         TotalMarks:item.TotalMarks,

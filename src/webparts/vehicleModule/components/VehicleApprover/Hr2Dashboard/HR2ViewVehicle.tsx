@@ -28,6 +28,7 @@ import { ENV_CONFIG } from '../../../../../Enviroment/envConfig';
 import { IVehicleModuleProps } from '../../IVehicleModuleProps';
 import { IVehicleRequest } from '../../../../services/interface/IVehicleRequest';
 import { IPrevPersonalAdvanceHistory } from '../../../../services/interface/IPrevPersonalAdvanceHistory';
+import NoteTemplateDocsDocumentOps from '../../../../services/bal/NoteTemplateDocs';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 const initialValues = {
@@ -71,6 +72,8 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
     super(props);
     this.state = {
       AllEmployeeCollObj: [],
+      NoteTempDocsColl: [],
+
       yearOfManufacture: '',
       yearOfManufacture1: '',
       isSubmitting: false,
@@ -152,6 +155,8 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
     await this.getCurrentUser();
+    const requestNo = VMId;
+    await this.getNoteTemplateDocs(requestNo)
   }
   componentDidUpdate(prevProps, prevState) {
     if (
@@ -169,6 +174,14 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
       this.calculateTotalMarks();
     }
   }
+   public getNoteTemplateDocs = async (NoteId) => {
+        let web = Web(this.props.currentSPContext.pageContext.web.absoluteUrl);
+        await NoteTemplateDocsDocumentOps().getNoteTemplateDocsDocument(NoteId, this.props).then(async (brPlanDocresults) => {
+          this.setState({ NoteTempDocsColl: brPlanDocresults });
+        }, error => {
+          console.log(error);
+        });
+      }
   handleChange = (e) => {
     const { name, value } = e.target;
     if (name.startsWith('ExpenseDetails.')) {
@@ -216,6 +229,7 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
           EmployeeInfodb: currentEmpResult,
           AllEmployeeCollObj: [],
           EmployeeName: currentEmpResult[0].EmployeeName,
+          Title: currentEmpResult[0].Title,
           Created: currentEmpResult[0].Created,
           DateOfConfirmation: currentEmpResult[0].DateOfConfirmation,
           isConfirmed: currentEmpResult[0].Created > currentEmpResult[0].DateOfConfirmation ? 'Yes' : 'No',
@@ -239,7 +253,8 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
           GHResponse: currentEmpResult[0].GHResponse,
           GHRemark: currentEmpResult[0].GHRemark,
           ExpenseDetails: {
-            TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+             TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+            TotalLoanAmount: +currentEmpResult[0].TotalLoanAmount,
             TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
             Totaldeductions: +currentEmpResult[0].TotalDeductions,
             FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
@@ -247,15 +262,20 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
             RepaymenttenureinEMI: currentEmpResult[0].EmiTenure,
             MakeModel: currentEmpResult[0].MakeModel,
             CostofVehicle: currentEmpResult[0].CostOfVehicle,
-            NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
+                       NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
             AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
-            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
-              ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
-              : '',
-            Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
-              ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
-              : '',
-            ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
+            Dateoffinalrepaymentofloan : currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
+            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
+            ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || '',
+
+            // AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
+            // DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate
+            //   ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0]
+            //   : '',
+            // Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate
+            //   ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0]
+            //   : '',
+            // ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || "",
           },
           typeOfVehicle: currentEmpResult[0].VehicleType,
           typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
@@ -351,7 +371,7 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
   public BtnApproveGroupHeadRequest = async () => {
     var VehicleRequestItem
     VehicleRequestItem = {
-      GHResponse: 'Approved by GroupHead',
+      GHResponse: 'Approved by Group Head',
       Status: 'Approved',
       GHApproverNameId: this.state.Currentuser.Id,
       GHResponseDate: new Date(),
@@ -474,51 +494,66 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
     }));
   };
   public render(): React.ReactElement<IVehicleModuleProps> {
+    const { existingFiles, NoteTempDocsColl } = this.state;
+
     return (
       <div >
         <h1>View Form</h1>
         <h4> <b> A). Service Particulars</b></h4>
-        <div className='card'>
-          <div className="row form-group">
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Employee ID</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label">{this.state.EmployeeCode}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Employee Name</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.EmployeeName}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Age</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.Age}</Label>
-            </div>
-          </div>
-          <div className="row form-group">
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Date of joining</Label>
-            </div>
-            <div className="col-sm-2">
-              {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Residence Address  </Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.CurrentOfficeLocation}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Designation</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.DesignationTitle}</Label>
-            </div>
-          </div>
-        </div>
+          <div className='card'>
+                <div className="row form-group">
+                <div className="col-sm-2">
+                    <Label className="control-Label font-weight-bold">VM Request ID</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label">{this.state.Title}</Label>
+                  </div>
+      
+                  <div className="col-sm-2">
+                    <Label className="control-Label font-weight-bold">Employee ID</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label">{this.state.EmployeeCode}</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label font-weight-bold">Employee Name</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label ">{this.state.EmployeeName}</Label>
+                  </div>
+                
+                </div>
+             
+                <div className="row form-group">
+                  <div className="col-sm-2">
+                    <Label className="control-Label font-weight-bold">Date of joining</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label font-weight-bold">Residence Address  </Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label ">{this.state.CurrentOfficeLocation}</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label font-weight-bold">Designation</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label ">{this.state.DesignationTitle}</Label>
+                  </div>
+                </div>
+      
+                <div className="row form-group">
+                <div className="col-sm-2">
+                    <Label className="control-Label font-weight-bold">Age</Label>
+                  </div>
+                  <div className="col-sm-2">
+                    <Label className="control-Label ">{this.state.Age}</Label>
+                  </div>
+                </div>
+                
+              </div>
         <h4><b> B). Salary Particulars</b></h4>
         <div className='card'>
           <div className="row form-group">
@@ -637,6 +672,29 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 }}
               />
             </div>
+               <div className="col-sm-2">
+                                      <Label className="control-Label font-weight-bold">
+                                        Cost of Vehicle Attachments
+                                      </Label>
+                                    </div>
+                        
+                                    <div className="col-sm-2">
+                        
+                                      {NoteTempDocsColl.map((item) => (
+                                        <div key={item.Id} style={{ marginTop: '5px', alignItems: 'center' }}>
+                                          <a
+                                            href={item.ServerRelativeUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ marginRight: '10px', textDecoration: 'none' }}
+                                          >
+                                            {item.FileLeafRef}
+                                          </a>
+                        
+                                          
+                                        </div>
+                                      ))}
+                                    </div>
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
@@ -771,33 +829,35 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
         ))}
         <hr></hr>
         <div className="row form-group">
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
-            <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR1Remark}
-            />
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
-            <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
-            <TextField
-              multiline disabled
-              value={this.state.HR2Remark}
-            /> </div>
-          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-            <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
-          </div>
-          <div className="col-sm-2" hidden={!(this.state.Status == 'Approved') && !(this.state.GHResponse == 'Rejected by GroupHead')}>
-            <TextField
-              multiline disabled
-              value={this.state.GHRemark}
-            /> </div>
-        </div>
-        <div hidden={!(this.state.Status == 'Approved')}>
+                     <div className="col-sm-2" hidden={!(this.state.GHResponse == 'Approved by Group Head') && !(this.state.GHResponse == 'Rejected by Group Head')}>
+                                  <Label className="control-Label font-weight-bold">Group Head Remarks  </Label>
+                                </div>
+                                <div className="col-sm-2" hidden={!(this.state.GHResponse == 'Approved by Group Head') && !(this.state.GHResponse == 'Rejected by Group Head')}>
+                                  <TextField
+                                    multiline disabled
+                                    value={this.state.GHRemark}
+                                  /> </div>
+                                  
+                                <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+                                  <Label className="control-Label font-weight-bold">HR1 Remarks</Label>
+                                </div>
+                                <div className="col-sm-2" hidden={!(this.state.HR1Response == 'Approved by HR1') && !(this.state.HR1Response == 'Rejected by HR1')}>
+                                  <TextField
+                                    multiline disabled
+                                    value={this.state.HR1Remark}
+                                  />
+                                </div>
+                                <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+                                  <Label className="control-Label font-weight-bold">HR2 Remarks  </Label>
+                                </div>
+                                <div className="col-sm-2" hidden={!(this.state.HR2Response == 'Approved by HR2') && !(this.state.HR2Response == 'Rejected by HR2')}>
+                                  <TextField
+                                    multiline disabled
+                                    value={this.state.HR2Remark}
+                                  /> </div>
+                               
+                              </div>
+        <div hidden={!(this.state.Status != 'Draft')}>
           <h2>Recommendation by Group Head</h2>
           <table
             style={{
@@ -862,6 +922,13 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                   </select>
                 </td>
                 <td style={cellStyle}>{this.state.disciplinaryPending == 'No' ? 1 : 0}</td>
+              </tr>
+              <tr>
+                <td style={cellStyle}>6. Total Loan Amount  (Auto Populated)</td>
+                <td style={cellStyle}>
+                  <input type="number" disabled value={this.state.ExpenseDetails.TotalLoanAmount || ''} />
+                </td>
+                <td style={cellStyle}>-</td>
               </tr>
               <tr>
                 <td style={cellStyle}>6a. Net Monthly Salary (Auto Populated)</td>

@@ -29,6 +29,7 @@ import { ENV_CONFIG } from '../../../../Enviroment/envConfig';
 import { IVehicleModuleProps } from '../IVehicleModuleProps';
 import { IVehicleRequest } from '../../../services/interface/IVehicleRequest';
 import { IPrevPersonalAdvanceHistory } from '../../../services/interface/IPrevPersonalAdvanceHistory';
+import NoteTemplateDocsDocumentOps from '../../../services/bal/NoteTemplateDocs';
 SPComponentLoader.loadCss('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 SPComponentLoader.loadCss('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 const initialValues = {
@@ -67,11 +68,12 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     super(props);
     this.state = {
       AllEmployeeCollObj: [],
+      NoteTempDocsColl: [],
       yearOfManufacture: '',
       yearOfManufacture1: '',
       isSubmitting: false,
-      AlreadyAnPendingRequest:false,
-
+      AlreadyAnPendingRequest: false,
+      existingFiles: [],
       isSave: false,
       selectedOption: '',
       filteredData: [],
@@ -108,6 +110,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       ],
       ExpenseDetails: {
         TotalEmolumentspm: 0,
+        TotalLoanAmount:0,
         TwentyFiveofthetotalemoluments: 0,
         Totaldeductions: 0,
         FityofNetemoluments: 0,
@@ -119,26 +122,119 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       typeOfVehicle: '',
     };
   }
+  //   async componentDidMount() {
+
+  //     let hashUrl = window.location.hash;
+  //     let hashUrlSplit = hashUrl.split('/');
+  //     let VMId = hashUrlSplit[2];
+  //     this.setState({ VMId: VMId });
+
+  //     localStorage.removeItem('activeTab');
+
+  //     localStorage.setItem('activeTab', 'Pending');
+
+  //     await this.getAllPersonalAdvanceVehicle();
+  //     await this.getAllPrevPersonalAdvanceHistory();
+  //     await this.getCurrentUser();
+
+  //   //   const requestNo = VMId;
+  //   //   const libraryFolder = 'VehicleCostAttachments';
+  //   //   // const files = await sp.web.getFolderByServerRelativeUrl(libraryFolder)
+  //   //   //   .files.filter(`PersonalAdvanceVehicleId eq '${requestNo}'`).get();
+  //   //   // this.setState({ existingFiles: files.map(f => ({ Name: f.Name, Url: f.ServerRelativeUrl, Id: f.UniqueId })) });
+  //   //   const files = await sp.web
+  //   //   .getFolderByServerRelativeUrl(libraryFolder)
+  //   //   .files
+  //   //   .select('Name','ServerRelativeUrl','PersonalAdvanceVehicleIdId')
+  //   //   .expand('PersonalAdvanceVehicleId')
+  //   //   .filter(`PersonalAdvanceVehicleIdId eq ${VMId}`)
+  //   //   .get();
+  //   // this.setState({ existingFiles: files.map(f => ({ Name: f.Name, Url: f.ServerRelativeUrl, Id: f.UniqueId })) });
+
+
+  // const requestNo = VMId;
+  // const libraryFolder = 'VehicleCostAttachments';
+
+  // const files = await sp.web
+  //   .getFolderByServerRelativeUrl(libraryFolder)
+  //   .files
+  //   .select('Name','ServerRelativeUrl','UniqueId','ListItemAllFields/PersonalAdvanceVehicleIdId')
+  //   .expand('ListItemAllFields')
+  //   .filter(`ListItemAllFields/PersonalAdvanceVehicleIdId eq ${requestNo}`)
+  //   .get();
+
+  // this.setState({
+  //   existingFiles: files.map(f => ({
+  //     Name: f.Name,
+  //     Url: f.ServerRelativeUrl,
+  //     Id: f.UniqueId
+  //   }))
+  // });
+
+
+
+  //   }
   async componentDidMount() {
-    
-    let hashUrl = window.location.hash;
-    let hashUrlSplit = hashUrl.split('/');
-    let VMId = hashUrlSplit[2];
-    this.setState({ VMId: VMId });
+    // Extract VMId from the URL hash
+    const hashUrl = window.location.hash;
+    const hashUrlSplit = hashUrl.split('/');
+    const VMId = hashUrlSplit[2];
 
+    this.setState({ VMId });
+
+    // Set default active tab
     localStorage.removeItem('activeTab');
-
     localStorage.setItem('activeTab', 'Pending');
-    
+
+    // Call API functions
     await this.getAllPersonalAdvanceVehicle();
     await this.getAllPrevPersonalAdvanceHistory();
     await this.getCurrentUser();
+
+    // Fetch files from SharePoint library
+    const requestNo = VMId;
+    await this.getNoteTemplateDocs(requestNo)
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
       this.setState({ selectedOption: null });
     }
+    if(prevState.ExpenseDetails.Dateoffinalrepaymentofloan !== this.state.ExpenseDetails.Dateoffinalrepaymentofloan && !this.state.ExpenseDetails.Dateoffinalrepaymentofloan){
+      // this.state.ExpenseDetails.Dateoffinalrepaymentofloan
+      this.setState({ ExpenseDetails:{Dateoffinalrepaymentofloan : null }});
+      // ExpenseDetails: {
+      //   TotalEmolumentspm: nul,
+    }
   }
+
+
+  public getNoteTemplateDocs = async (NoteId) => {
+    let web = Web(this.props.currentSPContext.pageContext.web.absoluteUrl);
+    await NoteTemplateDocsDocumentOps().getNoteTemplateDocsDocument(NoteId, this.props).then(async (brPlanDocresults) => {
+      this.setState({ NoteTempDocsColl: brPlanDocresults });
+    }, error => {
+      console.log(error);
+    });
+  }
+
+
+  // Handle new file selection
+  private onFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files: File[] = [];
+    if (e.target.files) {
+      for (let i = 0; i < e.target.files.length; i++) {
+        files.push(e.target.files.item(i)!);
+      }
+    }
+    this.setState({ selectedFiles: files });
+  };
+
+  // Remove existing attachment
+  // private removeExisting = async (id: number) => {
+  //   await sp.web.getFileById(id).delete();
+  //   this.setState(prev => ({ existingFiles: prev.existingFiles.filter(f => f.Id !== id) }));
+  // };
   public getCurrentUser = async () => {
     const spCrudObj = await useSPCRUD();
     return await spCrudObj.currentUser(this.props).then(cuser => {
@@ -152,29 +248,33 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       let employeeData = results;
 
       var AlreadyPendingcurrentEmpResult = employeeData.filter((item) => {
-        ((item.EmployeeCode ==this.state.EmployeeID) && (item.Status=='Pending' ));
-     })
-     if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
-       this.setState({AlreadyAnPendingRequest:true});
-     }
+        ((item.EmployeeCode == this.state.EmployeeID) && (item.Status == 'Pending'));
+      })
+      if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
+        this.setState({ AlreadyAnPendingRequest: true });
+      }
       var currentEmpResult = employeeData.filter((item) => {
-        return item.ID == +this.state.VMId ;
+        return item.ID == +this.state.VMId;
       })
 
-    
+
 
       if (currentEmpResult && currentEmpResult.length > 0) {
         this.setState({
           EmployeeInfodb: currentEmpResult,
           AllEmployeeCollObj: [],
           EmployeeName: currentEmpResult[0].EmployeeName,
+          Title: currentEmpResult[0].Title,
           DateOfJoining: currentEmpResult[0].DateOfJoining ? new Date(currentEmpResult[0].DateOfJoining) : null,
           CurrentOfficeLocation: currentEmpResult[0].ResidenceAddress,
           EmployeeCode: '' + currentEmpResult[0].EmployeeCode,
           DesignationTitle: currentEmpResult[0].Designation,
           Age: (currentEmpResult[0].Age),
           ExpenseDetails: {
-            TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+             TotalEmolumentspm: +currentEmpResult[0].TotalEmoluments,
+            TotalLoanAmount: +currentEmpResult[0].TotalLoanAmount,
+
+            
             TwentyFiveofthetotalemoluments: +currentEmpResult[0].Emoluments25,
             Totaldeductions: +currentEmpResult[0].TotalDeductions,
             FityofNetemoluments: +currentEmpResult[0].NetEmoluments50,
@@ -183,9 +283,10 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
             CostofVehicle: currentEmpResult[0].CostOfVehicle,
             NameandAddressoftheSeller: currentEmpResult[0].SellerDetails,
             AmountofLoanavailed: currentEmpResult[0].PrevLoanAmount ? +currentEmpResult[0].PrevLoanAmount : 0,
-            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
-            Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
+            Dateoffinalrepaymentofloan: currentEmpResult[0].PrevLoanRepaymentDate ? new Date(currentEmpResult[0].PrevLoanRepaymentDate).toISOString().split('T')[0] : '',
+            DateofAvailmentofLoan: currentEmpResult[0].PrevLoanDate ? new Date(currentEmpResult[0].PrevLoanDate).toISOString().split('T')[0] : '',
             ExpectedlifeofVehicle: currentEmpResult[0].ExpectedLife || '',
+
           },
           typeOfVehicle: currentEmpResult[0].VehicleType,
           typeOfVehicle1: currentEmpResult[0].PrevVehicleLoanType,
@@ -221,33 +322,144 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       return currentEmpResultHistory;
     });
   };
+
+
   handleDropdownChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, field?: string) => {
     if (option && field) {
       this.setState({ [field]: option.key });
     }
   }
-  public handleInputChangeadd = (e) => {
+  // public handleInputChangeadd = (e) => {
+  //   const { name, value } = e.target;
+  //   const parsed = parseFloat(value);
+  //   !isNaN(parsed) && isFinite(value) ? parsed : value;
+  //   const numericValue = (value)
+  //   let updatedExpenseDetails = {
+  //     ...this.state.ExpenseDetails,
+  //     [name.split('.')[1]]: numericValue
+  //   };
+  //   if (name == "ExpenseDetails.TotalEmolumentspm") {
+  //     updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
+  //   }
+  //   const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
+  //     ? numericValue
+  //     : this.state.ExpenseDetails.TotalEmolumentspm || 0;
+  //   const totalDeductions = name == "ExpenseDetails.Totaldeductions"
+  //     ? numericValue
+  //     : this.state.ExpenseDetails.Totaldeductions || 0;
+  //   updatedExpenseDetails.FityofNetemoluments = (totalEmoluments - totalDeductions) * 0.5;
+  //   this.setState({ ExpenseDetails: updatedExpenseDetails });
+  // };
+
+  // handleInputChangeadd = (e) => {
+  //   const { name, value } = e.target;
+  //   const field = name.split('.')[1];
+
+  //   const parsedValue = parseFloat(value);
+  //   const numericValue = !isNaN(parsedValue) && isFinite(parsedValue) ? parsedValue : value;
+
+  //   // Prepare new ExpenseDetails object
+  //   let updatedExpenseDetails = {
+  //     ...this.state.ExpenseDetails,
+  //     [field]: numericValue
+  //   };
+
+  //   // Fetch updated totals for both fields
+  //   let totalEmoluments = field === "TotalEmolumentspm" ? numericValue : parseFloat(this.state.ExpenseDetails.TotalEmolumentspm) || 0;
+  //   let totalDeductions = field === "Totaldeductions" ? numericValue : parseFloat(this.state.ExpenseDetails.Totaldeductions) || 0;
+
+  //   // Enforce capping: Total Deductions should not exceed Total Emoluments
+  //   if (+totalDeductions > +totalEmoluments) {
+  //     totalDeductions = +totalEmoluments;
+  //     updatedExpenseDetails.Totaldeductions = +totalEmoluments; // Cap the value
+  //   }
+
+  //   // Update 25% of Total Emoluments
+  //   updatedExpenseDetails.TwentyFiveofthetotalemoluments = totalEmoluments * 0.25;
+
+  //   // Update 50% of Net Emoluments
+  //   updatedExpenseDetails.FityofNetemoluments = (totalEmoluments - totalDeductions) * 0.5;
+
+  //   // Final state update
+  //   this.setState({ ExpenseDetails: updatedExpenseDetails });
+  // };
+
+  handleInputChangeadd = (e) => {
     const { name, value } = e.target;
-    const parsed = parseFloat(value);
-    !isNaN(parsed) && isFinite(value) ? parsed : value;
-    const numericValue = (value)
-    let updatedExpenseDetails = {
+    const field = name.split('.')[1];
+
+    const updatedExpenseDetails = {
       ...this.state.ExpenseDetails,
-      [name.split('.')[1]]: numericValue
+      [field]: value
     };
-    if (name == "ExpenseDetails.TotalEmolumentspm") {
-      updatedExpenseDetails.TwentyFiveofthetotalemoluments = numericValue * 0.25;
+
+    // Numeric fields
+    const totalEmoluments = field === "TotalEmolumentspm"
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.TotalEmolumentspm) || 0;
+
+    let totalDeductions = field === "Totaldeductions" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.Totaldeductions) || 0;
+
+      let totaLoanAmount = field === "TotalLoanAmount" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.TotalLoanAmount) || 0;
+      
+      let costofVehicle = field === "CostofVehicle" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.CostofVehicle) || 0;
+
+      let repaymenttenureinEMI = field === "RepaymenttenureinEMI" 
+      ? parseFloat(value)
+      : parseFloat(this.state.ExpenseDetails.RepaymenttenureinEMI) || 0;
+
+      // ExpenseDetails.RepaymenttenureinEMI
+      if (field === "RepaymenttenureinEMI" && repaymenttenureinEMI > 120) {
+        repaymenttenureinEMI = 120;
+        updatedExpenseDetails.RepaymenttenureinEMI = repaymenttenureinEMI.toString();
+      }
+ // Cap deductions
+ if (field === "CostofVehicle" && costofVehicle > 1000000) {
+  costofVehicle = 1000000;
+  updatedExpenseDetails.CostofVehicle = costofVehicle.toString();
+}
+
+    // Cap deductions
+    if (field === "Totaldeductions" && totalDeductions > totalEmoluments) {
+      totalDeductions = totalEmoluments;
+      updatedExpenseDetails.Totaldeductions = totalEmoluments.toString();
     }
-    const totalEmoluments = name == "ExpenseDetails.TotalEmolumentspm"
-      ? numericValue
-      : this.state.ExpenseDetails.TotalEmolumentspm || 0;
-    const totalDeductions = name == "ExpenseDetails.Totaldeductions"
-      ? numericValue
-      : this.state.ExpenseDetails.Totaldeductions || 0;
-    updatedExpenseDetails.FityofNetemoluments = (totalEmoluments - totalDeductions) * 0.5;
+
+    // Calculate emolument percentages
+    if (field === "TotalEmolumentspm") {
+      updatedExpenseDetails.TwentyFiveofthetotalemoluments = (totalEmoluments * 0.25).toFixed(2);
+    }
+
+    updatedExpenseDetails.FityofNetemoluments = ((totalEmoluments - totalDeductions) * 0.5).toFixed(2);
+
+    // Date validation: Final repayment date must be >= availment date
+    const availmentDateStr = field === "DateofAvailmentofLoan" ? value : this.state.ExpenseDetails.DateofAvailmentofLoan;
+    const finalRepaymentDateStr = field === "Dateoffinalrepaymentofloan" ? value : this.state.ExpenseDetails.Dateoffinalrepaymentofloan;
+
+    if (availmentDateStr && finalRepaymentDateStr) {
+      const availmentDate = new Date(availmentDateStr);
+      const finalRepaymentDate = new Date(finalRepaymentDateStr);
+
+      if (finalRepaymentDate < availmentDate) {
+        // Auto-correct to match availment date
+        updatedExpenseDetails.Dateoffinalrepaymentofloan = availmentDateStr;
+      }
+    }
+
     this.setState({ ExpenseDetails: updatedExpenseDetails });
   };
+
   public BtnSaveAsDraft = async (SubmittionType) => {
+
+    var rate=5.5;
+    var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.state.ExpenseDetails.RepaymenttenureinEMI*(1/1200))))/(this.state.ExpenseDetails.RepaymenttenureinEMI)).toFixed(2);
+     
     const spCrudObj = await useSPCRUD();
     if (this.state.removedVehicleRowIds && this.state.removedVehicleRowIds.length > 0) {
       for (var r = 0; r < this.state.removedVehicleRowIds.length; r++) {
@@ -262,11 +474,14 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         EmployeeName: this.state.EmployeeName,
         Age: '' + this.state.Age,
         Status: "Draft",
+        VehicleLoanEMI:VehicleLoanEMI||0,
         Id: RequestNoGenerate,
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,
         Designation: this.state.DesignationTitle,
         TotalEmoluments: +this.state.ExpenseDetails.TotalEmolumentspm,
+        TotalLoanAmount: +this.state.ExpenseDetails.TotalLoanAmount,
+
         Emoluments25: +this.state.ExpenseDetails.TwentyFiveofthetotalemoluments,
         TotalDeductions: +this.state.ExpenseDetails.Totaldeductions,
         NetEmoluments50: +this.state.ExpenseDetails.FityofNetemoluments,
@@ -287,7 +502,23 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     this.setState({ isSave: true });
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
-      const RequestNoGenerate = this.state.VMId;
+      const RequestNoGenerate = +this.state.VMId;
+
+      // 3. Upload and tag files with RequestNo metadata
+      if (this.state.selectedFiles && this.state.selectedFiles.length > 0) {
+        const libraryFolder = 'VehicleCostAttachments';
+        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+        for (const file of this.state.selectedFiles) {
+          const uploadResult = await folder.files.add(file.name, file, true);
+          // Set RequestNo column on the uploaded file
+          await uploadResult.file.getItem().then(item =>
+            item.update({
+              PersonalAdvanceVehicleIdId: +this.state.VMId,
+            })
+          );
+        }
+      }
+
       const newRows = this.state.vehicleRows.filter(row => row.isNew == true);
       const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
       if (existingRows && existingRows.length > 0) {
@@ -315,7 +546,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
   //  var EmployeeCode= +this.state.EmployeeCode;
   //      await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
   //       let employeeData = results;
-  
+
   //        AlreadyPendingcurrentEmpResult = employeeData.filter((item:any) => {
   //         (+item.EmployeeCode ==EmployeeCode && item.Status=='Pending' );
   //      })
@@ -323,33 +554,57 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
   //       swal("Notice", "Your Vehicle Request already in Pending.", "info");
   //       //alert('hii');
   //       return false
-  
+
   //        this.setState({AlreadyAnPendingRequest:true});
   //      }
   //     })
   public BtnSubmitRequest = async (SubmittionType) => {
+    var rate=5.5;
+    var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.state.ExpenseDetails.RepaymenttenureinEMI*(1/1200))))/(this.state.ExpenseDetails.RepaymenttenureinEMI)).toFixed(2);
+     
+
+    var count = 0;
+    if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
+      for (var v = 0; v < this.state.vehicleRows.length; v++) {
+        if ((+this.state.vehicleRows[v].POutstandingLoanasOnDate) > (+this.state.vehicleRows[v].PAmount)) {
+
+          count++
+          // PAmount<=POutstandingLoanasOnDate
+
+        }
+      }
+      if (count > 0) {
+        swal("Notice", "Outstanding Loan as on date should be less that Amount", "info");
+        //alert('hii');
+        return false
+
+      }
+    }
+
     let AlreadyPendingcurrentEmpResult = [];
     const EmployeeCode = +this.state.EmployeeCode;
-  
+
     await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       const employeeData = results;
-  
+
       console.log("Checking against EmployeeCode:", EmployeeCode);
       console.log("Employee vehicle data:", employeeData);
-  
+
       AlreadyPendingcurrentEmpResult = employeeData.filter((item: any) => {
         console.log("Item:", item.EmployeeCode, item.Status);
-        return +item.EmployeeCode === +EmployeeCode && item.Status === 'Pending';
+        return +item.EmployeeCode == +EmployeeCode && item.Status == 'Pending';
       });
-  
+
       if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
         this.setState({ AlreadyAnPendingRequest: true });
         swal("Notice", "Your Vehicle Request is already in Pending.", "info");
-        return;
+        window.location.href = '#/InitiatorDashboard';
+
+        return false;
       }
     });
-    
-  
+
+
 
     // if(this.state.AlreadyAnPendingRequest==true){
     //   swal("Notice", "Your Vehicle Request already in Pending.", "info");
@@ -357,7 +612,6 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     //   return false
 
     // }
-    return false;
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
     const showAlert = (message) => {
       swal("Validation Error", message, "warning");
@@ -366,6 +620,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
     if (isEmpty(ExpenseDetails.RepaymenttenureinEMI)) return showAlert('Please Fill Repayment tenure in EMI');
+    if (isEmpty(ExpenseDetails.TotalLoanAmount)) return showAlert('Please Fill Total Loan Amount');
+
+    
     if (ExpenseDetails.RepaymenttenureinEMI > 120) return showAlert('Repayment tenure in EMI should be less than 120');
     if (isEmpty(typeOfVehicle)) return showAlert('Please Select Type of Vehicle');
     if (isEmpty(ConditionOfVehicle)) return showAlert('Please Select Whether new or second hand');
@@ -386,6 +643,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         EmployeeCode: this.state.EmployeeCode,
         EmployeeName: this.state.EmployeeName,
         Age: '' + this.state.Age,
+        VehicleLoanEMI:VehicleLoanEMI||0,
         Status: "Pending",
         HR1Response: 'Pending with HR1',
         HR2Response: 'Pending with HR2',
@@ -394,6 +652,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         ResidenceAddress: this.state.CurrentOfficeLocation,
         Designation: this.state.DesignationTitle,
         TotalEmoluments: +ExpenseDetails.TotalEmolumentspm,
+        TotalLoanAmount: +ExpenseDetails.TotalLoanAmount,
+
         Emoluments25: +ExpenseDetails.TwentyFiveofthetotalemoluments,
         TotalDeductions: +ExpenseDetails.Totaldeductions,
         NetEmoluments50: +ExpenseDetails.FityofNetemoluments,
@@ -415,6 +675,21 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", +this.state.VMId, VehicleRequestItem, this.props);
       const RequestNoGenerate = this.state.VMId;
+      // 3. Upload and tag files with RequestNo metadata
+      if (this.state.selectedFiles && this.state.selectedFiles.length > 0) {
+        const libraryFolder = 'VehicleCostAttachments';
+        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+        for (const file of this.state.selectedFiles) {
+          const uploadResult = await folder.files.add(file.name, file, true);
+          // Set RequestNo column on the uploaded file
+          await uploadResult.file.getItem().then(item =>
+            item.update({
+              PersonalAdvanceVehicleIdId: RequestNoGenerate,
+            })
+          );
+        }
+      }
+
       const newRows = this.state.vehicleRows.filter(row => row.isNew);
       const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
       if (existingRows.length > 0) {
@@ -585,52 +860,98 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       };
     });
   };
+
+  removeExisting = async (fileId) => {
+    try {
+      // Find the file to delete
+      const fileToDelete = this.state.NoteTempDocsColl.find(item => item.Id === fileId);
+
+      if (!fileToDelete) return;
+
+      // Confirm deletion
+      const confirmDelete = window.confirm(`Are you sure you want to delete ${fileToDelete.FileLeafRef}?`);
+      if (!confirmDelete) return;
+
+      // Delete file from SharePoint library
+      await sp.web.getFileByServerRelativeUrl(fileToDelete.ServerRelativeUrl).recycle(); // or .delete()
+
+      // Remove from local state
+      const updatedFiles = this.state.NoteTempDocsColl.filter(item => item.Id !== fileId);
+      this.setState({ NoteTempDocsColl: updatedFiles });
+
+      alert("File removed successfully.");
+    } catch (error) {
+      console.error("Error removing file:", error);
+      alert("Failed to remove the file.");
+    }
+  };
   public render(): React.ReactElement<IVehicleModuleProps> {
+    const { existingFiles, NoteTempDocsColl } = this.state;
+
+    //   const {
+    //     currentUserGroupArray, currentUserGroup, SanctionApprovalYearOption, SanctionApprovalCurrencyOption, ApproverL2UHName, ApproverGHName, SubGroupOption,
+    //     showInterHead, InterGrpHeadObj, SACommitteeNameMasterObj, SanctionCommitteeMembers, globalFilteredMembers, MDUserObj, DMDUserObj, SanctionApprovalItemColl, FinancialYearId,
+    //     showLoader, ForInfoUserName, SADiscussionDetailsColl, NoteTempDocsColl
+    // } = this.state;
     return (
+
       <div >
         <h1>Edit Form</h1>
         <h4> <b> A). Service Particulars</b></h4>
-        <div className='card'>
-          <div className="row form-group">
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Employee ID</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label">{this.state.EmployeeCode}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Employee Name</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.EmployeeName}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Age</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.Age}</Label>
-            </div>
-          </div>
-          <div className="row form-group">
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Date of joining</Label>
-            </div>
-            <div className="col-sm-2">
-              {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Residence Address  </Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.CurrentOfficeLocation}</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label font-weight-bold">Designation</Label>
-            </div>
-            <div className="col-sm-2">
-              <Label className="control-Label ">{this.state.DesignationTitle}</Label>
-            </div>
-          </div>
-        </div>
+         <div className='card'>
+                       <div className="row form-group">
+                       <div className="col-sm-2">
+                           <Label className="control-Label font-weight-bold">VM Request ID</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label">{this.state.Title}</Label>
+                         </div>
+             
+                         <div className="col-sm-2">
+                           <Label className="control-Label font-weight-bold">Employee ID</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label">{this.state.EmployeeCode}</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label font-weight-bold">Employee Name</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label ">{this.state.EmployeeName}</Label>
+                         </div>
+                       
+                       </div>
+                    
+                       <div className="row form-group">
+                         <div className="col-sm-2">
+                           <Label className="control-Label font-weight-bold">Date of joining</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           {moment(this.state.DateOfJoining).format("DD/MM/YYYY")} </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label font-weight-bold">Residence Address  </Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label ">{this.state.CurrentOfficeLocation}</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label font-weight-bold">Designation</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label ">{this.state.DesignationTitle}</Label>
+                         </div>
+                       </div>
+             
+                       <div className="row form-group">
+                       <div className="col-sm-2">
+                           <Label className="control-Label font-weight-bold">Age</Label>
+                         </div>
+                         <div className="col-sm-2">
+                           <Label className="control-Label ">{this.state.Age}</Label>
+                         </div>
+                       </div>
+                       
+                     </div>
         <h4><b> B). Salary Particulars</b></h4>
         <div className='card'>
           <div className="row form-group">
@@ -675,9 +996,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
               <Label className="control-Label font-weight-bold">Repayment tenure in EMI (Maximum 120) <span style={{ color: 'red' }}>*</span>  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField type='number' 
-                  value={this.state.ExpenseDetails.RepaymenttenureinEMI}
-                 placeholder={"Enter Month"}
+              <TextField type='number'
+                value={this.state.ExpenseDetails.RepaymenttenureinEMI}
+                placeholder={"Enter Month"}
                 name="ExpenseDetails.RepaymenttenureinEMI"
                 onChanged={(e: any) => this.handleInputChangeadd(event)} />
             </div>
@@ -735,7 +1056,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
             </div>
             <div className="col-sm-2">
               { }
-              <TextField
+              {/* <TextField
                 type="number"
                 name="ExpenseDetails.CostofVehicle"
                 value={this.state.ExpenseDetails.CostofVehicle || 0}
@@ -747,8 +1068,83 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
                     }
                   }));
                 }}
-              />
+              /> */}
+              <input
+  type="number"
+  name="ExpenseDetails.CostofVehicle"
+  value={this.state.ExpenseDetails.CostofVehicle || ''}
+  onChange={(e) => {
+    const inputValue = e.target.value;
+    const numericValue = Number(inputValue);
+
+    this.setState((prevState) => ({
+      ExpenseDetails: {
+        ...prevState.ExpenseDetails,
+        CostofVehicle: numericValue > 1000000 ? 1000000 : numericValue
+      }
+    }));
+  }}
+/>
             </div>
+
+            <div className="col-sm-2">
+              <Label className="control-Label font-weight-bold">
+                Cost of Vehicle Attachments <span style={{ color: 'red' }}>*</span>
+              </Label>
+            </div>
+
+            <div className="col-sm-2">
+              <input type="file" multiple onChange={this.onFilesChange} />
+
+              {NoteTempDocsColl.map((item) => (
+                <div key={item.Id} style={{ marginTop: '5px', alignItems: 'center' }}>
+                  <a
+                    href={item.ServerRelativeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginRight: '10px', textDecoration: 'none' }}
+                  >
+                    {item.FileLeafRef}
+                  </a>
+
+                  <span
+                    style={{
+                      cursor: 'pointer',
+                      color: 'red',
+                      fontWeight: 'bold',
+                      fontSize: '16px'
+                    }}
+                    onClick={() => this.removeExisting(item.Id)}
+                    title="Remove"
+                  >
+                    ×
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* <div className="col-sm-2">
+              <Label className="control-Label font-weight-bold">Cost of Vehicle Attachments<span style={{ color: 'red' }}>*</span>   </Label>
+            </div>
+                 <div className='col-sm-2'>
+                <input type="file" multiple onChange={this.onFilesChange} />
+
+                {
+                  NoteTempDocsColl.map((item, index) => (
+                      <div key={item.Id}>
+                        <a href={item.ServerRelativeUrl} target="_new">
+                          {item.FileLeafRef}
+                        <DefaultButton onClick={() => this.removeExisting(item.Id)}>Remove</DefaultButton>
+
+                        </a>
+                      </div>
+                
+                  ))
+                }
+              </div> */}
+
+
+
           </div>
           <div className="row form-group">
             <div className="col-sm-2">
@@ -769,6 +1165,19 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
                 }}
               />
             </div>
+
+            <div className="col-sm-2">
+              <Label className="control-Label font-weight-bold">Total Loan Amount  </Label>
+            </div>
+            <div className="col-sm-2">
+              <TextField type='number'
+                value={this.state.ExpenseDetails.TotalLoanAmount || 0}
+
+                name="ExpenseDetails.TotalLoanAmount"
+                onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+
+            </div>
+
             <div className="col-sm-2" hidden={!this.state.ExpectlifeShow && !this.state.ExpenseDetails.ExpectedlifeofVehicle}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)<span style={{ color: 'red' }}>*</span>   </Label>
             </div>
@@ -825,10 +1234,29 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
               <Label className="control-Label font-weight-bold">Date of final repayment of loan  </Label>
             </div>
             <div className="col-sm-2">
-              <TextField type='date'
+              {/* <TextField type='date'
                 value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan}
                 name="ExpenseDetails.Dateoffinalrepaymentofloan"
-                onChanged={(e: any) => this.handleInputChangeadd(event)} />  </div>
+                onChanged={(e: any) => this.handleInputChangeadd(event)} /> */}
+
+<input
+                type="date"
+                name="ExpenseDetails.Dateoffinalrepaymentofloan"
+                value={this.state.ExpenseDetails.Dateoffinalrepaymentofloan || ''}
+                min={this.state.ExpenseDetails.DateofAvailmentofLoan || ''}
+                onChange={this.handleInputChangeadd}
+              />
+
+            </div>
+              {/* <div className="col-sm-2">
+                          <Label className="control-Label font-weight-bold">Total Loan Amount  </Label>
+                        </div>
+                        <div className="col-sm-2">
+                          <TextField type='number'
+                            name="ExpenseDetails.TotalLoanAmount"
+                            onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>                 
+                            
+                             </div> */}
           </div>
         </div>
         <h4><b>E). Previous Personal Advance History </b> </h4>
