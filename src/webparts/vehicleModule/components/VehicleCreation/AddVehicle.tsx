@@ -282,6 +282,13 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
   };
   public BtnSubmitRequest = async (SubmittionType) => {
 
+    if (this.state.AlreadyAnPendingRequest == true) {
+      swal("Notice", "Your Vehicle Request already in Pending.", "info");
+      //alert('hii');
+      return false
+
+    }
+
     var count = 0;
     if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
       for (var v = 0; v < this.state.vehicleRows.length; v++) {
@@ -301,12 +308,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     }
 
 
-    if (this.state.AlreadyAnPendingRequest == true) {
-      swal("Notice", "Your Vehicle Request already in Pending.", "info");
-      //alert('hii');
-      return false
-
-    }
+  
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
     const showAlert = (message) => {
       swal("Validation Error", message, "warning");
@@ -382,21 +384,75 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
       await spCrudObj.updateData("PersonalAdvanceVehicle", req.data.ID, RequestNoGenerate, this.props);
 
 
-      // 3. Upload and tag files with RequestNo metadata
-      if (this.state.selectedFiles.length > 0) {
-        const libraryFolder = 'VehicleCostAttachments';
-        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
-        for (const file of this.state.selectedFiles) {
-          const uploadResult = await folder.files.add(file.name, file, true);
-          // Set RequestNo column on the uploaded file
-          await uploadResult.file.getItem().then(item =>
-            item.update({
-              PersonalAdvanceVehicleIdId: req.data.ID,
-            })
-          );
-        }
-      }
+  // `    // 3. Upload and tag files with RequestNo metadata
+  //     if (this.state.selectedFiles.length > 0) {
+  //       const libraryFolder = 'VehicleCostAttachments';
+  //       const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+  //       for (const file of this.state.selectedFiles) {
+  //         const uploadResult = await folder.files.add(file.name, file, true);
+  //         // Set RequestNo column on the uploaded file
+  //         await uploadResult.file.getItem().then(item =>
+  //           item.update({
+  //             PersonalAdvanceVehicleIdId: req.data.ID,
+  //           })
+  //         );
+  //       }
+  //     }`
 
+  // if (this.state.selectedFiles.length > 0) {
+
+  //   const libraryFolder = 'VehicleCostAttachments';
+  //   const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+  //   const files = this.state.selectedFiles;
+  //   for (let i = 0; i < files.length; i++) {
+  //     const file = files[i];
+  //     const vPersonalAdvanceVehicleIdId=req.data.ID;
+
+  //     try {
+  //       const uploadResult = await folder.files.add(file.name, file, true);
+  //       const item = await uploadResult.file.getItem();
+  
+  //       await item.update({
+  //         PersonalAdvanceVehicleIdId: vPersonalAdvanceVehicleIdId,
+  //       });
+  
+  //       console.log(`File ${file.name} uploaded and metadata updated.`);
+  //     } catch (error) {
+  //       console.error(`Error handling file ${file.name}:`, error);
+  //     }
+  //   }
+  // }
+
+  if (this.state.selectedFiles.length > 0) {
+    const libraryFolder = 'VehicleCostAttachments';
+    const files = this.state.selectedFiles;
+    const vPersonalAdvanceVehicleIdId = req.data.ID;
+    const web = Web(this.props.currentSPContext.pageContext.web.absoluteUrl); // Make sure this.props is accessible
+  
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+  
+      try {
+        // Upload file in chunks
+        const uploadResult = await web.getFolderByServerRelativeUrl(libraryFolder).files.addChunked(uniqueFileName, file, data => {
+          // Logger.log({ data: data, level: LogLevel.Verbose, message: `Uploading ${file.name}...` });
+        }, true);
+  
+        // Set metadata
+        const item = await uploadResult.file.getItem();
+        await item.update({
+          PersonalAdvanceVehicleIdId: vPersonalAdvanceVehicleIdId
+        });
+  
+        console.log(`✔ File ${file.name} uploaded and metadata updated.`);
+      } catch (error) {
+        console.error(`❌ Error handling file ${file.name}:`, error);
+      }
+    }
+  }
+  
+  
       if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
         swal("Success", "Vehicle Request Submitted Successfully!", "success").then(() => {
@@ -469,19 +525,71 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
 
 
       // 3. Upload and tag files with RequestNo metadata
-      if (this.state.selectedFiles.length > 0) {
-        const libraryFolder = 'VehicleCostAttachments';
-        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
-        for (const file of this.state.selectedFiles) {
-          const uploadResult = await folder.files.add(file.name, file, true);
-          // Set RequestNo column on the uploaded file
-          await uploadResult.file.getItem().then(item =>
-            item.update({
-              PersonalAdvanceVehicleIdId: req.data.ID,
-            })
-          );
-        }
+      // if (this.state.selectedFiles.length > 0) {
+      //   const libraryFolder = 'VehicleCostAttachments';
+      //   const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+      //   for (const file of this.state.selectedFiles) {
+      //     const uploadResult = await folder.files.add(file.name, file, true);
+      //     // Set RequestNo column on the uploaded file
+      //     await uploadResult.file.getItem().then(item =>
+      //       item.update({
+      //         PersonalAdvanceVehicleIdId: req.data.ID,
+      //       })
+      //     );
+      //   }
+      // }
+      // if (this.state.selectedFiles.length > 0) {
+      //   const libraryFolder = 'VehicleCostAttachments';
+      //   const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+      //   const files = this.state.selectedFiles;
+      //   for (let i = 0; i < files.length; i++) {
+      //     const file = files[i];
+      //     const vPersonalAdvanceVehicleIdId=req.data.ID;
+    
+      //     try {
+      //       const uploadResult = await folder.files.add(file.name, file, true);
+      //       const item = await uploadResult.file.getItem();
+      
+      //       await item.update({
+      //         PersonalAdvanceVehicleIdId: vPersonalAdvanceVehicleIdId,
+      //       });
+      
+      //       console.log(`File ${file.name} uploaded and metadata updated.`);
+      //     } catch (error) {
+      //       console.error(`Error handling file ${file.name}:`, error);
+      //     }
+      //   }
+      // }
+
+      
+  if (this.state.selectedFiles.length > 0) {
+    const libraryFolder = 'VehicleCostAttachments';
+    const files = this.state.selectedFiles;
+    const vPersonalAdvanceVehicleIdId = req.data.ID;
+    const web = Web(this.props.currentSPContext.pageContext.web.absoluteUrl); // Make sure this.props is accessible
+  
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+  
+      try {
+        // Upload file in chunks
+        const uploadResult = await web.getFolderByServerRelativeUrl(libraryFolder).files.addChunked(uniqueFileName, file, data => {
+          // Logger.log({ data: data, level: LogLevel.Verbose, message: `Uploading ${file.name}...` });
+        }, true);
+  
+        // Set metadata
+        const item = await uploadResult.file.getItem();
+        await item.update({
+          PersonalAdvanceVehicleIdId: vPersonalAdvanceVehicleIdId
+        });
+  
+        console.log(`✔ File ${file.name} uploaded and metadata updated.`);
+      } catch (error) {
+        console.error(`❌ Error handling file ${file.name}:`, error);
       }
+    }
+  }
       if (this.state.vehicleRows && this.state.vehicleRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", req.data.ID, this.state.vehicleRows);
         swal("Success", "Vehicle Request Updated Successfully!", "success").then(() => {

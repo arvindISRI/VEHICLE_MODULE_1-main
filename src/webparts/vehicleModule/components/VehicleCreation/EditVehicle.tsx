@@ -504,20 +504,50 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       await spCrudObj.updateData("PersonalAdvanceVehicle", this.state.VMId, VehicleRequestItem, this.props);
       const RequestNoGenerate = +this.state.VMId;
 
-      // 3. Upload and tag files with RequestNo metadata
-      if (this.state.selectedFiles && this.state.selectedFiles.length > 0) {
-        const libraryFolder = 'VehicleCostAttachments';
-        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
-        for (const file of this.state.selectedFiles) {
-          const uploadResult = await folder.files.add(file.name, file, true);
-          // Set RequestNo column on the uploaded file
-          await uploadResult.file.getItem().then(item =>
-            item.update({
-              PersonalAdvanceVehicleIdId: +this.state.VMId,
-            })
-          );
+      // // 3. Upload and tag files with RequestNo metadata
+      // if (this.state.selectedFiles && this.state.selectedFiles.length > 0) {
+      //   const libraryFolder = 'VehicleCostAttachments';
+      //   const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+      //   for (const file of this.state.selectedFiles) {
+      //     const uploadResult = await folder.files.add(file.name, file, true);
+      //     // Set RequestNo column on the uploaded file
+      //     await uploadResult.file.getItem().then(item =>
+      //       item.update({
+      //         PersonalAdvanceVehicleIdId: +this.state.VMId,
+      //       })
+      //     );
+      //   }
+      // }
+  
+    if (this.state.selectedFiles.length > 0) {
+      const libraryFolder = 'VehicleCostAttachments';
+      const files = this.state.selectedFiles;
+      const vPersonalAdvanceVehicleIdId =RequestNoGenerate;// req.data.ID;
+      const web = Web(this.props.currentSPContext.pageContext.web.absoluteUrl); // Make sure this.props is accessible
+    
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+    
+        try {
+          // Upload file in chunks
+          const uploadResult = await web.getFolderByServerRelativeUrl(libraryFolder).files.addChunked(uniqueFileName, file, data => {
+            // Logger.log({ data: data, level: LogLevel.Verbose, message: `Uploading ${file.name}...` });
+          }, true);
+    
+          // Set metadata
+          const item = await uploadResult.file.getItem();
+          await item.update({
+            PersonalAdvanceVehicleIdId: vPersonalAdvanceVehicleIdId
+          });
+    
+          console.log(`✔ File ${file.name} uploaded and metadata updated.`);
+        } catch (error) {
+          console.error(`❌ Error handling file ${file.name}:`, error);
         }
       }
+    }
+
 
       const newRows = this.state.vehicleRows.filter(row => row.isNew == true);
       const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
@@ -675,18 +705,47 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     try {
       await spCrudObj.updateData("PersonalAdvanceVehicle", +this.state.VMId, VehicleRequestItem, this.props);
       const RequestNoGenerate = this.state.VMId;
-      // 3. Upload and tag files with RequestNo metadata
-      if (this.state.selectedFiles && this.state.selectedFiles.length > 0) {
+      // // 3. Upload and tag files with RequestNo metadata
+      // if (this.state.selectedFiles && this.state.selectedFiles.length > 0) {
+      //   const libraryFolder = 'VehicleCostAttachments';
+      //   const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
+      //   for (const file of this.state.selectedFiles) {
+      //     const uploadResult = await folder.files.add(file.name, file, true);
+      //     // Set RequestNo column on the uploaded file
+      //     await uploadResult.file.getItem().then(item =>
+      //       item.update({
+      //         PersonalAdvanceVehicleIdId: RequestNoGenerate,
+      //       })
+      //     );
+      //   }
+      // }
+      
+      if (this.state.selectedFiles.length > 0) {
         const libraryFolder = 'VehicleCostAttachments';
-        const folder = sp.web.getFolderByServerRelativeUrl(libraryFolder);
-        for (const file of this.state.selectedFiles) {
-          const uploadResult = await folder.files.add(file.name, file, true);
-          // Set RequestNo column on the uploaded file
-          await uploadResult.file.getItem().then(item =>
-            item.update({
-              PersonalAdvanceVehicleIdId: RequestNoGenerate,
-            })
-          );
+        const files = this.state.selectedFiles;
+        const vPersonalAdvanceVehicleIdId =RequestNoGenerate;// req.data.ID;
+        const web = Web(this.props.currentSPContext.pageContext.web.absoluteUrl); // Make sure this.props is accessible
+      
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+      
+          try {
+            // Upload file in chunks
+            const uploadResult = await web.getFolderByServerRelativeUrl(libraryFolder).files.addChunked(uniqueFileName, file, data => {
+              // Logger.log({ data: data, level: LogLevel.Verbose, message: `Uploading ${file.name}...` });
+            }, true);
+      
+            // Set metadata
+            const item = await uploadResult.file.getItem();
+            await item.update({
+              PersonalAdvanceVehicleIdId: vPersonalAdvanceVehicleIdId
+            });
+      
+            console.log(`✔ File ${file.name} uploaded and metadata updated.`);
+          } catch (error) {
+            console.error(`❌ Error handling file ${file.name}:`, error);
+          }
         }
       }
 
