@@ -504,7 +504,7 @@ export default class ViewVehicle extends React.Component<IVehicleModuleProps, an
     const { existingFiles, NoteTempDocsColl } = this.state;
 
     return (
-      <div >
+      <div  className="mainsection">
         <h1>View Form</h1>
         <h4> <b> A). Service Particulars</b></h4>
         <div className='card'>
@@ -801,8 +801,8 @@ export default class ViewVehicle extends React.Component<IVehicleModuleProps, an
           <div className='card mb-1' key={index}>
             <div className="row form-group">
               <div className="col-sm-1">
-                <Label className="control-Label font-weight-bold">Sr No</Label>
-                <label className="control-Label font-weight-bold">{index + 1}</label>
+                <Label className="control-Label font-weight-bold">Sr No {index + 1}</Label>
+                {/* <label className="control-Label font-weight-bold">{index + 1}</label> */}
               </div>
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>

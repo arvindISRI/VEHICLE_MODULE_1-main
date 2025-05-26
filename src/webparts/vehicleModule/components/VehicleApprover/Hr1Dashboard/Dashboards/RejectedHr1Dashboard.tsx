@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
-import styles from '../../../VehicleModule.module.scss'
+import styles from '../../../VehicleModule.module.scss';
+
 import * as moment from 'moment'
 import UseUtilities, { IUtilities } from '../../../../../services/bal/utilities';
 import Utilities from '../../../../../services/bal/utilities';

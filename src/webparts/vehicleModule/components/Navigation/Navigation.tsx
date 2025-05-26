@@ -91,7 +91,7 @@ export default class Navigation extends React.Component<IVehicleModuleProps, ITo
       ...(this.state.ShowGHTab ? [{
         name: 'Group Head Dashboard',
         url: '#/GroupHeadDashboard',
-        iconProps: { iconName: 'WorkFlow' },
+        iconProps: { iconName: 'WorkFlow' }, 
         key: 'GroupHeadDashboard'
       }] : []),
       ...(this.state.ShowHR1Tab ? [{

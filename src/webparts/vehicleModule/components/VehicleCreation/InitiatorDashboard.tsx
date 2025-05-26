@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
-import styles from '../VehicleModule.module.scss'
+import styles from '../VehicleModule.module.scss';
+import '../../assets/Vehiclecommon.scss';
 import * as moment from 'moment'
 import UseUtilities, { IUtilities } from '../../../services/bal/utilities';
 import Utilities from '../../../services/bal/utilities';
@@ -256,7 +257,7 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
       <div className='widget-card'>
         <div className='widget-card-head'>
           <span className='widget-card-head-icon'>
-            <Icon iconName='ContactInfo' />
+            <Icon iconName='ContactInfo' /> 
           </span>
           <h2 className='widget-card-head-title'>User Dashboard</h2>
           <span className='widget-card-head-btn'>
@@ -272,8 +273,8 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
                   <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
                   <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
                 </div>
-                <div className='col-md-10'>
-                  <div className={styles.panelbody}>
+                <div className='col-md-10 md--10'>
+                  <div className={styles.panelbody}> 
                     {this.state.activeTab == 'Pending' && (
                       <div id="Pending" className="tabcontent active table-responsive">
                         <h3>Pending</h3>

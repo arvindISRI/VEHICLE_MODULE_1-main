@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
-import styles from '../../../VehicleModule.module.scss'
+import styles from '../../../VehicleModule.module.scss';
+
 import * as moment from 'moment'
 import UseUtilities, { IUtilities } from '../../../../../services/bal/utilities';
 import Utilities from '../../../../../services/bal/utilities';
@@ -250,7 +251,7 @@ PendingpageCount = () => {
                   <button  className="tablink" > <a href={'#/ApprovedHr1Dashboard/Approved'}>Approved</a></button>
                   <button  className="tablink" > <a href={'#/RejectedHr1Dashboard/Rejected'}>Rejected</a></button>
                 </div>
-                <div className='col-md-10'>
+                <div className='col-md-10 md--10'>
                   <div className={styles.panelbody}>
                     {this.state.activeTab == 'Pending' && (
                       <div id="Pending" className="tabcontent active table-responsive">

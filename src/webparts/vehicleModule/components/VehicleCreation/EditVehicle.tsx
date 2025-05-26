@@ -958,7 +958,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     // } = this.state;
     return (
 
-      <div >
+      <div className="mainsection">
         <h1>Edit Form</h1>
         <h4> <b> A). Service Particulars</b></h4>
          <div className='card'>
@@ -1330,8 +1330,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
             <div className="row mb-2">
               { }
               <div className="col-sm-1 d-flex flex-column justify-content-center">
-                <Label className="control-label font-weight-bold">Sr No</Label>
-                <label className="control-label">{index + 1}</label>
+                <Label className="control-label font-weight-bold">Sr No {index + 1}</Label>
+                {/* <label className="control-label">{index + 1}</label> */}
               </div>
               { }
               <div className="col-sm-3">

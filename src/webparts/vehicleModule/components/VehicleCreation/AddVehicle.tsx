@@ -741,7 +741,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
 
   public render(): React.ReactElement<IVehicleModuleProps> {
     return (
-      <div  >
+      <div className="mainsection" >
         <h1>Add Form</h1>
         <h4> <b> A). Service Particulars</b></h4>
         <div className='card'>
@@ -926,10 +926,10 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
                         </div>
 
             <div className="col-sm-2">
-              <input type="file" multiple onChange={this.onFilesChange} />
+              <input className="form-control" type="file" multiple onChange={this.onFilesChange} />
             </div>
           </div>
-          <div className="row form-group">
+          <div className="row form-group"> 
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">Name and Address of the Seller / Dealer <span style={{ color: 'red' }}>*</span>  </Label>
             </div>
@@ -1037,8 +1037,8 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
           <div className='card mb-1' key={index}>
             <div className="row form-group">
               <div className="col-sm-1">
-                <Label className="control-Label font-weight-bold">Sr No</Label>
-                <label className="control-Label font-weight-bold">{index + 1}</label>
+                <Label className="control-Label font-weight-bold">Sr No {index + 1}</Label>
+                {/* <label className="control-Label font-weight-bold">{index + 1}</label> */}
               </div>
               <div className="col-sm-3">
                 <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>

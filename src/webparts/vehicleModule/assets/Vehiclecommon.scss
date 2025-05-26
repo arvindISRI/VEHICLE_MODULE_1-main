@@ -1,0 +1,40 @@
+.mainsection{
+    padding: 0 20px;
+  }
+  .card{
+    padding: 10px;
+  }  
+  .form-control {
+    height: 28px !important;
+    padding: 0 12px 0 0 !important;
+  }
+ .mainsection h1{
+    font-size: 23px !important;
+    font-weight: 600;
+    margin-top: 10px!important; 
+    padding-bottom: 5px!important;
+    border-bottom: 1px solid ;
+  }
+  .mainsection h4{
+    margin-top: 15px !important;
+  }
+  .nav{
+    display: none !important;
+  } 
+  .pageContainer{
+    left:0 !important;
+  } 
+  .widget-card-body {
+    margin-bottom: 15px;
+    margin-top: 10px;
+    margin-left: 10px;
+} 
+.md--10{
+    margin: 10px 0 10px 0 !important;  
+      padding-right: 24px !important;
+  }
+  .ms-Pivot-link{
+    display: none !important;
+  }
+  .text-center .ms-Button{
+  margin-bottom: 15px;}

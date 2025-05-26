@@ -266,7 +266,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
                   <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
                   <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
                 </div>
-                <div className='col-md-10'>
+                <div className='col-md-10 md--10'>
                   <div className={styles.panelbody}>
                     {this.state.activeTab == 'Pending' && (
                       <div id="Pending" className="tabcontent active table-responsive">

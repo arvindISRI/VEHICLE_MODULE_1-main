@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
-import styles from '../../../VehicleModule.module.scss'
+import styles from '../../../VehicleModule.module.scss';
 import * as moment from 'moment'
 import UseUtilities, { IUtilities } from '../../../../../services/bal/utilities';
 import Utilities from '../../../../../services/bal/utilities';
@@ -21,7 +21,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { SPComponentLoader } from '@microsoft/sp-loader';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Items, sp } from 'sp-pnp-js';
-import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers';
+import { CurrentUser } from 'sp-pnp-js/lib/sharepoint/siteusers'; 
 import Select from 'react-select-plus';
 import 'react-select-plus/dist/react-select-plus.css';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
@@ -250,7 +250,7 @@ PendingpageCount = () => {
                   <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
                   <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
                 </div>
-                <div className='col-md-10'>
+                <div className='col-md-10 md--10'>
                   <div className={styles.panelbody}>
                     {this.state.activeTab == 'Pending' && (
                       <div id="Pending" className="tabcontent active table-responsive">
