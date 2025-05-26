@@ -313,6 +313,11 @@ $ms-color-white: #fff;
   .ms-compositeHeader , .imageFrame_741262a5 , .nav_5a558a10{
     display: none !important;
   }
+
+  .commentsWrapper_20a83814>:last-child {
+    max-width: 1200px !important;;
+    display: none !important;;
+}
   .CanvasZone{
     max-width: 100% !important;
     padding: 0px 0px 0px 10px !important;

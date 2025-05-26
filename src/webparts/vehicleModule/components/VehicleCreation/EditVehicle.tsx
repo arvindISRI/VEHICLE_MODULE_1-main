@@ -474,6 +474,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         EmployeeName: this.state.EmployeeName,
         Age: '' + this.state.Age,
         Status: "Draft",
+        CurrentStatus:'Draft',
+
         VehicleLoanEMI:VehicleLoanEMI||0,
         Id: RequestNoGenerate,
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
@@ -678,6 +680,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         HR1Response: 'Pending with HR1',
         HR2Response: 'Pending with HR2',
         GHResponse: 'Pending with Group Head',
+        CurrentStatus:'Pending with Group Head',
+
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,
         Designation: this.state.DesignationTitle,

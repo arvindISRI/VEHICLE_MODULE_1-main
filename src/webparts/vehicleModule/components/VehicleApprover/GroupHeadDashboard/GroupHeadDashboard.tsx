@@ -306,7 +306,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -430,7 +430,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -554,7 +554,7 @@ export default class GroupHeadDashboard extends React.Component<IVehicleModulePr
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>

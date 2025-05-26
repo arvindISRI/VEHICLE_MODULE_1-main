@@ -290,7 +290,7 @@ PendingpageCount = () => {
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -347,7 +347,7 @@ PendingpageCount = () => {
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -404,7 +404,7 @@ PendingpageCount = () => {
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>

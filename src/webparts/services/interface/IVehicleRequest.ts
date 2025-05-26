@@ -49,6 +49,7 @@ export interface IVehicleRequest {
     TotalMarks:any,
     IsEmiLessThan50: any,
     VehicleLoanEMI:any,
+    CurrentStatus:any,
     EligibleLoanAmount: any,
     ApplicationCorrect: any,
     DisciplinaryProceedings:any,

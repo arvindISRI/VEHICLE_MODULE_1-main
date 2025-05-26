@@ -394,6 +394,8 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       // HR2Response: 'Pending with HR2',
       // GHResponse: 'Pending with Group Head',
       Status: 'Rejected',
+      CurrentStatus:'Rejected',
+
       HR1ApproverNameId: this.state.Currentuser.Id,
       HR1ResponseDate: new Date(),
       HR1Remark: this.state.ExpenseDetails.HR1Remarks
@@ -423,6 +425,8 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
       HR2Response: 'Pending with HR2',
       GHResponse: 'Approved by Group Head',
       Status: 'Pending',
+      CurrentStatus:'Pending with HR2',
+
       HR1ApproverNameId: this.state.Currentuser.Id,
       HR1ResponseDate: new Date(),
       HR1Remark: this.state.ExpenseDetails.HR1Remarks
@@ -777,6 +781,17 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
                 }}
               />
             </div>
+            <div className="col-sm-2">
+                                                  <Label className="control-Label font-weight-bold">Total Loan Amount  </Label>
+                                                </div>
+                                                <div className="col-sm-2">
+                                                  <TextField type='number'
+                                                    value={this.state.ExpenseDetails.TotalLoanAmount || 0}
+                                    
+                                                    name="ExpenseDetails.TotalLoanAmount" disabled
+                                                    onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+                                    
+                                                </div>
             <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)  </Label>
             </div>

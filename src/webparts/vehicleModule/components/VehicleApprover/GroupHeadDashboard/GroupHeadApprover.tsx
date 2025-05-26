@@ -351,6 +351,8 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
     VehicleRequestItem = {
       GHResponse: 'Rejected by Group Head',
       Status: 'Rejected',
+      CurrentStatus:'Rejected',
+
       GHApproverNameId: this.state.Currentuser.Id,
       GHResponseDate: new Date(),
       GHRemark: this.state.ExpenseDetails.GroupHeadRemarks,
@@ -427,6 +429,8 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
       DisciplinaryProceedings: this.state.disciplinaryPending,
       SanctionAmount: this.state.recommendedSanctionAmount,
       SanctionAmountDate: new Date(),
+      CurrentStatus:'Pending with HR1',
+
     };
     this.setState({ isSubmitting: true });
     const spCrudObj = await useSPCRUD();
@@ -760,6 +764,17 @@ export default class GroupHeadApproveVehicle extends React.Component<IVehicleMod
                 }}
               />
             </div>
+             <div className="col-sm-2">
+                          <Label className="control-Label font-weight-bold">Total Loan Amount  </Label>
+                        </div>
+                        <div className="col-sm-2">
+                          <TextField type='number'
+                            value={this.state.ExpenseDetails.TotalLoanAmount || 0}
+            
+                            name="ExpenseDetails.TotalLoanAmount" disabled
+                            onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+            
+                        </div>
             <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)  </Label>
             </div>

@@ -348,6 +348,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
         HR1Response: 'Pending with HR1',
         HR2Response: 'Pending with HR2',
         GHResponse: 'Pending with Group Head',
+        CurrentStatus:'Pending with Group Head',
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         DateOfConfirmation: this.state.DateOfConfirmation
           ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
@@ -486,6 +487,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
         Age: '' + this.state.Age,
         Status: "Draft",
         VehicleLoanEMI:+VehicleLoanEMI || 0,
+        CurrentStatus:'Draft',
 
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,

@@ -318,7 +318,7 @@ console.log(activeTab1);
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -442,7 +442,7 @@ console.log(activeTab1);
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -566,7 +566,7 @@ console.log(activeTab1);
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>

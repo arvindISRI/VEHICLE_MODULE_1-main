@@ -308,7 +308,7 @@ export default class Hr1Dashboard extends React.Component<IVehicleModuleProps, a
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -432,7 +432,7 @@ export default class Hr1Dashboard extends React.Component<IVehicleModuleProps, a
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>
@@ -556,7 +556,7 @@ export default class Hr1Dashboard extends React.Component<IVehicleModuleProps, a
                                 <td>{items.EmployeeCode}</td>
                                 <td>{items.EmployeeName}</td>
                                 <td>{items.Age}</td>
-                                <td>{items.Status}</td>
+                                <td>{items.CurrentStatus}</td>
                               </tr>
                             )) : (
                               <tr>

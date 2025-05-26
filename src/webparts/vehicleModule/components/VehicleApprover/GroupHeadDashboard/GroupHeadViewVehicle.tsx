@@ -716,6 +716,17 @@ export default class GroupHeadViewVehicle extends React.Component<IVehicleModule
                 }}
               />
             </div>
+             <div className="col-sm-2">
+                                      <Label className="control-Label font-weight-bold">Total Loan Amount  </Label>
+                                    </div>
+                                    <div className="col-sm-2">
+                                      <TextField type='number'
+                                        value={this.state.ExpenseDetails.TotalLoanAmount || 0}
+                        
+                                        name="ExpenseDetails.TotalLoanAmount" disabled
+                                        onChanged={(e: any) => this.handleInputChangeadd(event)}></TextField>
+                        
+                                    </div>
             <div className="col-sm-2" hidden={!(this.state.ConditionOfVehicle == 'Second Hand')}>
               <Label className="control-Label font-weight-bold">Expected life of Vehicle (in case of second hand vehicle)  </Label>
             </div>
