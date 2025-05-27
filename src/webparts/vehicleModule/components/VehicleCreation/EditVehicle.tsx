@@ -677,6 +677,8 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         Age: '' + this.state.Age,
         VehicleLoanEMI:VehicleLoanEMI||0,
         Status: "Pending",
+        RequestorEmail	:this.state.CompanyEmail,
+
         HR1Response: 'Pending with HR1',
         HR2Response: 'Pending with HR2',
         GHResponse: 'Pending with Group Head',

@@ -344,6 +344,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
         Age: '' + this.state.Age,
         Status: "Pending",
         VehicleLoanEMI:+VehicleLoanEMI || 0,
+        RequestorEmail	:this.state.CompanyEmail,
 
         HR1Response: 'Pending with HR1',
         HR2Response: 'Pending with HR2',
@@ -488,6 +489,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
         Status: "Draft",
         VehicleLoanEMI:+VehicleLoanEMI || 0,
         CurrentStatus:'Draft',
+        RequestorEmail	:this.state.CompanyEmail,
 
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,
