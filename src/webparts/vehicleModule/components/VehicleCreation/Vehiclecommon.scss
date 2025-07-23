@@ -35,3 +35,31 @@
   }
  .text-center .ms-Button{
     margin-bottom: 15px;}  
+    .ms-FocusZone,
+.ms-searchux-searchbox{
+display:none!important}
+
+.pageContainer{
+left:0 !important}
+
+/*for active in button*/
+.tablink {
+  background-color: #f1f1f1;
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000;
+}
+
+.tablink.active ,.active{
+  background-color: #007bff;
+  color: #fff;
+  border-bottom: 2px solid #0056b3;
+}
+.active,
+button.tablink.active{
+  background-color: #fff !important;
+  color: #fff;
+  border-bottom: 2px solid #0056b3 !important;
+}

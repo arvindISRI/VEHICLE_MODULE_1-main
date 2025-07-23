@@ -808,7 +808,7 @@ export default class ViewVehicle extends React.Component<IVehicleModuleProps, an
                 <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>
                 <TextField
                   multiline disabled
-                  value={row.DatePurposeofWithdrawal}
+                  value={row.DatePurposeofWithdrawal ||'NA'}
                   onChanged={(val) => this.handleRowChange(index, 'DatePurposeofWithdrawal', val)}
                 />
               </div>

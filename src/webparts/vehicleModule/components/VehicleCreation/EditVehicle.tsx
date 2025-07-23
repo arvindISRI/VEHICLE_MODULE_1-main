@@ -200,12 +200,12 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
       this.setState({ selectedOption: null });
     }
-    if(prevState.ExpenseDetails.Dateoffinalrepaymentofloan !== this.state.ExpenseDetails.Dateoffinalrepaymentofloan && !this.state.ExpenseDetails.Dateoffinalrepaymentofloan){
-      // this.state.ExpenseDetails.Dateoffinalrepaymentofloan
-      this.setState({ ExpenseDetails:{Dateoffinalrepaymentofloan : null }});
-      // ExpenseDetails: {
-      //   TotalEmolumentspm: nul,
-    }
+    // if(prevState.ExpenseDetails.Dateoffinalrepaymentofloan !== this.state.ExpenseDetails.Dateoffinalrepaymentofloan && !this.state.ExpenseDetails.Dateoffinalrepaymentofloan){
+    //   // this.state.ExpenseDetails.Dateoffinalrepaymentofloan
+    //   this.setState({ ExpenseDetails:{Dateoffinalrepaymentofloan : null }});
+    //   // ExpenseDetails: {
+    //   //   TotalEmolumentspm: nul,
+    // }
   }
 
 
@@ -247,17 +247,18 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     return await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       let employeeData = results;
 
-      var AlreadyPendingcurrentEmpResult = employeeData.filter((item) => {
-        ((item.EmployeeCode == this.state.EmployeeID) && (item.Status == 'Pending'));
-      })
-      if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
-        this.setState({ AlreadyAnPendingRequest: true });
-      }
+     
       var currentEmpResult = employeeData.filter((item) => {
         return item.ID == +this.state.VMId;
       })
-
-
+      var AlreadyPendingcurrentEmpResult=[];
+       AlreadyPendingcurrentEmpResult = employeeData.filter((item) => {
+        return (item.EmployeeCode == +currentEmpResult[0].EmployeeCode) && (item.Status == 'Pending');
+      });
+      
+      if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
+        this.setState({ AlreadyAnPendingRequest: true });
+      }
 
       if (currentEmpResult && currentEmpResult.length > 0) {
         this.setState({
@@ -420,8 +421,10 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         updatedExpenseDetails.RepaymenttenureinEMI = repaymenttenureinEMI.toString();
       }
  // Cap deductions
- if (field === "CostofVehicle" && costofVehicle > 1000000) {
-  costofVehicle = 1000000;
+// if (field === "CostofVehicle" && costofVehicle > 1000000) {
+  if (field === "CostofVehicle") {
+
+  // costofVehicle = 1000000;
   updatedExpenseDetails.CostofVehicle = costofVehicle.toString();
 }
 
@@ -520,8 +523,9 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       //     );
       //   }
       // }
-  
-    if (this.state.selectedFiles.length > 0) {
+
+  if(this.state.selectedFiles){
+    if (this.state.selectedFiles.length  > 0 ) {
       const libraryFolder = 'VehicleCostAttachments';
       const files = this.state.selectedFiles;
       const vPersonalAdvanceVehicleIdId =RequestNoGenerate;// req.data.ID;
@@ -529,7 +533,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+        const uniqueFileName = `${file.name}`;
     
         try {
           // Upload file in chunks
@@ -549,6 +553,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         }
       }
     }
+  }
 
 
       const newRows = this.state.vehicleRows.filter(row => row.isNew == true);
@@ -616,25 +621,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     let AlreadyPendingcurrentEmpResult = [];
     const EmployeeCode = +this.state.EmployeeCode;
 
-    await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
-      const employeeData = results;
-
-      console.log("Checking against EmployeeCode:", EmployeeCode);
-      console.log("Employee vehicle data:", employeeData);
-
-      AlreadyPendingcurrentEmpResult = employeeData.filter((item: any) => {
-        console.log("Item:", item.EmployeeCode, item.Status);
-        return +item.EmployeeCode == +EmployeeCode && item.Status == 'Pending';
-      });
-
-      if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
-        this.setState({ AlreadyAnPendingRequest: true });
-        swal("Notice", "Your Vehicle Request is already in Pending.", "info");
-        window.location.href = '#/InitiatorDashboard';
-
-        return false;
-      }
-    });
+ 
 
 
 
@@ -646,23 +633,106 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     // }
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
     const showAlert = (message) => {
-      swal("Validation Error", message, "warning");
+      swal("Vehicle Module says:", message, "warning");
     };
     const isEmpty = (val) => val == '' || val == null || val == undefined || val == 0;
-    if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
-    if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
-    if (isEmpty(ExpenseDetails.RepaymenttenureinEMI)) return showAlert('Please Fill Repayment tenure in EMI');
-    if (isEmpty(ExpenseDetails.TotalLoanAmount)) return showAlert('Please Fill Total Loan Amount');
+    if (isEmpty(ExpenseDetails.TotalEmolumentspm)){ 
+    showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
+    return false;
+    }
+
+    if (isEmpty(ExpenseDetails.Totaldeductions)) 
+      
+      {
+         
+        showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
+        return false
+      }
+
+      if (isEmpty(ExpenseDetails.TotalLoanAmount)) 
+      
+        {
+           
+          showAlert('Please Fill Total Loan Amount');
+                    return false
+        }
+
+        if (isEmpty(ExpenseDetails.RepaymenttenureinEMI))
+        {
+           showAlert('Please Fill Repayment tenure in EMI');
+           return false
+
+        }
+    if (isEmpty(ExpenseDetails.TotalLoanAmount)) {
+       showAlert('Please Fill Total Loan Amount');
+      return false
+
+    }
 
     
-    if (ExpenseDetails.RepaymenttenureinEMI > 120) return showAlert('Repayment tenure in EMI should be less than 120');
-    if (isEmpty(typeOfVehicle)) return showAlert('Please Select Type of Vehicle');
-    if (isEmpty(ConditionOfVehicle)) return showAlert('Please Select Whether new or second hand');
-    if (isEmpty(ExpenseDetails.MakeModel)) return showAlert('Please Fill Make/ Model');
-    if (isEmpty(yearOfManufacture1)) return showAlert('Please Select Year of Manufacture');
-    if (isEmpty(ExpenseDetails.CostofVehicle)) return showAlert('Please Fill Cost of Vehicle');
-    if (isEmpty(ExpenseDetails.NameandAddressoftheSeller)) return showAlert('Please Fill Name and Address of the Seller / Dealer');
-    if (ExpectlifeShow && isEmpty(ExpenseDetails.ExpectedlifeofVehicle)) return showAlert('Please Fill Expected life of Vehicle');
+    if (ExpenseDetails.RepaymenttenureinEMI > 120){
+       showAlert('Repayment tenure in EMI should be less than 120');
+       return false
+
+    }
+    if (isEmpty(typeOfVehicle)){  
+      showAlert('Please Select Type of Vehicle')
+      return false
+    };
+    if (isEmpty(ConditionOfVehicle)) {
+      showAlert('Please Select Whether new or second hand');
+      return false
+    } 
+    if (isEmpty(ExpenseDetails.MakeModel)){
+      showAlert('Please Fill Make/ Model');
+      return   false;
+    }  
+    if (isEmpty(yearOfManufacture1)) {
+      showAlert('Please Select Year of Manufacture');
+      return false;
+    } 
+    if (isEmpty(ExpenseDetails.CostofVehicle)) {
+      showAlert('Please Fill Cost of Vehicle');
+      return false
+    } 
+    if (isEmpty(ExpenseDetails.NameandAddressoftheSeller)) 
+    {
+      showAlert('Please Fill Name and Address of the Seller / Dealer');
+      return false
+    }
+    if (ExpectlifeShow && isEmpty(ExpenseDetails.ExpectedlifeofVehicle)) 
+      {
+        showAlert('Please Fill Expected life of Vehicle');
+        return false
+      } 
+
+      if (this.state.AlreadyAnPendingRequest == true) {
+        swal("Notice", "Your Vehicle Request already in Pending.", "info");
+        //alert('hii');
+        return false
+  
+      }
+
+      // await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
+      //   const employeeData = results;
+  
+      //   console.log("Checking against EmployeeCode:", EmployeeCode);
+      //   console.log("Employee vehicle data:", employeeData);
+  
+      //   AlreadyPendingcurrentEmpResult = employeeData.filter((item: any) => {
+      //     console.log("Item:", item.EmployeeCode, item.Status);
+      //     return +item.EmployeeCode == +EmployeeCode && item.Status == 'Pending';
+      //   });
+  
+      //   if (AlreadyPendingcurrentEmpResult && AlreadyPendingcurrentEmpResult.length > 0) {
+      //     this.setState({ AlreadyAnPendingRequest: true });
+      //     swal("Notice", "Your Vehicle Request is already in Pending.", "info");
+      //     window.location.href = '#/InitiatorDashboard';
+  
+      //     return false;
+      //   }
+      // });
+
     const spCrudObj = await useSPCRUD();
     if (this.state.removedVehicleRowIds.length > 0) {
       for (let id of this.state.removedVehicleRowIds) {
@@ -726,7 +796,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       //   }
       // }
       
-      if (this.state.selectedFiles.length > 0) {
+      if (this.state.selectedFiles&&this.state.selectedFiles.length > 0) {
         const libraryFolder = 'VehicleCostAttachments';
         const files = this.state.selectedFiles;
         const vPersonalAdvanceVehicleIdId =RequestNoGenerate;// req.data.ID;
@@ -734,7 +804,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
       
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
-          const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+          const uniqueFileName = `${file.name}`;
       
           try {
             // Upload file in chunks
@@ -757,13 +827,13 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
 
       const newRows = this.state.vehicleRows.filter(row => row.isNew);
       const existingRows = this.state.vehicleRows.filter(row => !row.isNew && row.Id);
-      if (existingRows.length > 0) {
+      if (existingRows && existingRows.length > 0) {
         await this.UpdatePrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, existingRows);
       }
-      if (newRows.length > 0) {
+      if (newRows && newRows.length > 0) {
         await this.InsertPrevPersonalAdvanceHistory("PrevPersonalAdvanceHistory", RequestNoGenerate, newRows);
       }
-      if (existingRows.length > 0 || newRows.length > 0) {
+      if (existingRows || existingRows.length > 0 || newRows || newRows.length > 0) {
         swal("Success", "Vehicle Request Submitted Successfully!", "success").then(() => {
           window.location.href = '#/InitiatorDashboard';
         });
@@ -1145,7 +1215,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
     this.setState((prevState) => ({
       ExpenseDetails: {
         ...prevState.ExpenseDetails,
-        CostofVehicle: numericValue > 1000000 ? 1000000 : numericValue
+        CostofVehicle: numericValue ,//> 1000000 ? 1000000 : numericValue
       }
     }));
   }}
@@ -1154,7 +1224,7 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
 
             <div className="col-sm-2">
               <Label className="control-Label font-weight-bold">
-                Cost of Vehicle Attachments <span style={{ color: 'red' }}>*</span>
+                Cost of Vehicle Attachments 
               </Label>
             </div>
 
@@ -1401,13 +1471,13 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         ))}
         <div className='text-center'>
           { }
-          <PrimaryButton
+          <PrimaryButton type='button'
             onClick={() => this.BtnSubmitRequest('Submitted')}
             disabled={this.state.isSubmitting}
           >
             {this.state.isSubmitting ? <Spinner size={SpinnerSize.small} /> : "Submit"}
           </PrimaryButton>
-          <PrimaryButton
+          <PrimaryButton type='button'
             onClick={() => this.BtnSaveAsDraft('Draft')}
             disabled={this.state.isSave}
           >

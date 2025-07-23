@@ -800,7 +800,7 @@ export default class HR2ViewVehicle extends React.Component<IVehicleModuleProps,
                 <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>
                 <TextField
                   multiline disabled
-                  value={row.DatePurposeofWithdrawal}
+                  value={row.DatePurposeofWithdrawal ||'NA'}
                   onChanged={(val) => this.handleRowChange(index, 'DatePurposeofWithdrawal', val)}
                 />
               </div>

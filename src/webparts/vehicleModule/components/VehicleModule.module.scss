@@ -307,7 +307,7 @@ $ms-color-white: #fff;
     display: none !important;
     width: 0px !important;
   }
-  .pageContainer_5a558a10{
+  .pageContainer{
     left: 0px !important;
   }
   .ms-compositeHeader , .imageFrame_741262a5 , .nav_5a558a10{
@@ -858,4 +858,40 @@ $ms-color-white: #fff;
 .panelbody h3{
 
     margin-top: 5px !important;
+}
+
+:global{
+  
+  .spNav_ad748018{
+    width:0 !important;
+  }
+  .searchBox_e0d68e03,.ms-Nav
+ { 
+  display:none;} 
+  .emp-mas-top-nav{
+    display:block!important
+  }
+  
+  .pageContainer,
+  .leftMargin, .pageContainer_b5013a39 {
+  left:0 !important}
+
+}.leftMargin, .pageContainer_b5013a39 {
+  left:0 !important}
+  
+/*for active in button*/
+.tablink {
+  background-color: #f1f1f1;
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000;
+}
+
+.active,
+button.tablink.active{
+  background-color: #fff !important;
+  color: #fff;
+  border-bottom: 2px solid #0056b3 !important;
 }

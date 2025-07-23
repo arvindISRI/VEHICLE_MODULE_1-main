@@ -133,6 +133,22 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     await this.getCurrentUser();
     await this.getAllPersonalAdvanceVehicle();
 
+    await this.checkemployeeNullValue();
+//     VM Request ID
+// VM000309
+// Employee ID
+// 9999
+// Employee Name
+// Farm Admin
+// Date of joining
+// 01/06/2024
+// Residence Address
+// HEAD OFFICE
+// Designation
+// Management Trainee (MT)
+// Age
+// 29
+
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.showhideEmployeeNameLab !== this.state.showhideEmployeeNameLab && !this.state.showhideEmployeeNameLab) {
@@ -155,6 +171,27 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
       return cuser;
     });
   }
+  
+ 
+    public checkemployeeNullValue = async () => {
+      const isEmpty = (val) => val == '' || val == null || val == undefined || val == 0;
+
+       if (isEmpty(this.state.EmployeeName) && 
+          isEmpty(this.state.DateOfJoining) && 
+            isEmpty(this.state.CurrentOfficeLocation) && 
+              isEmpty(this.state.DesignationTitle) && 
+                isEmpty(this.state.DateofBirth) && 
+                  isEmpty(this.state.Age) 
+
+      )
+      {
+        window.location.href = '#/InitiatorDashboard';
+
+      }
+        
+   }
+  
+  
   public getEmployee = async (): Promise<IEmployeeMaster> => {
     return await EmployeeOps().getEmployeeMaster(this.props).then(async (results) => {
       let employeeData = results;
@@ -168,14 +205,14 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
           ? `${new Date(employeeData.DateOfConfirmation).getDate()}-${new Date(employeeData.DateOfConfirmation).getMonth() + 1}-${new Date(employeeData.DateOfConfirmation).getFullYear()}`
           : null,
         EmployeeIDId: employeeData.Id,
-        DependentType: "",
-        ActualClaimAmountLable: "",
+       // DependentType: "",
+        //ActualClaimAmountLable: "",
         CompanyEmail: employeeData.CompanyEmail,
         EmployeeID: employeeData.EmployeeId,
         DesignationId: employeeData.DesignationId,
         DesignationTitle: employeeData.DesignationTitle,
         DateofBirth: employeeData.DateofBirth,
-        Scale: employeeData.Scale,
+       // Scale: employeeData.Scale,
         Age: parseInt(employeeData.Age),
         EmpType: employeeData.EmpType,
       });
@@ -236,10 +273,10 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
         updatedExpenseDetails.RepaymenttenureinEMI = repaymenttenureinEMI.toString();
       }
  // Cap deductions
- if (field === "CostofVehicle" && costofVehicle > 1000000) {
-  costofVehicle = 1000000;
-  updatedExpenseDetails.CostofVehicle = costofVehicle.toString();
-}
+//  if (field === "CostofVehicle" && costofVehicle > 1000000) {
+//   costofVehicle = 1000000;
+//   updatedExpenseDetails.CostofVehicle = costofVehicle.toString();
+// }
 
     // Cap deductions
     if (field === "Totaldeductions" && totalDeductions > totalEmoluments) {
@@ -311,7 +348,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
   
     const { ExpenseDetails, typeOfVehicle, ConditionOfVehicle, yearOfManufacture1, ExpectlifeShow } = this.state;
     const showAlert = (message) => {
-      swal("Validation Error", message, "warning");
+      swal("Vehicle Module says:", message, "warning");
       return false;
     };
     const isEmpty = (val) => val == '' || val == null || val == undefined || val == 0;
@@ -433,7 +470,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
   
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+      const uniqueFileName = `${file.name}`;
   
       try {
         // Upload file in chunks
@@ -574,7 +611,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
   
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const uniqueFileName = `${(new Date().getTime() * 10000 + 621355968000000000)}_${file.name}`;
+      const uniqueFileName = `${file.name}`;
   
       try {
         // Upload file in chunks
@@ -914,7 +951,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
     this.setState((prevState) => ({
       ExpenseDetails: {
         ...prevState.ExpenseDetails,
-        CostofVehicle: numericValue > 1000000 ? 1000000 : numericValue
+        CostofVehicle: numericValue ,//> 1000000 ? 1000000 : numericValue
       }
     }));
   }}
@@ -923,7 +960,7 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
             </div>
              <div className="col-sm-2">
                           <Label className="control-Label font-weight-bold">
-                            Cost of Vehicle Attachments <span style={{ color: 'red' }}>*</span>
+                            Cost of Vehicle Attachments 
                           </Label>
                         </div>
 

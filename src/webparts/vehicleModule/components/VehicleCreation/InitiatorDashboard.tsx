@@ -269,9 +269,57 @@ export default class InitiatorDashboard extends React.Component<IVehicleModulePr
             <PivotItem linkText='User Dashboard'>
               <div className='row'>
                 <div className={styles.tabnav + " " + 'col-md-2'}>
-                  <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
+                  {/* <button className="tablink" onClick={() => this.setActiveTab("Pending")}>Pending</button>
                   <button className="tablink" onClick={() => this.setActiveTab("Approved")}>Approved</button>
-                  <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button>
+                  <button className="tablink" onClick={() => this.setActiveTab("Rejected")}>Rejected</button> */}
+                  <button
+  className="tablink"
+  style={{
+    backgroundColor: this.state.activeTab === "Pending" ? "#FAA21A" : "#2e6da4",
+    color: this.state.activeTab === "Pending" ? "#fff" : "#fff",
+    borderBottom: this.state.activeTab === "Pending" ? "2px solid #FAA21A" : "none",
+    padding: "10px 16px",
+    border: "none",
+    cursor: "pointer",
+    
+  }}
+  onClick={() => this.setActiveTab("Pending")}
+>
+  Pending
+                  </button>
+
+                  <button
+                    className="tablink"
+                    style={{
+                      backgroundColor: this.state.activeTab === "Approved" ? "#FAA21A" : "#2e6da4",
+                      color: this.state.activeTab === "Approved" ? "#fff" : "#fff",
+                      borderBottom: this.state.activeTab === "Approved" ? "2px solid #FAA21A" : "none",
+                      padding: "10px 16px",
+                      border: "none",
+                      cursor: "pointer",
+                      
+                    }}
+                    onClick={() => this.setActiveTab("Approved")}
+                  >
+                    Approved
+                  </button>
+
+                  <button
+                    className="tablink"
+                    style={{
+                      backgroundColor: this.state.activeTab === "Rejected" ? "#FAA21A" : "#2e6da4",
+                      color: this.state.activeTab === "Rejected" ? "#fff" : "#fff",
+                      borderBottom: this.state.activeTab === "Rejected" ? "2px solid #FAA21A" : "none",
+                      padding: "10px 16px",
+                      border: "none",
+                      cursor: "pointer",
+                    
+                    }}
+                    onClick={() => this.setActiveTab("Rejected")}
+                  >
+                    Rejected
+                  </button>
+
                 </div>
                 <div className='col-md-10 md--10'>
                   <div className={styles.panelbody}> 

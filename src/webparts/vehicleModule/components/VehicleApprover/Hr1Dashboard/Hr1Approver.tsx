@@ -866,7 +866,7 @@ export default class HR1ApproveVehicle extends React.Component<IVehicleModulePro
                 <Label className="control-Label font-weight-bold">Date/Purpose of Withdrawal </Label>
                 <TextField
                   multiline disabled
-                  value={row.DatePurposeofWithdrawal}
+                  value={row.DatePurposeofWithdrawal ||'NA'}
                   onChanged={(val) => this.handleRowChange(index, 'DatePurposeofWithdrawal', val)}
                 />
               </div>
