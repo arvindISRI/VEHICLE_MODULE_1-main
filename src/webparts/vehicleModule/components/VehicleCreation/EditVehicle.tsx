@@ -712,6 +712,11 @@ export default class EditVehicle extends React.Component<IVehicleModuleProps, an
         return false
   
       }
+      if ((ExpenseDetails.TotalLoanAmount>1000000)){
+        showAlert('Please Fill Total Loan Amount should not be greater than 1000000');
+
+        return false
+      }
 
       // await PersonalAdvanceVehicleMasterOps().getAllPersonalAdvanceVehicle(this.props).then(async (results) => {
       //   const employeeData = results;

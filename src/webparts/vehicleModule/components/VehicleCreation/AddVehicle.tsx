@@ -355,7 +355,7 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     if (isEmpty(ExpenseDetails.TotalEmolumentspm)) return showAlert('Please Fill Total Emoluments p.m. (Salary and allowance)');
     if (isEmpty(ExpenseDetails.TotalLoanAmount)) return showAlert('Please Fill Total Loan Amount');
  
-    if ((ExpenseDetails.TotalLoanAmount>ExpenseDetails.CostofVehicle)) return showAlert('Please Fill Total Loan Amount Less than Cost of Vehicle');
+    if ((ExpenseDetails.TotalLoanAmount>1000000)) return showAlert('Please Fill Total Loan Amount should not be greater than 1000000');
 
     
     if (isEmpty(ExpenseDetails.Totaldeductions)) return showAlert('Please Fill Total deductions p.m. viz. Festival Advance, Personal Advance');
@@ -374,7 +374,8 @@ export default class AddVehicle extends React.Component<IVehicleModuleProps, any
     if (SubmittionType == 'Submitted') {
 var rate=5.5;
 var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.state.ExpenseDetails.RepaymenttenureinEMI*(1/1200))))/(this.state.ExpenseDetails.RepaymenttenureinEMI)).toFixed(2);
-     
+let date = new Date(this.state.DateOfConfirmation);
+
       VehicleRequestItem = {
         EmployeeCode: this.state.EmployeeID,
         EmployeeName: this.state.EmployeeName,
@@ -388,9 +389,9 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
         GHResponse: 'Pending with Group Head',
         CurrentStatus:'Pending with Group Head',
         DateOfJoining: this.state.DateOfJoining ? new Date(this.state.DateOfJoining) : null,
-        DateOfConfirmation: this.state.DateOfConfirmation
-          ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
-          : null,
+        // DateOfConfirmation: this.state.DateOfConfirmation
+        //   ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
+        //   : null,
         ResidenceAddress: this.state.CurrentOfficeLocation,
         Designation: this.state.DesignationTitle,
         TotalEmoluments: +ExpenseDetails.TotalEmolumentspm,
@@ -515,7 +516,8 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
 
   var rate=5.5;
   var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.state.ExpenseDetails.RepaymenttenureinEMI*(1/1200))))/(this.state.ExpenseDetails.RepaymenttenureinEMI)).toFixed(2);
-  
+  let date = new Date(this.state.DateOfConfirmation);
+
 
     var VehicleRequestItem
     if (SubmittionType == 'Draft') {
@@ -540,9 +542,14 @@ var VehicleLoanEMI= ((this.state.ExpenseDetails.TotalLoanAmount*(1+(rate*this.st
         EmiTenure: this.state.ExpenseDetails.RepaymenttenureinEMI ? +this.state.ExpenseDetails.RepaymenttenureinEMI : 0,
         CostOfVehicle: this.state.ExpenseDetails.CostofVehicle ? +this.state.ExpenseDetails.CostofVehicle : 0,
         VehicleType: this.state.typeOfVehicle,
-        DateOfConfirmation: this.state.DateOfConfirmation
-          ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
-          : null,
+        // DateOfConfirmation: this.state.DateOfConfirmation
+        // ? `${new Date(this.state.DateOfConfirmation).getDate()}-${new Date(this.state.DateOfConfirmation).getMonth() + 1}-${new Date(this.state.DateOfConfirmation).getFullYear()}`
+        // : null ,
+DateOfConfirmation :
+  this.state.DateOfConfirmation && !isNaN(date.getTime())
+    ? `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
+    : null,
+
         ManufactureYear: this.state.yearOfManufacture1 || "",
         VehicleCondition: this.state.ConditionOfVehicle,
         MakeModel: this.state.ExpenseDetails.MakeModel || "",
